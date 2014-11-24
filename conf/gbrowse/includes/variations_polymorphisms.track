@@ -7,7 +7,7 @@ feature      = deletion:CGH_allele_Polymorphism
                     SNP:Variation_project_Polymorphism
          insertion_site:Variation_project_Polymorphism
    complex_substitution:Variation_project_Polymorphism
-   sequence_alteration:Variation_project_Polymorphism
+     tandem_duplication:Variation_project_Polymorphism
 	       deletion:Allele_Polymorphism
 label        = sub {
 	     my $f = shift;

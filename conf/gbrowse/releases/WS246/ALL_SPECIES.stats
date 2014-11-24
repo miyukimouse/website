@@ -180,7 +180,7 @@ point_mutation:PCoF_Variation_project	PCoF_Variation_project	point_mutation	Chan
 point_mutation:Variation_project	Variation_project	point_mutation	High-throughput alleles (variations_high_throughput_alleles)	0	0	0	0	0	0	0	0	21643	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 polyA_signal_sequence:polyA_signal_sequence	polyA_signal_sequence	polyA_signal_sequence	PolyA sites and signal sequences (polya_sites)	0	0	0	0	0	0	0	0	2454	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 polyA_site:polyA_site	polyA_site	polyA_site	PolyA sites and signal sequences (polya_sites)	0	0	0	0	0	0	0	0	85690	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
-polypeptide_motif:translated_feature	translated_feature	polypeptide_motif	NO CONFIG AVAILABLE	0	0	0	265858	0	0	0	0	401905	0	406306	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+polypeptide_motif:translated_feature	translated_feature	polypeptide_motif	Protein motifs (protein_motifs)	0	0	0	265858	0	0	0	0	401905	0	406306	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 possible_base_call_error:RNASeq	RNASeq	possible_base_call_error	Genome sequence errors (genome_sequence_errors)	0	0	0	0	0	0	0	0	955	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 pre_miRNA:WormBase	WormBase	pre_miRNA	NO CONFIG AVAILABLE	0	0	0	0	0	0	244	130	265	88	0	0	0	0	0	0	0	0	0	0	0	10	0	0	0	0	0	0	0
 pre_miRNA:miRNA_precursor	miRNA_precursor	pre_miRNA	NO CONFIG AVAILABLE	0	0	0	1	0	0	0	0	0	0	150	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
@@ -213,9 +213,9 @@ reagent:Oligo_set	Oligo_set	reagent	Microarray oligo probes (microarray_oligo_pr
 regulatory_region:regulatory_region	regulatory_region	regulatory_region	Regulatory regions (regulatory_regions)	0	0	0	0	0	0	0	0	65	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 repeat_region:RepeatMasker	RepeatMasker	repeat_region	Repeat Region (RepeatMasker) (repeats_repeat_masker)	715822	143063	105658	100931	67769	119358	170518	188816	116933	455838	152570	135730	61118	120937	27385	55772	23677	95848	11764	157147	308929	114947	166175	144825	30196	139103	78753	82656	74120
 scRNA:WormBase	WormBase	scRNA	Curated Genes (noncoding) (genes_noncoding)	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
-sequence_alteration:PCoF_Variation_project_Polymorphism	PCoF_Variation_project_Polymorphism	sequence_alteration	Change-of-function polymorphisms (variations_change_of_function_polymorphisms)	0	0	0	0	0	0	0	134	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
-sequence_alteration:Variation_project_Polymorphism	Variation_project_Polymorphism	sequence_alteration	Polymorphisms (variations_polymorphisms)	0	0	0	0	0	0	0	564	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
-sequence_motif:translated_feature	translated_feature	sequence_motif	Protein motifs (protein_motifs)	0	0	0	0	0	0	191145	315020	0	128748	0	0	0	0	0	0	0	0	0	0	0	234450	0	354937	0	0	0	0	0
+sequence_alteration:PCoF_Variation_project_Polymorphism	PCoF_Variation_project_Polymorphism	sequence_alteration	NO CONFIG AVAILABLE	0	0	0	0	0	0	0	134	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+sequence_alteration:Variation_project_Polymorphism	Variation_project_Polymorphism	sequence_alteration	NO CONFIG AVAILABLE	0	0	0	0	0	0	0	564	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+sequence_motif:translated_feature	translated_feature	sequence_motif	NO CONFIG AVAILABLE	0	0	0	0	0	0	191145	315020	0	128748	0	0	0	0	0	0	0	0	0	0	0	234450	0	354937	0	0	0	0	0
 snRNA:WormBase	WormBase	snRNA	Curated Genes (noncoding) (genes_noncoding)	0	0	0	0	0	0	259	113	130	352	0	0	0	0	0	0	0	0	0	0	0	231	0	0	0	0	0	0	0
 snRNA:snRNA	snRNA	snRNA	NO CONFIG AVAILABLE	0	0	0	709	0	0	0	0	0	0	130	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 snoRNA:WormBase	WormBase	snoRNA	Curated Genes (noncoding) (genes_noncoding)	0	0	0	0	0	0	148	104	345	106	0	0	0	0	0	0	0	0	0	0	0	2	0	0	0	0	0	0	0
@@ -227,8 +227,8 @@ substitution:Variation_project_Polymorphism	Variation_project_Polymorphism	subst
 tRNA:WormBase	WormBase	tRNA	Curated Genes (noncoding) (genes_noncoding)	0	0	0	0	0	0	1179	777	637	1014	0	0	0	0	0	0	0	0	0	0	0	127	0	0	0	0	0	0	0
 tRNA:WormBase_imported	WormBase_imported	tRNA	NO CONFIG AVAILABLE	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1582	0	124	0	0	404	0	0	0	0	0	0	0	0
 tRNA:tRNA	tRNA	tRNA	NO CONFIG AVAILABLE	0	0	0	167	0	0	0	0	0	0	799	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
-tandem_duplication:Million_mutation	Million_mutation	tandem_duplication	NO CONFIG AVAILABLE	0	0	0	0	0	0	0	0	1443	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
-tandem_duplication:Variation_project_Polymorphism	Variation_project_Polymorphism	tandem_duplication	NO CONFIG AVAILABLE	0	0	0	0	0	0	0	0	2582	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+tandem_duplication:Million_mutation	Million_mutation	tandem_duplication	Million Mutation Project (variations_million_mutation_project)	0	0	0	0	0	0	0	0	1443	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+tandem_duplication:Variation_project_Polymorphism	Variation_project_Polymorphism	tandem_duplication	Polymorphisms (variations_polymorphisms)	0	0	0	0	0	0	0	0	2582	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 tandem_repeat:tandem	tandem	tandem_repeat	Tandem and Inverted Repeats (repeats_tandem_and_inverted)	97625	67771	70908	73871	21659	49236	64358	59754	53024	120788	55071	58415	34819	53376	7196	70884	115828	65560	60447	82330	49865	55851	70528	60624	8166	32391	24496	13658	12512
 three_prime_UTR:Coding_transcript	Coding_transcript	three_prime_UTR	NO CONFIG AVAILABLE	0	0	0	1643	0	0	0	0	0	0	2481	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 three_prime_UTR:UTRome	UTRome	three_prime_UTR	NO CONFIG AVAILABLE	0	0	0	0	0	0	0	0	21358	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0

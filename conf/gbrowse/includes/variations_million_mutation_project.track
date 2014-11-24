@@ -3,7 +3,7 @@ feature      =       point_mutation:Million_mutation
                complex_substitution:Million_mutation
                            deletion:Million_mutation
                      insertion_site:Million_mutation
-                sequence_alteration:Million_mutation
+                tandem_duplication:Million_mutation
 category     = Alleles, Variations, RNAi
 key          = Million Mutation Project
 label        = sub {

@@ -27,6 +27,7 @@ nucleotide_match:TIGR_BEST		TIGR_BEST	nucleotide_match	TIGR genes models (sequen
 nucleotide_match:TIGR_OTHER		TIGR_OTHER	nucleotide_match	TIGR genes models (sequence_similarity_tigr_gene_models_other)	267197
 operon:deprecated_operon		deprecated_operon	operon	Operons (deprecated) (operons_deprecated)	1
 operon:operon		operon	operon	Operons (operons)	1702
+polypeptide_motif:translated_feature		translated_feature	polypeptide_motif	Protein motifs (protein_motifs)	265858
 protein_match:UniProt-BLASTX		UniProt-BLASTX	protein_match	Other UniProt proteins (sequence_similarity_uniprot_blastx)	245153
 protein_match:bmalayi_proteins-BLASTX		bmalayi_proteins-BLASTX	protein_match	B. malayi proteins (sequence_similarity_bmalayi_proteins_blastx)	110980
 protein_match:cbrenneri_proteins-BLASTX		cbrenneri_proteins-BLASTX	protein_match	C. brenneri proteins (sequence_similarity_cbrenneri_proteins_blastx)	135043

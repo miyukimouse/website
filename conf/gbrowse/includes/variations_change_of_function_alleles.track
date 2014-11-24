@@ -13,7 +13,6 @@ feature =         complex_substitution:PCoF_Allele
                               deletion:PCoF_Million_mutation
                         insertion_site:PCoF_Million_mutation
                   complex_substitution:PCoF_Million_mutation
-                   sequence_alteration:PCoF_Million_mutation
                               deletion:PCoF_Variation_project
                         point_mutation:PCoF_Variation_project
                   complex_substitution:PCoF_NBP_knockout
