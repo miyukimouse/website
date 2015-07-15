@@ -39,7 +39,11 @@
     <span id="fade">[% item.ptype.replace('[/_]', ' '); %]:</span>
   [% END %]
   [% TRY %]
-      [% file = "search/" _ class _ ".tt2" %]
+      [% IF class == 'gene' && item.name.wbps %]
+        [% file = "search/gene-parasite.tt2" %]
+      [% ELSE %]
+        [% file = "search/" _ class _ ".tt2" %]
+      [% END %]
       [% PROCESS "$file" %]
        <span id="fade">[% item.footer %]</span>
   [% CATCH file %]
@@ -77,4 +81,3 @@
 
   [% END %]
 [% END %]
-

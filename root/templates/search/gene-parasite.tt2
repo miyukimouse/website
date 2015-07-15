@@ -1,0 +1,16 @@
+    [% !item.name.coord.start ? tag2link(item.name, item.name.label) : item.name.id %]
+     [% gbrowselink(item.name); %]
+    </li>
+    <span class="species">[% item.taxonomy.genus %] [% item.taxonomy.species %]
+    [% item.taxonomy.project_id %]
+    </span>
+     [% text = [ ];
+        text.push(item.concise_description.join("<br />"))               IF item.concise_description;
+        text.push(item.title.join(", "))                    IF item.title;
+        text.push(item.description.join("<br />"))          IF item.description;
+        text.push(item.remark.join("<br />"))               IF item.remark;
+     %]
+
+<div class="text-min">
+    [% text.join("<br>"); %]
+</div>

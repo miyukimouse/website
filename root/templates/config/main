@@ -23,7 +23,11 @@
       IF data.defined;
         UNLESS text; text = data.label; END;
         IF data.class.defined && data.class != 'text';
-          ln = data.coord.start ? gbrowselink(data, data.id) : text2link(data.class, data.id, text, title, data.taxonomy);
+          IF data.wbps.defined;
+            ln = parasite_link(data);
+          ELSE;
+            ln = data.coord.start ? gbrowselink(data, data.id) : text2link(data.class, data.id, text, title, data.taxonomy);
+          END;
           IF data.style;
             '<span style="'_ data.style _ "\">$ln</span>";
           ELSE;
@@ -200,6 +204,20 @@
         END;
         linkouts.join(' ');
       END;
+    END;
+
+
+    MACRO parasite_link(data) BLOCK;
+      link = "http://parasite.wormbase.org/";
+      IF data.taxonomy;
+        species = data.taxonomy;
+        species = species.lower FILTER ucfirst;
+        link = link _ species _ "/Gene/Summary?g=" _ data.id;
+      END;
+      '<a class="parasite-link" href="' _ link _ '" target="_blank">' _ data.label _
+      '<span class="ui-icon ui-icon-extlink"></span>' _
+      '<span class="fade"> [on ParaSite]</span>' _
+      '</a>';
     END;
 
 

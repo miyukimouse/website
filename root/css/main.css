@@ -2203,6 +2203,12 @@ div#google-map {
     margin-right: 0.2em;
 }
 
+/* links to parasite genes */
+.parasite-link,
+.parasite-link .ui-icon{
+    display: inline-block;
+}
+
 /* cytoscape legend */
 #cyto_legend {
     width:15em;

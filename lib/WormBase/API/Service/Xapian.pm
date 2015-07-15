@@ -45,7 +45,7 @@ has 'modelmap' => (
 has '_api' => (
     is => 'ro',
 );
-
+    use Data::Dumper;
 # Main search - returns a page of results
 sub search {
     my ( $class, $args) = @_;
@@ -291,11 +291,22 @@ sub _get_obj {
 
   my %ret;
   $ret{name} = $self->_pack_search_obj($doc);
-  my $species = $ret{name}{taxonomy};
-  if($species =~ m/^(.*)_([^_]*)$/){
-    my $s = $self->_api->config->{sections}{species_list}{$species};
-    $ret{taxonomy}{genus} = $s->{genus} || ucfirst($1);
-    $ret{taxonomy}{species} = $s->{species} || $2;
+  my $species_str = $ret{name}{taxonomy};
+  my ($genus, $species, $proj_id) = split(/_/, $species_str);
+  if ($genus && $species){
+    my $s = $self->_api->config->{sections}{species_list}{$species_str};
+    $ret{taxonomy}{genus} = $s->{genus} || ucfirst($genus);
+    $ret{taxonomy}{species} = $s->{species} || $species;
+    $ret{taxonomy}{project_id} = $proj_id;
+
+    #if(!%$s || $s->{wbps} eq 1){
+    if($proj_id){
+        # Hacky way to determine whether a ParaSite species.
+        # TODO: mkae if based on species_list config
+        # this is a ParaSite species
+        $ret{name}{wbps} = 1;
+    }
+    print Dumper \%ret;
   }
   $ret{ptype} = $doc->get_value(7) if $doc->get_value(7);
   %ret = %{$self->_split_fields(\%ret, uri_unescape($doc->get_data()))};
@@ -393,6 +404,7 @@ sub _get_tag_info {
 sub _get_taxonomy {
   my ($self, $doc) = @_;
   my $taxonomy = $doc->get_value(5);
+
   return $taxonomy;
 }
 
@@ -416,6 +428,7 @@ sub _pack_search_obj {
   $class = $self->modelmap->ACE2WB_MAP->{class}->{$class} || $self->modelmap->ACE2WB_MAP->{fullclass}->{$class};
   $label ||= $doc->get_value(6) || $id;
   $label =~ s/\\(.)/$1/g;
+
   return {  id => $id,
             label => $label,
             class => lc($class),
