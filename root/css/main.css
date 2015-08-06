@@ -2238,6 +2238,21 @@ div#google-map {
 }
 
 
+/* chromosome minimap */
+.chromo-minimap {
+	position: relative;
+	width: 200px;
+	height: 1em;
+	background-color: lightgrey;
+}
+
+.chromo-minimap .chromo-minimap-feature{
+	position: absolute;
+	top: 0;
+	height: 1em;
+	background-color: #406F9C; /*darkred; */
+}
+
 
 /* SEQUENCE STYLING */
 /* sequence display formatting */

@@ -63,6 +63,9 @@
                    UNLESS loop.last;
      	                 ',&nbsp;';
                    END;
+                   IF fields.genomic_minimap.data;
+                        tag2link(position, chromosome_minimap(fields.genomic_minimap.data));
+                   END;
      	         END;
 
                  '<div style="clear:both;">';
