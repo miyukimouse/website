@@ -2088,6 +2088,34 @@ var Scrolling = (function(){
 
 	}
 
+    function setupMiniMap(){
+      var minimap = $jq('.chromo-minimap');
+      var mark = minimap.children('.chromo-minimap-feature');
+      var markStyle;
+
+      function calcMark(start, stop, chrLength){
+        var left = 0;
+        var width = 0;
+        if (start <= stop ){
+          left = start / chrLength;
+          width = (stop - start + 1) / chrLength;
+          left = left * 100;
+          width = width * 100;
+        }
+        return {
+          left: left + '%',
+          width: width < 1 ? '2px' : width + '%'
+        };
+      }
+
+      markStyle = calcMark(minimap.attr('start'),
+                           minimap.attr('stop'),
+                           minimap.attr('chromosome-length'));
+      mark.css(markStyle);
+
+    }
+
+
 	function getMarkItUp(callback){
       Plugin.getPlugin("markitup", function(){
         Plugin.getPlugin("markitup-wiki", callback);
@@ -2293,6 +2321,7 @@ var Scrolling = (function(){
       validate_fields: validate_fields,             // validate form fields
       recordOutboundLink: recordOutboundLink,       // record external links
       setupCytoscape: setupCytoscape,               // setup cytoscape for use
+      setupMiniMap: setupMiniMap,                   // setup chromosome minimap
       reloadWidget: reloadWidget,                   // reload a widget
       multiViewInit: multiViewInit,                 // toggle between summary/full view table
       partitioned_table: partitioned_table        // augment to a datatable setting, when table rows are partitioned by certain attributes
