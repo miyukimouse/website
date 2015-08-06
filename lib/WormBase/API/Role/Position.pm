@@ -25,6 +25,13 @@ has 'genomic_position' => (
 	builder  => '_build_genomic_position',
 );
 
+has 'genomic_minimap' => (
+    is       => 'ro',
+#    required => 1,
+	lazy     => 1,
+	builder  => '_build_genomic_minimap',
+);
+
 # used by genome browser to render image
 has 'genomic_image' => (
     is       => 'ro',
@@ -130,6 +137,38 @@ sub _genomic_position {
     my ($self, $segments, $adjust_coords) = @_;
     return unless $segments;
     return map { $self->_seg2posURLpart($_, $adjust_coords) } @$segments;
+}
+
+sub _build_genomic_minimap {
+    my ($self) = @_;
+
+    my %minimap = ();
+
+    my $positions = $self->genomic_position->{data};
+    if ($positions && (length @$positions == 1)) {
+        # only handles single position cases
+
+        my $seg = $self->_segments->[0];
+        my ($chromosome) = grep {
+            $_->{name} =~ /^CHROMOSOME/ && $_->{start} eq 1
+        } $seg->features(-types => ['assembly_component']);
+
+        my $chr_length = $chromosome->{stop};
+
+        # which segment is used to determine position depends on the class,
+        # so avoid getting position info from segments here
+        my $position_str = $positions->[0]->{label};
+        my ($start, $stop) = $position_str =~ /(\d+)/g;
+
+        %minimap = (
+            start => $start,
+            stop => $stop,
+            chromosome_length => $chr_length
+        );
+    }
+
+    return { description => "cartoon for the genomic position",
+             data => %minimap ? \%minimap : undef };
 }
 
 # converts a segment into a URL part for use in GBrowse links
