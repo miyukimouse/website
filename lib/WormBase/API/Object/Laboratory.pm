@@ -253,7 +253,7 @@ sub _get_lineage_data {
     my $relationship = $relationships{$rep};
     my ($level,$start,$end,$duration);
     if ($relationship) {
-	($level, $start, $end) = $relationship->right->row;
+	($level, $start, $end) = $relationship->row(1); # offset 1 position to the right
 
 	my @end_date;
 	if ($end && ($end !~ m/present/i)) {
@@ -386,4 +386,3 @@ sub strains {
 __PACKAGE__->meta->make_immutable;
 
 1;
-
