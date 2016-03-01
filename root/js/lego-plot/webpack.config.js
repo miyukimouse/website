@@ -9,7 +9,11 @@ module.exports = {
   output: {
     path: path.join(__dirname, 'build'),
     filename: 'bundle.js',
-    publicPath: '/static/'
+    publicPath: '/static/',
+    // export itself to a global var
+    libraryTarget: "var",
+    // name of the global var
+    library: "legoPlot"
   },
   module: {
     // loaders: [

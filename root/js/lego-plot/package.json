@@ -23,7 +23,8 @@
     "minimist": "~1.1.1",
     "socket.io": "0.9.16",
     "sync-request": "2.0.1",
-    "underscore": "~1.8.3"
+    "underscore": "~1.8.3",
+    "vis": "^4.15.0"
   },
   "author": "",
   "license": "ISC",
