@@ -3,6 +3,8 @@
   "version": "0.0.1",
   "description": "plot GO model graph",
   "scripts": {
+    "build": "webpack",
+    "start": "webpack-dev-server  --inline --hot",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
@@ -12,9 +14,9 @@
     "bbop-graph-noctua": "0.0.26",
     "bbop-manager-golr": "0.0.4",
     "bbop-manager-minerva": "0.0.8",
-    "bbop-rest-manager": "0.0.9",
     "bbop-response-barista": "0.0.8",
     "bbop-response-golr": "0.0.5",
+    "bbop-rest-manager": "sibyl229/bbop-rest-manager",
     "class-expression": "0.0.11",
     "golr-conf": "0.0.3",
     "minerva-requests": "0.0.8",
@@ -24,5 +26,13 @@
     "underscore": "~1.8.3"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "webpack": "^1.12.14",
+    "webpack-dev-server": "^1.14.1",
+    "babel-core": "^6.3.17",
+    "babel-loader": "^6.2.0",
+    "babel-preset-es2015": "^6.3.13",
+    "babel-preset-react": "^6.3.13"
+  }
 }

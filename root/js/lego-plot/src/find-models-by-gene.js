@@ -30,7 +30,8 @@ var us = require('underscore');
 ///
 
 // Global variables.
-var endpoint_location = 'http://amigo-dev-golr.berkeleybop.org/';
+var endpoint_location = 'http://dev.wormbase.org:9004/api/';
+//var endpoint_location = 'http://amigo-dev-golr.berkeleybop.org/';
 var max_model_count = 11;
 
 // Aliases.
