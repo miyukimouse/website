@@ -76,6 +76,7 @@ function get_graph(gid){
         id: e.id(),
 		from: e.subject_id(),
 		to: e.object_id(),
+        label: prettyLabel(e.predicate_id()),
         arrows:'to',
       };
     });
@@ -89,8 +90,17 @@ function get_graph(gid){
     var container = document.getElementById('lego-graph-container');
     var options = {
       layout: {
+        improvedLayout: true,
         hierarchical: {
-          direction: 'UD'
+          enabled:true,
+          // levelSeparation: 150,
+          // nodeSpacing: 100,
+          // treeSpacing: 200,
+          // blockShifting: true,
+          // edgeMinimization: true,
+          // parentCentralization: true,
+          direction: 'UD',        // UD, DU, LR, RL
+          sortMethod: 'directed'   // hubsize, directed
         }
       },
       nodes : {
