@@ -1,8 +1,9 @@
 var vis =  require('vis');
 var get_model = require('./find-models-by-gene.js');
+var utils = require('./utils.js');
 var bbop = require('bbop-core');
 
-get_model('UniProtKB:Q9GYQ4', function(graph){
+get_model('UniProtKB:Q9GYQ4', function(graph, context){
   console.log(graph);
 });
 
@@ -30,9 +31,8 @@ function prettyLabel(label){
 }
 
 function get_graph(gid){
-  get_model('UniProtKB:Q9GYQ4', function(graph){
-    console.log(graph.all_nodes());
-
+  get_model('UniProtKB:Q9GYQ4', function(graph, context){
+  //  graph.fold_go_noctua(["RO:0002233","RO:0002234","RO:0002333","RO:0002488","BFO:0000066","BFO:0000051", "BFO:0000050"]);
 
     // randomly create some nodes and edges
 
@@ -72,11 +72,13 @@ function get_graph(gid){
     });
 
     var edges = graph.all_edges().map(function(e){
+
+      var edge_label = context.get_edge_label(e.predicate_id());
       return {
         id: e.id(),
 		from: e.subject_id(),
 		to: e.object_id(),
-        label: prettyLabel(e.predicate_id()),
+        label: prettyLabel(edge_label),
         arrows:'to',
       };
     });
@@ -112,8 +114,6 @@ function get_graph(gid){
 
   });
 }
-
-get_graph();
 
 module.exports = {
   get_graph: get_graph

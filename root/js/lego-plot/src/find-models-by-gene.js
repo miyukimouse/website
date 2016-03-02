@@ -18,6 +18,7 @@ var golr_conf = require('golr-conf');
 var golr_manager = require('bbop-manager-golr');
 var golr_response = require('bbop-response-golr');
 var model = require('bbop-graph-noctua');
+var utils = require('./utils.js');
 
 // Engine for use.
 var node_engine = require('bbop-rest-manager').node;
@@ -132,7 +133,8 @@ function get_model(gp_id, callback){
 
             // The final thing that we'll do.
             ll('Model: ' + doc['annotation_unit']);
-            callback(graph);
+            var context = utils.build_context(jobj);
+            callback(graph, context);
           }
         });
       });
