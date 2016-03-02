@@ -13,7 +13,7 @@ module.exports = {
     // export itself to a global var
     libraryTarget: "var",
     // name of the global var
-    library: "legoPlot"
+    library: "LegoPlot"
   },
   module: {
     // loaders: [
