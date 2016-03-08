@@ -7,8 +7,8 @@ class App extends React.Component {
   render() {
     const data1 = [
       {
-        xMin: 5,
-        xMax: 15,
+        xMin: 10,
+        xMax: 25,
         tip: 'exon 1'
       },
       {

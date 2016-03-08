@@ -23,7 +23,7 @@ export default class Track extends React.Component {
     super(props);
     this.state = {
       tooltipTarget: null,
-      tooltipPosition: null,
+      tooltip: null,
       tooltipEventID: 0
     };
   }
@@ -38,36 +38,63 @@ export default class Track extends React.Component {
     return this.props.index * TRACK_HEIGHT;
   }
 
-  showTooltip = (event) => {
 
-    // Get point in global SVG space
-    function cursorPoint(evt){
-      // Create an SVGPoint for future math
-      const svg = evt.target.ownerSVGElement;
-      const pt = svg.createSVGPoint();
-      pt.x = evt.clientX;
-      pt.y = evt.clientY;
-      // return pt.matrixTransform(svg.getScreenCTM().inverse());
-      return {
-        x: 0,
-        y: 0
-      }
+
+  generateTooltipHandler = (dataIndex) => {
+
+    let x, tip;
+    if (dataIndex === 0 || dataIndex) {
+      const {xMin, xMax} = this.props.data[dataIndex];
+      x = xMin + Math.floor((xMax - xMin) /2);
+      tip = this.props.data[dataIndex].tip;
+    } else {
+      x = this.props.width / 2;
+      tip = this.props.tip;
     }
 
-    //const {x, y} = cursorPoint(event);
+    const showTooltip = (event) => {
+      event.stopPropagation();
+      console.log('Show tooltip is called with: ' +  dataIndex);
 
-    this.setState((prevState, currProps) => {
-      return {
-        tooltipEventID: prevState.tooltipEventID + 1,
-        tooltipPosition: {
-          // x,
-          // y
-          x: this.props.width / 2,
-          y: this.getVerticalPosition() + 10
-        },
-        tooltipTarget: event.target
-      };
-    });
+      // // Get point in global SVG space
+      // function cursorPoint(evt){
+      //   // Create an SVGPoint for future math
+      //   const svg = evt.target.ownerSVGElement;
+      //   const pt = svg.createSVGPoint();
+      //   pt.x = evt.clientX;
+      //   pt.y = evt.clientY;
+      //   // return pt.matrixTransform(svg.getScreenCTM().inverse());
+      //   return {
+      //     x: 0,
+      //     y: 0
+      //   }
+      // }
+
+      // const {x, y} = cursorPoint(event);
+
+      this.setState((prevState, currProps) => {
+console.log({
+            // x,
+            // y
+            x: x,
+            y: this.getVerticalPosition() + 10,
+            tip: tip
+          });
+        return {
+          tooltipEventID: prevState.tooltipEventID + 1,
+          tooltip: {
+            // x,
+            // y
+            x: x,
+            y: this.getVerticalPosition() + 10,
+            tip: tip
+          },
+          tooltipTarget: event.target
+        };
+      });
+    }
+
+    return showTooltip;
   }
 
   hideTooltip = (event) => {
@@ -75,7 +102,7 @@ export default class Track extends React.Component {
     setTimeout(() => {
       this.setState((prevState, currProps) => {
         return prevState.tooltipEventID === tooltipEventID ? {
-          tooltipPosition: null
+          tooltip: null
         } : {}
       });
     }, 200);
@@ -103,7 +130,10 @@ export default class Track extends React.Component {
     return (
       this.props.data.map((dat, index) => {
         return (
-          <rect key={`data-rect-${index}`}
+          <rect
+            key={`data-rect-${index}`}
+            onMouseOver={this.generateTooltipHandler(index)}
+            onMouseOut={this.hideTooltip}
             x={dat.xMin}
             y={this.getVerticalPosition()}
             width={dat.xMax - dat.xMin}
@@ -116,10 +146,10 @@ export default class Track extends React.Component {
 
 
   render() {
-    console.log(this.state);
+//    console.log(this);
     return (
       <g className="track"
-        onMouseOver={this.showTooltip}
+        onMouseOver={this.generateTooltipHandler()}
         onMouseOut={this.hideTooltip}>
 
         <rect
@@ -131,7 +161,7 @@ export default class Track extends React.Component {
           this.renderData()
         }
         {
-          this.state.tooltipPosition ? <Tooltip {...this.state.tooltipPosition} tip={this.props.tip}/> : null
+          this.state.tooltip ? <Tooltip {...this.state.tooltip}/> : null
         }
       </g>
     );
