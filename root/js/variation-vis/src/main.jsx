@@ -14,6 +14,20 @@ class App extends React.Component {
     };
   }
 
+  static childContextTypes = {
+    zoomFactor: React.PropTypes.number,
+    xMin: React.PropTypes.number,
+    center: React.PropTypes.number
+  }
+
+  getChildContext() {
+    return {
+      zoomFactor: this.state.zoomFactor,
+      xMin: this._getXMin(),
+      center: this.state.center
+    }
+  }
+
   createZoomHandler = (multiple, locatable) => {
     return (event) => {
       this.setState((prevState) => {
@@ -32,9 +46,14 @@ class App extends React.Component {
     return DEFAULT_VISIBLE_WIDTH / this.state.zoomFactor;
   }
 
+  _getXMin = () => {
+    return Math.floor(this.state.center - this._getVisibleWidth()/2);
+  }
+
+
   getViewBox = () => {
     const visibleWidth = this._getVisibleWidth();
-    const x = Math.floor(this.state.center - visibleWidth/2)
+    const x = this._getXMin();
     return [x, 0, visibleWidth, 40].join(' ');
   }
 

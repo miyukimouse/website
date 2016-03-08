@@ -54,7 +54,6 @@ export default class Track extends React.Component {
 
     const showTooltip = (event) => {
       event.stopPropagation();
-      console.log('Show tooltip is called with: ' +  dataIndex);
 
       // // Get point in global SVG space
       // function cursorPoint(evt){
@@ -73,13 +72,7 @@ export default class Track extends React.Component {
       // const {x, y} = cursorPoint(event);
 
       this.setState((prevState, currProps) => {
-console.log({
-            // x,
-            // y
-            x: x,
-            y: this.getVerticalPosition() + 10,
-            tip: tip
-          });
+
         return {
           tooltipEventID: prevState.tooltipEventID + 1,
           tooltip: {
