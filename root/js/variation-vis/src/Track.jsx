@@ -1,9 +1,9 @@
 import React from 'react';
 import { findDOMNode } from 'react-dom';
 import Tooltip from './Tooltip.jsx';
+import SequenceComponent from './SequenceComponent.jsx';
 import $ from 'jquery';
-
-const TRACK_HEIGHT = 20;
+import { TRACK_HEIGHT } from './Utils.js'
 
 export default class Track extends React.Component {
 
@@ -12,8 +12,11 @@ export default class Track extends React.Component {
     data: React.PropTypes.arrayOf(React.PropTypes.shape({
       xMin: React.PropTypes.number,
       xMax: React.PropTypes.number,
-      tip: React.PropTypes.string
+      tip: React.PropTypes.string,
+      label: React.PropTypes.string
     })),
+    sequence: React.PropTypes.string,
+    viewWidth: React.PropTypes.number,
     tip: React.PropTypes.string,
     width: React.PropTypes.number,
     height: React.PropTypes.number
@@ -32,6 +35,10 @@ export default class Track extends React.Component {
     width: 100,
     height: 10,
     data: []
+  }
+
+  static contextTypes = {
+    zoomFactor: React.PropTypes.number
   }
 
   getVerticalPosition = () => {
@@ -138,6 +145,24 @@ export default class Track extends React.Component {
   }
 
 
+  /* render sequence or label depending how zoomed in */
+  renderContent = () => {
+    if (this.props.sequence) {
+      const visibleCharCount = this.props.sequence.length / this.context.zoomFactor;
+      const charWidth = this.props.width / visibleCharCount;
+      console.log([visibleCharCount, charWidth]);
+      return  charWidth > 8
+        ? <SequenceComponent {...this.props}
+            x="0"
+            y={this.getVerticalPosition()}/>
+        : null;
+    }else{
+      return null;
+    }
+
+  }
+
+
   render() {
 //    console.log(this);
     return (
@@ -152,6 +177,9 @@ export default class Track extends React.Component {
 
         {
           this.renderData()
+        }
+        {
+          this.renderContent()
         }
         {
           this.state.tooltip ? <Tooltip {...this.state.tooltip}/> : null

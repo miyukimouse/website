@@ -70,19 +70,33 @@ class App extends React.Component {
         tip: 'exon 2'
       }
     ];
+    const sequence1 = 'MSVNDLQELIERRIPDNRAQLETSHANLQQVAAYCEDNYIQSNNKSAALEESKKFAIQALASVAYQINKMVTDLHDMLAL'
+      + 'QTDKVNSLTNQVQYVSQVVDVHKEKLARREIGSLTTNKTLFKQPKIIAPAIPDEKQRYQRTPIDFSVLDGIGHGVRTSDP'
+      + 'PRAAPISRATSSISGSSPSQFHNESPAYGVYAGERTATLGRTMRPYAPSIAPSDYRLPQVTPQSESRIGRQMSHGSEFGD'
+      + 'HMSGGGGSGSQHGSSDYNSIYQPDRYGTIRAGGRTTVDGSFSIPRLSSAQSSAGGPESPTFPLPPPAMNYTGYVAPGSVV'
+      + 'QQQQQQQMQQQNYGTIRKSTVNRHDLPPPPNSLLTGMSSRMPTQDDMDDLPPPPESVGGSSAYGVFAGRTESYSSSQPPS'
+      + 'LFDTSAGWMPNEYLEKVRVLYDYDAAKEDELTLRENAIVYVLKKNDDDWYEGVLDGVTGLFPGNYVVPV*';
+
+    const viewWidth = 500;  // hard code this for now
+
     return (
       <div>
         <div style={{margin: "20px"}}>
           <button onClick={this.createZoomHandler(2)}>Zoom in (+)</button>
           <button onClick={this.createZoomHandler(0.5)} style={{margin: "0 20px"}}>Zoom out (-)</button>
         </div>
-        <svg width="500px" height="200px"
+        <div>
+        <svg width={viewWidth} height="200"
           viewBox={this.getViewBox()}
-          preserveAspectRatio="none meet">
+          preserveAspectRatio="none meet"
+          style={{position:'relative'}}>
           <Track index={0} tip="one track"
-            data={data1}/>
-          <Track index={1} tip="track number 2" />
+            sequence={sequence1}
+            data={data1}
+            width={viewWidth}/>
+          <Track index={1} tip="track number 2" width={viewWidth}/>
         </svg>
+        </div>
       </div>
     );
   }

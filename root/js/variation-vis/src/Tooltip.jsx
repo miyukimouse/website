@@ -32,8 +32,8 @@ export default class Tooltip extends React.Component {
     }
   }
 
+
   render() {
-    console.log(this.context);
     const containerWidth = this.props.width / this.context.zoomFactor;
     return (
       <svg
