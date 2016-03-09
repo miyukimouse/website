@@ -16,6 +16,7 @@ class App extends React.Component {
 
   static childContextTypes = {
     zoomFactor: React.PropTypes.number,
+    viewWidth: React.PropTypes.number,
     xMin: React.PropTypes.number,
     center: React.PropTypes.number
   }
@@ -23,6 +24,7 @@ class App extends React.Component {
   getChildContext() {
     return {
       zoomFactor: this.state.zoomFactor,
+      viewWidth: 500,
       xMin: this._getXMin(),
       center: this.state.center
     }
@@ -77,7 +79,7 @@ class App extends React.Component {
       + 'QQQQQQQMQQQNYGTIRKSTVNRHDLPPPPNSLLTGMSSRMPTQDDMDDLPPPPESVGGSSAYGVFAGRTESYSSSQPPS'
       + 'LFDTSAGWMPNEYLEKVRVLYDYDAAKEDELTLRENAIVYVLKKNDDDWYEGVLDGVTGLFPGNYVVPV*';
 
-    const viewWidth = 500;  // hard code this for now
+    const width = 100;  // hard code this for now
 
     return (
       <div>
@@ -86,15 +88,15 @@ class App extends React.Component {
           <button onClick={this.createZoomHandler(0.5)} style={{margin: "0 20px"}}>Zoom out (-)</button>
         </div>
         <div>
-        <svg width={viewWidth} height="200"
+        <svg width={this.context.viewWidth} height="200"
           viewBox={this.getViewBox()}
           preserveAspectRatio="none meet"
           style={{position:'relative'}}>
           <Track index={0} tip="one track"
             sequence={sequence1}
             data={data1}
-            width={viewWidth}/>
-          <Track index={1} tip="track number 2" width={viewWidth}/>
+            width={width}/>
+          <Track index={1} tip="track number 2" width={width}/>
         </svg>
         </div>
       </div>

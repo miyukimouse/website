@@ -1,5 +1,7 @@
 import React from 'react';
-import { ScaleIndependentComponent } from './ScaleIndependentComponent.jsx';
+//import { ScaleIndependentComponent } from './ScaleIndependentComponent.jsx';
+
+const MIN_SEQUENCE_CHAR_WIDTH = 8;  // hide sequence if not enough space per char
 
 class SequenceComponent extends React.Component {
 
@@ -15,6 +17,11 @@ class SequenceComponent extends React.Component {
   //   height: 20
   // }
 
+  static contextTypes = {
+    zoomFactor: React.PropTypes.number,
+    viewWidth: React.PropTypes.number,
+  }
+
   getCoord = (offsets) => {
     const {x,y, width} = this.props;
     const {xOffset, yOffset} = offsets || {};
@@ -23,6 +30,13 @@ class SequenceComponent extends React.Component {
       x: 0,
       y: y + (yOffset || 0)
     }
+  }
+
+  _getCharWidth = () => {
+    const visibleCharCount = this.props.sequence.length / this.context.zoomFactor;
+    const charWidth = this.context.viewWidth / visibleCharCount;
+    console.log([visibleCharCount, this.context.viewWidth, charWidth]);
+    return charWidth;
   }
 
   render() {
@@ -36,18 +50,19 @@ class SequenceComponent extends React.Component {
       y
     };
 
-    console.log(coords);
+    //console.log(coords);
 
-    return (
-      <ScaleIndependentComponent {...coords}>
-        <text x="0" y="12" textAnchor="start" fill="white"
-              fontFamily="monospace,Courier"
-              is="svg-text"
+    return this.props.sequence && this._getCharWidth() > MIN_SEQUENCE_CHAR_WIDTH ?
+        <text is="svg-text"
+              {...coords}
+              x="0" y="6" text-anchor="start"
+              font-size="4"
+              font-family="monospace,Courier New"
               textLength={width}
-              lengthAdjust="spacingAndGlyphs">
+              lengthAdjust="spacingAndGlyphs"
+              fill="white">
           {this.props.sequence}
-        </text>
-      </ScaleIndependentComponent>)
+        </text> : null;
   }
 }
 

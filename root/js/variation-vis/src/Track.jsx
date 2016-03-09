@@ -37,10 +37,6 @@ export default class Track extends React.Component {
     data: []
   }
 
-  static contextTypes = {
-    zoomFactor: React.PropTypes.number
-  }
-
   getVerticalPosition = () => {
     return this.props.index * TRACK_HEIGHT;
   }
@@ -147,19 +143,9 @@ export default class Track extends React.Component {
 
   /* render sequence or label depending how zoomed in */
   renderContent = () => {
-    if (this.props.sequence) {
-      const visibleCharCount = this.props.sequence.length / this.context.zoomFactor;
-      const charWidth = this.props.width / visibleCharCount;
-      console.log([visibleCharCount, charWidth]);
-      return  charWidth > 8
-        ? <SequenceComponent {...this.props}
-            x="0"
-            y={this.getVerticalPosition()}/>
-        : null;
-    }else{
-      return null;
-    }
-
+    return <SequenceComponent {...this.props}
+        x="0"
+        y={this.getVerticalPosition()}/>
   }
 
 
