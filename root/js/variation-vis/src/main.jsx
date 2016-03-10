@@ -11,6 +11,7 @@ class App extends React.Component {
     this.state = {
       center: DEFAULT_VISIBLE_WIDTH/2,
       zoomFactor: 1,
+      lastMoveTime: Number.NEGATIVE_INFINITY
     };
   }
 
@@ -42,6 +43,20 @@ class App extends React.Component {
       })
     }
 
+  }
+
+  handlePan = (event) => {
+    console.log(event.deltaX);
+    const now = (new Date()).getTime();
+    console.log(now);
+    if (now - this.state.lastMoveTime > 300){
+      const xMovement = event.deltaX;
+      this.setState((prevState) => {
+        return {
+          center: prevState.center + xMovement / 1
+        }
+      })
+    }
   }
 
   _getVisibleWidth = () => {
@@ -81,14 +96,21 @@ class App extends React.Component {
 
     const width = 100;  // hard code this for now
 
+    const containerStyle = {
+      // overflowX: 'scroll',
+      // //padding: '0 5',
+      // width: 400
+    }
+
     return (
       <div>
         <div style={{margin: "20px"}}>
           <button onClick={this.createZoomHandler(2)}>Zoom in (+)</button>
           <button onClick={this.createZoomHandler(0.5)} style={{margin: "0 20px"}}>Zoom out (-)</button>
         </div>
-        <div>
+        <div style={containerStyle}>
         <svg width={this.context.viewWidth} height="200"
+          onWheel={this.handlePan}
           viewBox={this.getViewBox()}
           preserveAspectRatio="none meet"
           style={{position:'relative'}}>
