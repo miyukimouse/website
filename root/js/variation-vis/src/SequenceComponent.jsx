@@ -35,7 +35,6 @@ class SequenceComponent extends React.Component {
   _getCharWidth = () => {
     const visibleCharCount = this.props.sequence.length / this.context.zoomFactor;
     const charWidth = this.context.viewWidth / visibleCharCount;
-    console.log([visibleCharCount, this.context.viewWidth, charWidth]);
     return charWidth;
   }
 

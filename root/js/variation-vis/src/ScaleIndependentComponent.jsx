@@ -28,8 +28,6 @@ export class ScaleIndependentComponent extends Component {
       preserveAspectRatio: "none meet"
     };
 
-    console.log(scaleSetting);
-
     return (
       <svg {...scaleSetting}>
         {this.props.children}

@@ -1,6 +1,7 @@
 import React from 'react';
 import { render } from 'react-dom';
 import Track from './Track.jsx';
+import svgPanZoom from 'svg-pan-zoom';
 
 const DEFAULT_VISIBLE_WIDTH = 100;
 
@@ -46,21 +47,21 @@ class App extends React.Component {
   }
 
   handlePan = (event) => {
-    console.log(event.deltaX);
-    const now = (new Date()).getTime();
-    console.log(now);
-    if (now - this.state.lastMoveTime > 300){
-      const xMovement = event.deltaX;
-      this.setState((prevState) => {
-        return {
-          center: prevState.center + xMovement / 1
-        }
-      })
-    }
+    // console.log(event.deltaX);
+    // const now = (new Date()).getTime();
+    // console.log(now);
+    // if (now - this.state.lastMoveTime > 300){
+    //   const xMovement = event.deltaX;
+    //   this.setState((prevState) => {
+    //     return {
+    //       center: prevState.center + xMovement / 1
+    //     }
+    //   })
+    // }
   }
 
   _getVisibleWidth = () => {
-    return DEFAULT_VISIBLE_WIDTH / this.state.zoomFactor;
+    return DEFAULT_VISIBLE_WIDTH;
   }
 
   _getXMin = () => {
@@ -69,9 +70,65 @@ class App extends React.Component {
 
 
   getViewBox = () => {
-    const visibleWidth = this._getVisibleWidth();
     const x = this._getXMin();
-    return [x, 0, visibleWidth, 40].join(' ');
+    return [x, 0, DEFAULT_VISIBLE_WIDTH, 40].join(' ');
+  }
+
+
+  componentDidMount() {
+    const svgElement = svgPanZoom('#svg-browser', {
+    //  viewportSelector: '.svg-pan-zoom_viewport'
+    panEnabled: true,
+    separateZoomsEnabled: true,
+    beforeZoom: (zooms) => {
+      if (this.state.zoomLockOn) {
+        console.log('zoom canceled')
+        return false;
+      }
+      return {x: true, y: false};
+    },
+    beforePan: () => {
+      return {x: true, y: false};
+    },
+    onZoom: (zooms) => {
+
+      this.setState((prevState) => {
+        const newZoomFactor = zooms.x;
+        const newCenter = false ? this.svgX(event.target.clientX) : this.state.center;
+        return {
+          center: newCenter,
+          zoomFactor: newZoomFactor //< 1 ? 1 : newZoomFactor
+        }
+      })
+    }
+    //, controlIconsEnabled: false
+    //, zoomEnabled: false
+    // , dblClickZoomEnabled: true
+    // , mouseWheelZoomEnabled: true
+    // , preventMouseEventsDefault: true
+    , zoomScaleSensitivity: 0.8
+    // , minZoom: 0.5
+    // , maxZoom: 10
+    //, fit: false
+    , contain: false
+    , center: false
+    // , refreshRate: 'auto'
+    // , beforeZoom: function(){}
+    // , onZoom: function(){}
+    // , beforePan: function(){}
+    // , onPan: function(){}
+    // , eventsListenerElement: null
+    });
+    $('#svg-browser').css({width: '500px'})
+    svgElement.resize()
+//svgElement.setAttribute('width', 500)
+    console.log(svgElement.getZoom());
+    //this.svgElement = svgElement;
+
+  }
+
+  componentWillUpdate() {
+   // this.svgElement.destroy();
   }
 
   render() {
@@ -100,6 +157,9 @@ class App extends React.Component {
       // overflowX: 'scroll',
       // //padding: '0 5',
       // width: 400
+      width: 500,
+      height: 200,
+      border:"1px solid black"
     }
 
     return (
@@ -109,11 +169,10 @@ class App extends React.Component {
           <button onClick={this.createZoomHandler(0.5)} style={{margin: "0 20px"}}>Zoom out (-)</button>
         </div>
         <div style={containerStyle}>
-        <svg width={this.context.viewWidth} height="200"
+        <svg id="svg-browser" className={this.state.center}
           onWheel={this.handlePan}
           viewBox={this.getViewBox()}
-          preserveAspectRatio="none meet"
-          style={{position:'relative'}}>
+          preserveAspectRatio="none meet">
           <Track index={0} tip="one track"
             sequence={sequence1}
             data={data1}
