@@ -134,13 +134,13 @@ class App extends React.Component {
   render() {
     const data1 = [
       {
-        xMin: 10,
-        xMax: 25,
+        start: 10,
+        end: 25,
         tip: 'exon 1'
       },
       {
-        xMin: 40,
-        xMax: 70,
+        start: 40,
+        end: 70,
         tip: 'exon 2'
       }
     ];

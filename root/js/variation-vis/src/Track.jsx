@@ -10,8 +10,8 @@ export default class Track extends React.Component {
   static propTypes = {
     index: React.PropTypes.number.isRequired,
     data: React.PropTypes.arrayOf(React.PropTypes.shape({
-      xMin: React.PropTypes.number,
-      xMax: React.PropTypes.number,
+      start: React.PropTypes.number,
+      end: React.PropTypes.number,
       tip: React.PropTypes.string,
       label: React.PropTypes.string
     })),
@@ -47,8 +47,8 @@ export default class Track extends React.Component {
 
     let x, tip;
     if (dataIndex === 0 || dataIndex) {
-      const {xMin, xMax} = this.props.data[dataIndex];
-      x = xMin + Math.floor((xMax - xMin) /2);
+      const {start, end} = this.props.data[dataIndex];
+      x = start + Math.floor((end - start) /2);
       tip = this.props.data[dataIndex].tip;
     } else {
       x = this.props.width / 2;
@@ -130,9 +130,9 @@ export default class Track extends React.Component {
             key={`data-rect-${index}`}
             onMouseOver={this.generateTooltipHandler(index)}
             onMouseOut={this.hideTooltip}
-            x={dat.xMin}
+            x={dat.start}
             y={this.getVerticalPosition()}
-            width={dat.xMax - dat.xMin}
+            width={dat.end - dat.start}
             height={this.props.height}
             tip={dat.tip}
             fill="grey"/>)
