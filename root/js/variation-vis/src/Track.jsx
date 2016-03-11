@@ -2,6 +2,7 @@ import React from 'react';
 import { findDOMNode } from 'react-dom';
 import Tooltip from './Tooltip.jsx';
 import SequenceComponent from './SequenceComponent.jsx';
+import DataSegment from './components/DataSegment.jsx';
 import $ from 'jquery';
 import { TRACK_HEIGHT } from './Utils.js'
 
@@ -134,7 +135,7 @@ export default class Track extends React.Component {
       this.props.data.map((dat, index) => {
         const graphicPosition = this.getHorizontalPosition(dat);
         return (
-          <rect
+          <DataSegment
             key={`data-rect-${index}`}
             onMouseOver={this.generateTooltipHandler(index)}
             onMouseOut={this.hideTooltip}

@@ -1,8 +1,8 @@
 import React from 'react';
 import { render } from 'react-dom';
 import Track from './Track.jsx';
-import Button from './components/Button.jsx';
-console.log(Button);
+//import Button from './components/Button.jsx';
+import { Button, Popover } from 'react-bootstrap';
 import svgPanZoom from 'svg-pan-zoom';
 require('./main.less');
 
@@ -189,7 +189,7 @@ class App extends React.Component {
     }
 
     return (
-      <div className="semantic-ui">
+      <div className="bootstrap-style">
         <div style={{margin: "20px"}}>
           <Button onClick={this.createZoomHandler(2)}>Zoom in (+)</Button>
           <Button onClick={this.createZoomHandler(0.5)} style={{margin: "0 20px"}}>Zoom out (-)</Button>
@@ -209,6 +209,9 @@ class App extends React.Component {
             width={width}/>
           <Track index={2} tip="track number 2" width={width}/>
         </svg>
+        <Popover placement="top" positionLeft={0} positionTop={0} title="Popover right">
+          And here's some <strong>amazing</strong> content. It's very engaging. right?
+        </Popover>
         </div>
       </div>
     );
