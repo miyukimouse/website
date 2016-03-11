@@ -59,7 +59,7 @@ class SequenceComponent extends React.Component {
               font-family="monospace,Courier New"
               textLength={width}
               lengthAdjust="spacingAndGlyphs"
-              fill="white">
+              fill="black">
           {this.props.sequence}
         </text> : null;
   }
