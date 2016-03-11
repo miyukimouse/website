@@ -1,5 +1,6 @@
 var path = require('path');
 var webpack = require('webpack');
+var ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 module.exports = {
   devtool: 'eval',
@@ -21,6 +22,17 @@ module.exports = {
         test: /\.(js|jsx)$/,
         loaders: ['react-hot', 'babel'],
         include: path.join(__dirname, 'src')
+      },
+      // Extract css files
+      {
+          test: /\.css$/,
+          loader: ExtractTextPlugin.extract("style-loader", "css-loader")
+      },
+      // Optionally extract less files
+      // or any other compile-to-css language
+      {
+          test: /\.less$/,
+          loader: ExtractTextPlugin.extract("style-loader", "css-loader!less-loader")
       }
     ]
   },
@@ -30,6 +42,7 @@ module.exports = {
     "jquery": "jQuery"
   },
   plugins: [
+    new ExtractTextPlugin( "bundle.css" )
   ],
   // resolve: {
   //   root: path.resolve(__dirname),

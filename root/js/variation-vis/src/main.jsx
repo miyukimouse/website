@@ -1,7 +1,10 @@
 import React from 'react';
 import { render } from 'react-dom';
 import Track from './Track.jsx';
+import Button from './components/Button.jsx';
+console.log(Button);
 import svgPanZoom from 'svg-pan-zoom';
+require('./main.less');
 
 const DEFAULT_VISIBLE_WIDTH = 100;
 
@@ -186,10 +189,10 @@ class App extends React.Component {
     }
 
     return (
-      <div>
+      <div className="semantic-ui">
         <div style={{margin: "20px"}}>
-          <button onClick={this.createZoomHandler(2)}>Zoom in (+)</button>
-          <button onClick={this.createZoomHandler(0.5)} style={{margin: "0 20px"}}>Zoom out (-)</button>
+          <Button onClick={this.createZoomHandler(2)}>Zoom in (+)</Button>
+          <Button onClick={this.createZoomHandler(0.5)} style={{margin: "0 20px"}}>Zoom out (-)</Button>
         </div>
         <div style={containerStyle}>
         <svg id="svg-browser" className={this.state.center}
