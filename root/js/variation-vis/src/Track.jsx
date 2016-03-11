@@ -15,6 +15,7 @@ export default class Track extends React.Component {
       tip: React.PropTypes.string,
       label: React.PropTypes.string
     })),
+    sequenceLength: React.PropTypes.number,   // used when sequence isn't provided to map sequence coordinates to track graphic coordinates
     sequence: React.PropTypes.string,
     viewWidth: React.PropTypes.number,
     tip: React.PropTypes.string,
@@ -41,13 +42,20 @@ export default class Track extends React.Component {
     return this.props.index * TRACK_HEIGHT;
   }
 
+  getHorizontalPosition = (dat) => {
+    const sequenceLength = (this.props.sequenceLength || this.props.sequence.length);
+    return {
+      start: dat.start / sequenceLength * this.props.width,
+      end: dat.end / sequenceLength * this.props.width
+    }
+  };
 
 
   generateTooltipHandler = (dataIndex) => {
 
     let x, tip;
     if (dataIndex === 0 || dataIndex) {
-      const {start, end} = this.props.data[dataIndex];
+      const {start, end} = this.getHorizontalPosition(this.props.data[dataIndex]);
       x = start + Math.floor((end - start) /2);
       tip = this.props.data[dataIndex].tip;
     } else {
@@ -75,7 +83,6 @@ export default class Track extends React.Component {
       // const {x, y} = cursorPoint(event);
 
       this.setState((prevState, currProps) => {
-
         return {
           tooltipEventID: prevState.tooltipEventID + 1,
           tooltip: {
@@ -125,14 +132,15 @@ export default class Track extends React.Component {
   renderData(){
     return (
       this.props.data.map((dat, index) => {
+        const graphicPosition = this.getHorizontalPosition(dat);
         return (
           <rect
             key={`data-rect-${index}`}
             onMouseOver={this.generateTooltipHandler(index)}
             onMouseOut={this.hideTooltip}
-            x={dat.start}
+            x={graphicPosition.start}
             y={this.getVerticalPosition()}
-            width={dat.end - dat.start}
+            width={graphicPosition.end - graphicPosition.start}
             height={this.props.height}
             tip={dat.tip}
             fill="grey"/>)

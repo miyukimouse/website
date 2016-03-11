@@ -71,7 +71,7 @@ class App extends React.Component {
 
   getViewBox = () => {
     const x = this._getXMin();
-    return [x, 0, DEFAULT_VISIBLE_WIDTH, 40].join(' ');
+    return [x, 0, DEFAULT_VISIBLE_WIDTH, 60].join(' ');
   }
 
 
@@ -119,7 +119,7 @@ class App extends React.Component {
     // , onPan: function(){}
     // , eventsListenerElement: null
     });
-    $('#svg-browser').css({width: '500px'})
+    $('#svg-browser').css({width: '100%', height:'100%'})
     svgElement.resize()
 //svgElement.setAttribute('width', 500)
     console.log(svgElement.getZoom());
@@ -134,16 +134,39 @@ class App extends React.Component {
   render() {
     const data1 = [
       {
-        start: 10,
-        end: 25,
-        tip: 'exon 1'
+        start: 100,
+        end: 250,
+        tip: 'Domain 1'
       },
       {
-        start: 40,
-        end: 70,
-        tip: 'exon 2'
+        start: 400,
+        end: 450,
+        tip: 'Domain 2'
       }
     ];
+
+    const variations1 = [
+      {
+        start: 120,
+        end: 140,
+        tip: 'v1'
+      },
+      {
+        start: 160,
+        end: 170,
+        tip: 'v2'
+      },
+      {
+        start: 150,
+        end: 151,
+        tip: 'v3'
+      },
+      {
+        start: 153,
+        end: 154,
+        tip: 'v4'
+      }
+    ]
     const sequence1 = 'MSVNDLQELIERRIPDNRAQLETSHANLQQVAAYCEDNYIQSNNKSAALEESKKFAIQALASVAYQINKMVTDLHDMLAL'
       + 'QTDKVNSLTNQVQYVSQVVDVHKEKLARREIGSLTTNKTLFKQPKIIAPAIPDEKQRYQRTPIDFSVLDGIGHGVRTSDP'
       + 'PRAAPISRATSSISGSSPSQFHNESPAYGVYAGERTATLGRTMRPYAPSIAPSDYRLPQVTPQSESRIGRQMSHGSEFGD'
@@ -158,7 +181,7 @@ class App extends React.Component {
       // //padding: '0 5',
       // width: 400
       width: 500,
-      height: 200,
+      height: 300,
       border:"1px solid black"
     }
 
@@ -177,7 +200,11 @@ class App extends React.Component {
             sequence={sequence1}
             data={data1}
             width={width}/>
-          <Track index={1} tip="track number 2" width={width}/>
+          <Track index={1} tip="one track"
+            sequenceLength={sequence1.length}
+            data={variations1}
+            width={width}/>
+          <Track index={2} tip="track number 2" width={width}/>
         </svg>
         </div>
       </div>
