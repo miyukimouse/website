@@ -53,6 +53,7 @@ class SequenceComponent extends React.Component {
 
     return this.props.sequence && this._getCharWidth() > MIN_SEQUENCE_CHAR_WIDTH ?
         <text is="svg-text"
+              class="sequence-text"
               {...coords}
               x="0" y="6" text-anchor="start"
               font-size="4"

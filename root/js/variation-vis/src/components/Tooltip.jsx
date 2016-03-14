@@ -81,8 +81,6 @@ export default class Tooltip extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log('new props:');
-    console.log(nextProps);
 //  componentDidUpdate() {
     this.setState({
       ...this._getOrigin()

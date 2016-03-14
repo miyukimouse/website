@@ -125,8 +125,8 @@ tooltipEventID: prevState.tooltipEventID + 1,
         return (
           <DataSegment
             key={`data-rect-${index}`}
-            onMouseOver={(event) => this.props.onTooltipShow ? this.props.onTooltipShow({content: dat.tip, event: event}) : null}
-            onMouseOut={this.hideTooltip}
+            onMouseEnter={(event) => this.props.onTooltipShow ? this.props.onTooltipShow({content: dat.tip, event: event}) : null}
+            onMouseLeave={this.props.onTooltipHide}
             x={graphicPosition.start}
             y={this.getVerticalPosition()}
             width={graphicPosition.end - graphicPosition.start}
@@ -149,9 +149,7 @@ tooltipEventID: prevState.tooltipEventID + 1,
   render() {
 //    console.log(this);
     return (
-      <g className="track"
-        onMouseOver={(event) => this.props.onTooltipShow ? this.props.onTooltipShow({content: this.props.tip, event: event}) : null }
-        onMouseOut={this.props.onTooltipHide}>
+      <g className="track">
         <rect
           x="0"
           y={this.getVerticalPosition()}

@@ -123,7 +123,7 @@ class App extends React.Component {
     // const target = getRectCoords(targetBox);
     // const container = getRectCoords(containerBox);
 
-    event.stopPropagation();
+    //event.stopPropagation();
 
     this.setState((prevState, currProps) => {
       return {
@@ -142,6 +142,12 @@ class App extends React.Component {
 
   hideTooltip = (event) => {
     const tooltipEventID = this.state.tooltipEventID;
+    const enteredObject = event.relatedTarget;
+
+    if (enteredObject.getAttribute('class') === 'sequence-text') {
+      return;
+    }
+
     setTimeout(() => {
       this.setState((prevState, currProps) => {
         return prevState.tooltipEventID === tooltipEventID ? {
