@@ -8,11 +8,10 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "bootstrap": "^3.3.6",
     "react": "^0.14.7",
     "react-bootstrap": "^0.28.3",
     "react-dom": "^0.14.7",
-    "semantic-ui-popup": "^2.1.7",
-    "semantic-ui-transition": "^2.1.7",
     "svg-pan-zoom": "jeremyVignelles/svg-pan-zoom#unofficial-release"
   },
   "author": "",

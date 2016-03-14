@@ -1,7 +1,5 @@
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
-$.fn.transition = require("semantic-ui-transition");
-$.fn.popup = require("semantic-ui-popup");
 
 export default class Button extends React.Component {
 
