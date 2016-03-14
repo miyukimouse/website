@@ -4,39 +4,46 @@ const PALETTE = [
   'rgb(217,217,217)','rgb(188,128,189)','rgb(204,235,197)','rgb(255,237,111)'
 ]
 
-function colorLoader(data=[], groupFunction, {...groupToColor}={}) {
-  groupFunction = groupFunction || function(dat, index) { return index };
+export default class ColorScheme {
 
-  return data.map((dat, index) => {
-    const group = groupFunction(dat, index);
-    let color = groupToColor[group];
-    if (!(color || color === 0)){
-      // find an available color to use
-      color = _getNewColor(groupToColor);
-      groupToColor[group] = color;
-    }
-    return {
-      color: PALETTE[color % PALETTE.length],
-      ...dat
-    }
-  })
-
-}
-
-function _getNewColor(groupToColor){
-  let color = 0;
-  const colorsUsed = _getUsedColors(groupToColor);
-  while (colorsUsed.has(color)){
-    color++;
+  constructor(groupFunction, {...groupToColor}={}) {
+    this.groupFunction = groupFunction || function(dat, index) { return index };
+    this.groupToColor = groupToColor;
   }
-  return color;
-}
 
-function _getUsedColors(groupToColor){
-  const colorsUsed = Object.keys(groupToColor).map((key) => {
-    return groupToColor[key];
-  });
-  return new Set(colorsUsed);
-}
+  decorate(data=[]){
+    return data.map((dat, index) => {
+      const group = this.groupFunction(dat, index);
+      let color = this.groupToColor[group];
+      if (!this._isColorValid(color)){
+        // find an available color to use
+        color = this._newColor(group);
+      }
+      return {
+        color: PALETTE[color % PALETTE.length],
+        ...dat
+      }
+    });
+  }
 
-export default colorLoader;
+
+  _newColor(group){
+    let color = 0;
+    while (this._isColorTaken(color)){
+      color++;
+    }
+    this.groupToColor[group] = color;
+    return color;
+  }
+
+  _isColorTaken(color){
+    return Object.keys(this.groupToColor).some((key) => {
+      return this.groupToColor[key] === color;
+    });
+  }
+
+  _isColorValid(color){
+    return color || color === 0;
+  }
+
+}

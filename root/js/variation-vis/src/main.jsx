@@ -3,6 +3,7 @@ import { render } from 'react-dom';
 import Track from './Track.jsx';
 //import Button from './components/Button.jsx';
 import Tooltip from './components/Tooltip.jsx';
+import ColorScheme from './DataDecorator.js';
 import { Button, Popover, Overlay } from 'react-bootstrap';
 import svgPanZoom from 'svg-pan-zoom';
 require('./main.less');
@@ -260,6 +261,10 @@ class App extends React.Component {
       + 'QQQQQQQMQQQNYGTIRKSTVNRHDLPPPPNSLLTGMSSRMPTQDDMDDLPPPPESVGGSSAYGVFAGRTESYSSSQPPS'
       + 'LFDTSAGWMPNEYLEKVRVLYDYDAAKEDELTLRENAIVYVLKKNDDDWYEGVLDGVTGLFPGNYVVPV*';
 
+
+    const colorSchemeA = new ColorScheme();
+    //const colorSchemeB = new ColorScheme()
+
     const width = 100;  // hard code this for now
 
     const containerStyle = {
@@ -288,6 +293,7 @@ class App extends React.Component {
             onTooltipHide={this.hideTooltip}
             sequence={sequence1}
             data={data1}
+            colorScheme={colorSchemeA}
             width={width}/>
           <Track index={1} tip="one track"
             sequenceLength={sequence1.length}

@@ -3,7 +3,6 @@ import { findDOMNode } from 'react-dom';
 import Tooltip from './Tooltip.jsx';
 import SequenceComponent from './SequenceComponent.jsx';
 import DataSegment from './components/DataSegment.jsx';
-import colorLoader from './DataDecorator.js';
 import $ from 'jquery';
 import { TRACK_HEIGHT } from './Utils.js'
 
@@ -23,6 +22,7 @@ export default class Track extends React.Component {
     tip: React.PropTypes.string,
     onTooltipShow: React.PropTypes.func,
     onTooltipHide: React.PropTypes.func,
+    colorScheme: React.PropTypes.object,
     width: React.PropTypes.number,
     height: React.PropTypes.number
   }
@@ -56,7 +56,8 @@ export default class Track extends React.Component {
 
   /* data series within a track */
   renderData(){
-    const data = colorLoader(this.props.data);
+    const data = this.props.colorScheme
+      ? this.props.colorScheme.decorate(this.props.data) : this.props.data;
     return (
       data.map((dat, index) => {
         const graphicPosition = this.getHorizontalPosition(dat);
@@ -70,7 +71,7 @@ export default class Track extends React.Component {
             width={graphicPosition.end - graphicPosition.start}
             height={this.props.height}
             tip={dat.tip}
-            fill={dat.color}/>)
+            fill={dat.color || 'grey'}/>)
       })
     )
   }
