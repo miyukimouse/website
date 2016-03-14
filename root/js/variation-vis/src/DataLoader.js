@@ -8,7 +8,7 @@
 /* this package internally uses 0-base start coordinate and 1-based end coordinate */
 
 // takes one or more lists of ranges and output another after merging the overlapping ones
-function unionLoader([...inputs] = []) {
+function unionLoader(inputs=[]) {
   const allInputs = [].concat(...inputs);  // flatten the 1st level and put everything in a big array
   const occupancyArr = _createOccupancyMap(allInputs);
   return _occupancyMapToRanges(occupancyArr);
@@ -16,7 +16,7 @@ function unionLoader([...inputs] = []) {
 
 
 // takes some lists of ranges and output another after merging the overlapping ones
-function intersectionLoader([...inputs] = []) {
+function intersectionLoader(inputs=[]) {
   if (inputs.length <= 1) {
     return inputs[0] || [];
   }

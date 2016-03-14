@@ -3,6 +3,7 @@ import { findDOMNode } from 'react-dom';
 import Tooltip from './Tooltip.jsx';
 import SequenceComponent from './SequenceComponent.jsx';
 import DataSegment from './components/DataSegment.jsx';
+import colorLoader from './DataDecorator.js';
 import $ from 'jquery';
 import { TRACK_HEIGHT } from './Utils.js'
 
@@ -51,76 +52,13 @@ export default class Track extends React.Component {
       start: dat.start / sequenceLength * this.props.width,
       end: dat.end / sequenceLength * this.props.width
     }
-  };
-
-
-  generateTooltipHandler = (dataIndex) => {
-
-    let x, tip;
-    if (dataIndex === 0 || dataIndex) {
-      const {start, end} = this.getHorizontalPosition(this.props.data[dataIndex]);
-      x = start + Math.floor((end - start) /2);
-      tip = this.props.data[dataIndex].tip;
-    } else {
-      x = this.props.width / 2;
-      tip = this.props.tip;
-    }
-
-    const showTooltip = (event) => {
-
-      event.stopPropagation();
-
-      this.setState((prevState, currProps) => {
-        return {
-tooltipEventID: prevState.tooltipEventID + 1,
-          tooltip: {
-            // x,
-            // y
-            x: x,
-            y: this.getVerticalPosition() + 10,
-            tip: tip
-          },
-        };
-      }, () => {
-        this.handle
-      });
-    }
-
-    return showTooltip;
   }
-
-  hideTooltip = (event) => {
-    const tooltipEventID = this.state.tooltipEventID;
-    setTimeout(() => {
-      this.setState((prevState, currProps) => {
-        return prevState.tooltipEventID === tooltipEventID ? {
-          tooltip: null
-        } : {}
-      });
-    }, 200);
-  }
-
-  // componentDidMount() {
-  //   $(findDOMNode(this)).find('.track').each((index, element) => { // Notice the .each() loop, discussed below
-  //     $(element).qtip({
-  //       content: {
-  //           text: 'aaa'
-  //       },
-  //           position: {
-  //       my: 'top center',
-  //       at: 'bottom center'
-  //   }
-  //     });
-  //   });
-
-  // }
-
-
 
   /* data series within a track */
   renderData(){
+    const data = colorLoader(this.props.data);
     return (
-      this.props.data.map((dat, index) => {
+      data.map((dat, index) => {
         const graphicPosition = this.getHorizontalPosition(dat);
         return (
           <DataSegment
@@ -132,7 +70,7 @@ tooltipEventID: prevState.tooltipEventID + 1,
             width={graphicPosition.end - graphicPosition.start}
             height={this.props.height}
             tip={dat.tip}
-            fill="grey"/>)
+            fill={dat.color}/>)
       })
     )
   }
