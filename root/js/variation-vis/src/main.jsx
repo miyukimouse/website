@@ -2,7 +2,8 @@ import React from 'react';
 import { render } from 'react-dom';
 import Track from './Track.jsx';
 //import Button from './components/Button.jsx';
-import { Button, Popover } from 'react-bootstrap';
+import Tooltip from './components/Tooltip.jsx';
+import { Button, Popover, Overlay } from 'react-bootstrap';
 import svgPanZoom from 'svg-pan-zoom';
 require('./main.less');
 
@@ -15,7 +16,11 @@ class App extends React.Component {
     this.state = {
       center: DEFAULT_VISIBLE_WIDTH/2,
       zoomFactor: 1,
-      lastMoveTime: Number.NEGATIVE_INFINITY
+      lastMoveTime: Number.NEGATIVE_INFINITY,
+
+      // tooltips
+      tooltip: null,
+      tooltipEventID: 0
     };
   }
 
@@ -78,6 +83,69 @@ class App extends React.Component {
   }
 
 
+
+
+  showTooltip = ({content, event}) => {
+
+    // // Get point in global SVG space
+    // function cursorPoint(evt){
+    //   // Create an SVGPoint for future math
+    //   const svg = evt.target.ownerSVGElement;
+    //   const pt = svg.createSVGPoint();
+    //   pt.x = evt.clientX;
+    //   pt.y = evt.clientY;
+    //   // return pt.matrixTransform(svg.getScreenCTM().inverse());
+    //   return {
+    //     x: 0,
+    //     y: 0
+    //   }
+    // }
+
+    // const {x, y} = cursorPoint(event);
+    console.log('called');
+
+    const containerBox = this.refs.myContainer.getBoundingClientRect();
+    const targetBox = event.target.getBoundingClientRect();
+
+    const x = targetBox.left - containerBox.left;
+    const y = targetBox.top - containerBox.top;
+
+    const {left, top, height, width} = targetBox;
+    const target = {
+      left,
+      top,
+      height,
+      width
+    };
+
+    event.stopPropagation();
+
+    this.setState((prevState, currProps) => {
+      return {
+        tooltip: {
+          content: content,
+          target: targetBox,
+        },
+        tooltipEventID: prevState.tooltipEventID + 1,
+      };
+    });
+
+  }
+
+
+
+  hideTooltip = (event) => {
+    const tooltipEventID = this.state.tooltipEventID;
+    setTimeout(() => {
+      this.setState((prevState, currProps) => {
+        return prevState.tooltipEventID === tooltipEventID ? {
+          tooltip: null
+        } : {}
+      });
+    }, 200);
+  }
+
+
   componentDidMount() {
     const svgElement = svgPanZoom('#svg-browser', {
     //  viewportSelector: '.svg-pan-zoom_viewport'
@@ -130,9 +198,9 @@ class App extends React.Component {
 
   }
 
-  componentWillUpdate() {
-   // this.svgElement.destroy();
-  }
+  // componentWillUpdate() {
+  //   // this.svgElement.destroy();
+  // }
 
   render() {
     const data1 = [
@@ -185,7 +253,7 @@ class App extends React.Component {
       // width: 400
       width: 500,
       height: 300,
-      border:"1px solid black"
+      border:"1px solid black",
     }
 
     return (
@@ -194,12 +262,15 @@ class App extends React.Component {
           <Button onClick={this.createZoomHandler(2)}>Zoom in (+)</Button>
           <Button onClick={this.createZoomHandler(0.5)} style={{margin: "0 20px"}}>Zoom out (-)</Button>
         </div>
-        <div style={containerStyle}>
+        <div id="svg-browser-container" ref="myContainer" style={containerStyle}>
         <svg id="svg-browser" className={this.state.center}
           onWheel={this.handlePan}
           viewBox={this.getViewBox()}
           preserveAspectRatio="none meet">
-          <Track index={0} tip="one track"
+          <Track index={0}
+            //tip="one track"
+            onTooltipShow={this.showTooltip}
+            onTooltipHide={this.hideTooltip}
             sequence={sequence1}
             data={data1}
             width={width}/>
@@ -209,9 +280,10 @@ class App extends React.Component {
             width={width}/>
           <Track index={2} tip="track number 2" width={width}/>
         </svg>
-        <Popover placement="top" positionLeft={0} positionTop={0} title="Popover right">
-          And here's some <strong>amazing</strong> content. It's very engaging. right?
-        </Popover>
+        { this.state.tooltip
+          ? <Tooltip {...this.state.tooltip}/>
+          : null
+        }
         </div>
       </div>
     );

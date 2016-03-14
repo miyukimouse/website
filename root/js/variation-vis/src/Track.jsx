@@ -20,6 +20,8 @@ export default class Track extends React.Component {
     sequence: React.PropTypes.string,
     viewWidth: React.PropTypes.number,
     tip: React.PropTypes.string,
+    onTooltipShow: React.PropTypes.func,
+    onTooltipHide: React.PropTypes.func,
     width: React.PropTypes.number,
     height: React.PropTypes.number
   }
@@ -65,27 +67,12 @@ export default class Track extends React.Component {
     }
 
     const showTooltip = (event) => {
+
       event.stopPropagation();
-
-      // // Get point in global SVG space
-      // function cursorPoint(evt){
-      //   // Create an SVGPoint for future math
-      //   const svg = evt.target.ownerSVGElement;
-      //   const pt = svg.createSVGPoint();
-      //   pt.x = evt.clientX;
-      //   pt.y = evt.clientY;
-      //   // return pt.matrixTransform(svg.getScreenCTM().inverse());
-      //   return {
-      //     x: 0,
-      //     y: 0
-      //   }
-      // }
-
-      // const {x, y} = cursorPoint(event);
 
       this.setState((prevState, currProps) => {
         return {
-          tooltipEventID: prevState.tooltipEventID + 1,
+tooltipEventID: prevState.tooltipEventID + 1,
           tooltip: {
             // x,
             // y
@@ -93,8 +80,9 @@ export default class Track extends React.Component {
             y: this.getVerticalPosition() + 10,
             tip: tip
           },
-          tooltipTarget: event.target
         };
+      }, () => {
+        this.handle
       });
     }
 
@@ -137,7 +125,7 @@ export default class Track extends React.Component {
         return (
           <DataSegment
             key={`data-rect-${index}`}
-            onMouseOver={this.generateTooltipHandler(index)}
+            onMouseOver={(event) => this.props.onTooltipShow ? this.props.onTooltipShow({content: dat.tip, event: event}) : null}
             onMouseOut={this.hideTooltip}
             x={graphicPosition.start}
             y={this.getVerticalPosition()}
@@ -162,9 +150,8 @@ export default class Track extends React.Component {
 //    console.log(this);
     return (
       <g className="track"
-        onMouseOver={this.generateTooltipHandler()}
-        onMouseOut={this.hideTooltip}>
-
+        onMouseOver={(event) => this.props.onTooltipShow ? this.props.onTooltipShow({content: this.props.tip, event: event}) : null }
+        onMouseOut={this.props.onTooltipHide}>
         <rect
           x="0"
           y={this.getVerticalPosition()}
