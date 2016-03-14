@@ -102,21 +102,26 @@ class App extends React.Component {
     // }
 
     // const {x, y} = cursorPoint(event);
-    console.log('called');
 
     const containerBox = this.refs.myContainer.getBoundingClientRect();
     const targetBox = event.target.getBoundingClientRect();
 
-    const x = targetBox.left - containerBox.left;
-    const y = targetBox.top - containerBox.top;
+    // console.log('called');
+    // const x = targetBox.left - containerBox.left;
+    // const y = targetBox.top - containerBox.top;
 
-    const {left, top, height, width} = targetBox;
-    const target = {
-      left,
-      top,
-      height,
-      width
-    };
+    // function getRectCoords(rect) {
+    //   const {left, top, height, width} = rect;
+    //   return {
+    //     left,
+    //     top,
+    //     height,
+    //     width
+    //   };
+    // }
+
+    // const target = getRectCoords(targetBox);
+    // const container = getRectCoords(containerBox);
 
     event.stopPropagation();
 
@@ -125,6 +130,7 @@ class App extends React.Component {
         tooltip: {
           content: content,
           target: targetBox,
+          container: containerBox
         },
         tooltipEventID: prevState.tooltipEventID + 1,
       };

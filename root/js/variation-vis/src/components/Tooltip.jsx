@@ -19,6 +19,12 @@ export default class Tooltip extends React.Component {
       width: React.PropTypes.number,
       height: React.PropTypes.number,
     }),
+    container: React.PropTypes.shape({
+      top: React.PropTypes.number,
+      left: React.PropTypes.number,
+      width: React.PropTypes.number,
+      height: React.PropTypes.number,
+    }),
     content: React.PropTypes.string
   }
 
@@ -85,11 +91,36 @@ export default class Tooltip extends React.Component {
 
 // point on target
   _getPointer = () => {
-    const {left, top, width} = this.props.target;
+    // take the intersecting rectangle of target and container
+    const newBox = this._getIntersectRect(this.props.target, this.props.container);
+    const {left, top, width} = newBox;
     return {
       left: left + width/2,
       top: top
     }
+  }
+
+  _getIntersectRect = (rect1, rect2) => {
+    const left = Math.max(rect1.left, rect2.left);
+    const top = Math.max(rect1.top, rect2.top);
+
+    const _getRight = (rect) => {
+      return rect.left + rect.width;
+    }
+    const _getBottom = (rect) => {
+      return rect.top + rect.height;
+    }
+
+    const right = Math.min(_getRight(rect1), _getRight(rect2));
+    const bottom = Math.min(_getBottom(rect1), _getBottom(rect2));
+
+    const intersect = {
+      left,
+      top,
+      width: right - left,
+      height: bottom - top
+    };
+    return intersect;
   }
 
   // tooltip origin
