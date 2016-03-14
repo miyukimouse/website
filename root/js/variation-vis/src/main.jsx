@@ -142,9 +142,8 @@ class App extends React.Component {
 
   hideTooltip = (event) => {
     const tooltipEventID = this.state.tooltipEventID;
-    const enteredObject = event.relatedTarget;
 
-    if (enteredObject.getAttribute('class') === 'sequence-text') {
+    if (event && event.relatedTarget.getAttribute('class') === 'sequence-text') {
       return;
     }
 
@@ -174,6 +173,7 @@ class App extends React.Component {
       return {x: true, y: false};
     },
     onZoom: (zooms) => {
+      this.hideTooltip();
 
       this.setState((prevState) => {
         const newZoomFactor = zooms.x;
@@ -183,6 +183,9 @@ class App extends React.Component {
           zoomFactor: newZoomFactor //< 1 ? 1 : newZoomFactor
         }
       })
+    },
+    onPan: () => {
+      this.hideTooltip();
     }
     //, controlIconsEnabled: false
     //, zoomEnabled: false
