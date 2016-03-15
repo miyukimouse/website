@@ -33,7 +33,10 @@ export default class Track extends React.Component {
     this.state = {
       tooltipTarget: null,
       tooltip: null,
-      tooltipEventID: 0
+      tooltipEventID: 0,
+
+      // to show sequence of label
+      sequenceShown: 0
     };
   }
 
@@ -56,8 +59,8 @@ export default class Track extends React.Component {
   }
 
   addSequenceVisibilityEventListener = (callback) => {
-    CustomEvents.subscribe(this, function() {
-      callback();
+    CustomEvents.subscribe(this, function(data) {
+      callback(data);
     });
   }
 
@@ -66,6 +69,8 @@ export default class Track extends React.Component {
   }
 
   triggerSequenceVisibilityEvent = (data) => {
+    console.log('notify called')
+    console.log(data);
     CustomEvents.notify(this, data);
   }
 
@@ -77,12 +82,12 @@ export default class Track extends React.Component {
       data.map((dat, index) => {
         const graphicPosition = this.getHorizontalPosition(dat);
         return (
-          <DataSegment
+          this.state.sequenceShown ? null : <DataSegment
             key={`data-rect-${index}`}
             onMouseEnter={(event) => this.props.onTooltipShow ? this.props.onTooltipShow({content: dat.tip, event: event}) : null}
             onMouseLeave={this.props.onTooltipHide}
-            addSequenceVisibilityEventListener=this.addSequenceVisibilityEventListener
-            removeSequenceVisibilityEventListener=this.removeSequenceVisibilityEventListener
+            addSequenceVisibilityEventListener={this.addSequenceVisibilityEventListener}
+            removeSequenceVisibilityEventListener={this.removeSequenceVisibilityEventListener}
             x={graphicPosition.start}
             y={this.getVerticalPosition()}
             width={graphicPosition.end - graphicPosition.start}
@@ -93,6 +98,11 @@ export default class Track extends React.Component {
     )
   }
 
+  // handleSequenceVisibilitySet(show){
+  //   this.setState((prevState, nextState) => {
+  //     sequenceShown: show
+  //   });
+  // }
 
   /* render sequence or label depending how zoomed in */
   renderContent = () => {

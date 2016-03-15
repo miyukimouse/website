@@ -14,7 +14,8 @@ export default class Button extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      labelWidthInitial: null
+      labelWidthInitial: null,
+      hide: false
     };
   }
 
@@ -29,13 +30,25 @@ export default class Button extends React.Component {
     this.setState({
       labelWidthInitial
     });
+
+    this.props.addSequenceVisibilityEventListener((show) => {
+      console.log('event listener called: ')
+      console.log(show)
+      this.setState({
+        hide: show   // hide the label when showing the sequence
+      })
+    });
+  }
+
+  componentWillUnmount() {
+    this.props.removeSequenceVisibilityEventListener();
   }
 
   // componentDidUpdate() {
   // }
 
   _getLabelVisibility() {
-    if (this.state.labelWidthInitial && this._getLabelScaledWidth() < this.props.width * 0.8){
+    if (!this.state.hide && this.state.labelWidthInitial && this._getLabelScaledWidth() < this.props.width * 0.8){
       return 'visible';
     }else{
       return 'hidden';
@@ -63,6 +76,7 @@ export default class Button extends React.Component {
       }
     }
   }
+
 
   render() {
 

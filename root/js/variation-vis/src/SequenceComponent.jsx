@@ -9,7 +9,8 @@ class SequenceComponent extends React.Component {
     y: React.PropTypes.number.isRequired,
     width: React.PropTypes.number,
     height: React.PropTypes.number,
-    sequence: React.PropTypes.string
+    sequence: React.PropTypes.string,
+    onVisibilitySet: React.PropTypes.func,
   }
 
   // static defaultProps = {
@@ -32,10 +33,22 @@ class SequenceComponent extends React.Component {
     }
   }
 
-  _getCharWidth = () => {
-    const visibleCharCount = this.props.sequence.length / this.context.zoomFactor;
-    const charWidth = this.context.viewWidth / visibleCharCount;
+  _getCharWidth = (props, context) => {
+    const visibleCharCount = props.sequence.length / context.zoomFactor;
+    const charWidth = context.viewWidth / visibleCharCount;
     return charWidth;
+  }
+
+  componentDidMount(){
+    // const show = this.props.sequence
+    //   && this._getCharWidth(this.props, this.context) > MIN_SEQUENCE_CHAR_WIDTH;
+    // this.props.onVisibilitySet && this.props.onVisibilitySet(show);
+  }
+
+  componentWillReceiveProps(nextProps, nextContext){
+    const show = nextProps.sequence
+      && this._getCharWidth(nextProps, nextContext) > MIN_SEQUENCE_CHAR_WIDTH;
+    this.props.onVisibilitySet && this.props.onVisibilitySet(show);
   }
 
   render() {
@@ -51,7 +64,7 @@ class SequenceComponent extends React.Component {
 
     //console.log(coords);
 
-    return this.props.sequence && this._getCharWidth() > MIN_SEQUENCE_CHAR_WIDTH ?
+    return this.props.sequence && this._getCharWidth(this.props, this.context) > MIN_SEQUENCE_CHAR_WIDTH ?
         <text is="svg-text"
               class="sequence-text"
               {...coords}
