@@ -5,6 +5,7 @@ import SequenceComponent from './SequenceComponent.jsx';
 import DataSegment from './components/DataSegment.jsx';
 import $ from 'jquery';
 import { TRACK_HEIGHT } from './Utils.js'
+import CustomEvents from './CustomEvents.js'
 
 export default class Track extends React.Component {
 
@@ -54,6 +55,20 @@ export default class Track extends React.Component {
     }
   }
 
+  addSequenceVisibilityEventListener = (callback) => {
+    CustomEvents.subscribe(this, function() {
+      callback();
+    });
+  }
+
+  removeSequenceVisibilityEventListener = () => {
+    CustomEvents.unsubscribe(this);
+  }
+
+  triggerSequenceVisibilityEvent = (data) => {
+    CustomEvents.notify(this, data);
+  }
+
   /* data series within a track */
   renderData(){
     const data = this.props.colorScheme
@@ -66,6 +81,8 @@ export default class Track extends React.Component {
             key={`data-rect-${index}`}
             onMouseEnter={(event) => this.props.onTooltipShow ? this.props.onTooltipShow({content: dat.tip, event: event}) : null}
             onMouseLeave={this.props.onTooltipHide}
+            addSequenceVisibilityEventListener=this.addSequenceVisibilityEventListener
+            removeSequenceVisibilityEventListener=this.removeSequenceVisibilityEventListener
             x={graphicPosition.start}
             y={this.getVerticalPosition()}
             width={graphicPosition.end - graphicPosition.start}
@@ -81,7 +98,8 @@ export default class Track extends React.Component {
   renderContent = () => {
     return <SequenceComponent {...this.props}
         x="0"
-        y={this.getVerticalPosition()}/>
+        y={this.getVerticalPosition()}
+        onVisibilitySet={this.triggerSequenceVisibilityEvent}/>
   }
 
 
