@@ -39,17 +39,17 @@ class SequenceComponent extends React.Component {
     return charWidth;
   }
 
-  componentDidMount(){
-    // const show = this.props.sequence
-    //   && this._getCharWidth(this.props, this.context) > MIN_SEQUENCE_CHAR_WIDTH;
-    // this.props.onVisibilitySet && this.props.onVisibilitySet(show);
-  }
+  // componentDidMount(){
+  //   // const show = this.props.sequence
+  //   //   && this._getCharWidth(this.props, this.context) > MIN_SEQUENCE_CHAR_WIDTH;
+  //   // this.props.onVisibilitySet && this.props.onVisibilitySet(show);
+  // }
 
-  componentWillReceiveProps(nextProps, nextContext){
-    const show = nextProps.sequence
-      && this._getCharWidth(nextProps, nextContext) > MIN_SEQUENCE_CHAR_WIDTH;
-    this.props.onVisibilitySet && this.props.onVisibilitySet(show);
-  }
+  // componentWillReceiveProps(nextProps, nextContext){
+  //   const show = nextProps.sequence
+  //     && this._getCharWidth(nextProps, nextContext) > MIN_SEQUENCE_CHAR_WIDTH;
+  //   this.props.onVisibilitySet && this.props.onVisibilitySet(show);
+  // }
 
   render() {
 

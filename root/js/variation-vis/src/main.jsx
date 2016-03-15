@@ -5,6 +5,7 @@ import Track from './Track.jsx';
 import Tooltip from './components/Tooltip.jsx';
 import ColorScheme from './DataDecorator.js';
 import { Button, Popover, Overlay } from 'react-bootstrap';
+import { ButtonGroup, ButtonToolbar, Glyphicon } from 'react-bootstrap';
 import svgPanZoom from 'svg-pan-zoom';
 require('./main.less');
 
@@ -80,7 +81,7 @@ class App extends React.Component {
 
   getViewBox = () => {
     const x = this._getXMin();
-    return [x, 0, DEFAULT_VISIBLE_WIDTH, 60].join(' ');
+    return [x, 0, DEFAULT_VISIBLE_WIDTH, 120].join(' ');
   }
 
 
@@ -144,7 +145,8 @@ class App extends React.Component {
   hideTooltip = (event) => {
     const tooltipEventID = this.state.tooltipEventID;
 
-    if (event && event.relatedTarget.getAttribute('class') === 'sequence-text') {
+    if (event && (event.relatedTarget.getAttribute('class') === 'sequence-text'
+      || event.relatedTarget.getAttribute('is') === 'svg-text')) {
       return;
     }
 
@@ -188,12 +190,12 @@ class App extends React.Component {
     onPan: () => {
       this.hideTooltip();
     }
-    //, controlIconsEnabled: false
+    , controlIconsEnabled: true
     //, zoomEnabled: false
     // , dblClickZoomEnabled: true
-    // , mouseWheelZoomEnabled: true
+    , mouseWheelZoomEnabled: true
     // , preventMouseEventsDefault: true
-    , zoomScaleSensitivity: 0.8
+    , zoomScaleSensitivity: 0.2
     // , minZoom: 0.5
     // , maxZoom: 10
     //, fit: false
@@ -210,6 +212,9 @@ class App extends React.Component {
     svgElement.resize()
 //svgElement.setAttribute('width', 500)
     console.log(svgElement.getZoom());
+    this.setState({
+      zoomPan: svgElement
+    });
     //this.svgElement = svgElement;
 
   }
@@ -272,15 +277,21 @@ class App extends React.Component {
       // //padding: '0 5',
       // width: 400
       width: 500,
-      height: 300,
+      height: 600,
       border:"1px solid black",
     }
 
     return (
       <div className="bootstrap-style">
-        <div style={{margin: "20px"}}>
-          <Button onClick={this.createZoomHandler(2)}>Zoom in (+)</Button>
-          <Button onClick={this.createZoomHandler(0.5)} style={{margin: "0 20px"}}>Zoom out (-)</Button>
+        <div style={{margin: "20px", height: 30}}>
+          <ButtonToolbar>
+            <ButtonGroup>
+              <Button><Glyphicon glyph="zoom-in" /></Button>
+              <Button><Glyphicon glyph="zoom-out" /></Button>
+              <Button><Glyphicon glyph="chevron-left" /></Button>
+              <Button><Glyphicon glyph="chevron-right" /></Button>
+            </ButtonGroup>
+          </ButtonToolbar>
         </div>
         <div id="svg-browser-container" ref="myContainer" style={containerStyle}>
         <svg id="svg-browser" className={this.state.center}
@@ -295,11 +306,42 @@ class App extends React.Component {
             data={data1}
             colorScheme={colorSchemeA}
             width={width}/>
-          <Track index={1} tip="one track"
+          <Track index={1}
+            //tip="one track"
+            onTooltipShow={this.showTooltip}
+            onTooltipHide={this.hideTooltip}
+            sequence={sequence1}
+            data={data1}
+            colorScheme={colorSchemeA}
+            width={width}/>
+          <Track index={2} tip="one track"
+            onTooltipShow={this.showTooltip}
+            onTooltipHide={this.hideTooltip}
             sequenceLength={sequence1.length}
             data={variations1}
             width={width}/>
-          <Track index={2} tip="track number 2" width={width}/>
+          <Track index={4}
+            //tip="one track"
+            onTooltipShow={this.showTooltip}
+            onTooltipHide={this.hideTooltip}
+            sequence={sequence1}
+            data={data1}
+            colorScheme={colorSchemeA}
+            width={width}/>
+          <Track index={3} tip="one track"
+            onTooltipShow={this.showTooltip}
+            onTooltipHide={this.hideTooltip}
+            sequenceLength={sequence1.length}
+            data={variations1}
+            width={width}/>
+          <Track index={5}
+            //tip="one track"
+            onTooltipShow={this.showTooltip}
+            onTooltipHide={this.hideTooltip}
+            sequence={sequence1}
+            data={data1}
+            colorScheme={colorSchemeA}
+            width={width}/>
         </svg>
         { this.state.tooltip
           ? <Tooltip {...this.state.tooltip}/>
