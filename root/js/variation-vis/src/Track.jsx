@@ -5,7 +5,6 @@ import SequenceComponent from './SequenceComponent.jsx';
 import DataSegment from './components/DataSegment.jsx';
 import $ from 'jquery';
 import { TRACK_HEIGHT } from './Utils.js'
-import CustomEvents from './CustomEvents.js'
 
 export default class Track extends React.Component {
 
@@ -33,10 +32,7 @@ export default class Track extends React.Component {
     this.state = {
       tooltipTarget: null,
       tooltip: null,
-      tooltipEventID: 0,
-
-      // to show sequence of label
-      sequenceShown: 0
+      tooltipEventID: 0
     };
   }
 
@@ -58,22 +54,6 @@ export default class Track extends React.Component {
     }
   }
 
-  addSequenceVisibilityEventListener = (callback) => {
-    CustomEvents.subscribe(this, function(data) {
-      callback(data);
-    });
-  }
-
-  removeSequenceVisibilityEventListener = () => {
-    CustomEvents.unsubscribe(this);
-  }
-
-  triggerSequenceVisibilityEvent = (data) => {
-    console.log('notify called')
-    console.log(data);
-    CustomEvents.notify(this, data);
-  }
-
   /* data series within a track */
   renderData(){
     const data = this.props.colorScheme
@@ -82,12 +62,10 @@ export default class Track extends React.Component {
       data.map((dat, index) => {
         const graphicPosition = this.getHorizontalPosition(dat);
         return (
-          this.state.sequenceShown ? null : <DataSegment
+          <DataSegment
             key={`data-rect-${index}`}
             onMouseEnter={(event) => this.props.onTooltipShow ? this.props.onTooltipShow({content: dat.tip, event: event}) : null}
             onMouseLeave={this.props.onTooltipHide}
-            addSequenceVisibilityEventListener={this.addSequenceVisibilityEventListener}
-            removeSequenceVisibilityEventListener={this.removeSequenceVisibilityEventListener}
             x={graphicPosition.start}
             y={this.getVerticalPosition()}
             width={graphicPosition.end - graphicPosition.start}
@@ -98,18 +76,12 @@ export default class Track extends React.Component {
     )
   }
 
-  // handleSequenceVisibilitySet(show){
-  //   this.setState((prevState, nextState) => {
-  //     sequenceShown: show
-  //   });
-  // }
 
   /* render sequence or label depending how zoomed in */
   renderContent = () => {
     return <SequenceComponent {...this.props}
         x="0"
-        y={this.getVerticalPosition()}
-        onVisibilitySet={this.triggerSequenceVisibilityEvent}/>
+        y={this.getVerticalPosition()}/>
   }
 
 
