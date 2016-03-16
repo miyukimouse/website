@@ -28,7 +28,7 @@ class SequenceComponent extends React.Component {
 
     return {
       x: 0,
-      y: y + (yOffset || 0)
+      y: y + (yOffset || 0) + 7
     }
   }
 
@@ -55,7 +55,7 @@ class SequenceComponent extends React.Component {
         <text is="svg-text"
               class="sequence-text"
               {...coords}
-              x="0" y="6" text-anchor="start"
+              text-anchor="start"
               font-size="4"
               font-family="monospace,Courier New"
               textLength={width}
