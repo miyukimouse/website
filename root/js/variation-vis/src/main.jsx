@@ -22,15 +22,20 @@ class App extends React.Component {
 
       // tooltips
       tooltip: null,
-      tooltipEventID: 0
-    };
+      tooltipEventID: 0,
+
+      // zoomPan
+      isZoomPanOccuring: false,
+      zoomPanEventId: 0
+     };
   }
 
   static childContextTypes = {
     zoomFactor: React.PropTypes.number,
     viewWidth: React.PropTypes.number,
     xMin: React.PropTypes.number,
-    center: React.PropTypes.number
+    center: React.PropTypes.number,
+    isZoomPanOccuring: React.PropTypes.bool,
   }
 
   getChildContext() {
@@ -38,7 +43,8 @@ class App extends React.Component {
       zoomFactor: this.state.zoomFactor,
       viewWidth: 500,
       xMin: this._getXMin(),
-      center: this.state.center
+      center: this.state.center,
+      isZoomPanOccuring: this.state.isZoomPanOccuring
     }
   }
 
@@ -185,10 +191,13 @@ class App extends React.Component {
           center: newCenter,
           zoomFactor: newZoomFactor //< 1 ? 1 : newZoomFactor
         }
-      })
+      });
+
+      this._zoomPanTimeout();
     },
     onPan: () => {
       this.hideTooltip();
+      this._zoomPanTimeout()
     }
     , controlIconsEnabled: true
     //, zoomEnabled: false
@@ -197,7 +206,7 @@ class App extends React.Component {
     // , preventMouseEventsDefault: true
     , zoomScaleSensitivity: 0.2
     // , minZoom: 0.5
-    // , maxZoom: 10
+    , maxZoom: Infinity
     //, fit: false
     , contain: false
     , center: false
@@ -217,6 +226,29 @@ class App extends React.Component {
     });
     //this.svgElement = svgElement;
 
+  }
+
+  _zoomPanTimeout = () => {
+    let zoomPanEventId;
+    this.setState((prevState) => {
+      zoomPanEventId = prevState.zoomPanEventId + 1;
+      return {
+        isZoomPanOccuring: true,
+        zoomPanEventId: zoomPanEventId
+      };
+    });
+    setTimeout(()=> {
+      this.setState((prevState) => {
+        if (prevState.zoomPanEventId === zoomPanEventId){
+          // only cancel isZoomPanOccuring if no zoompan request is made
+          return {
+            isZoomPanOccuring: false
+          };
+        }else{
+          return {};
+        }
+      });
+    }, 200);
   }
 
   // componentWillUpdate() {

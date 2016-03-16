@@ -27,6 +27,10 @@ export default class Track extends React.Component {
     height: React.PropTypes.number
   }
 
+  static contextTypes = {
+    isZoomPanOccuring: React.PropTypes.bool
+  }
+
   constructor(props) {
     super(props);
     this.state = {
@@ -79,7 +83,8 @@ export default class Track extends React.Component {
 
   /* render sequence or label depending how zoomed in */
   renderContent = () => {
-    return <SequenceComponent {...this.props}
+    return this.context.isZoomPanOccuring ? null :
+      <SequenceComponent {...this.props}
         x="0"
         y={this.getVerticalPosition()}/>
   }
