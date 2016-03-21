@@ -64,14 +64,14 @@ module.exports = {
     hot: true,
     port: 9004,
     publicPath: '/static',
-    // proxy: {
-    //   '/api/*': {
-    //     target: 'http://amigo-dev-golr.berkeleybop.org',
-    //     rewrite: function(req) {
-    //       req.url = req.url.replace(/^\/api/, '');
-    //     },
-    //     secure: false,
-    //   },
-    // },
+    proxy: {
+      '/rest/parasite/*': {
+        target: 'http://dev.wormbase.org:5000',
+        // rewrite: function(req) {
+        //   req.url = req.url.replace(/^\/api/, '');
+        // },
+        secure: false,
+      },
+    },
   }
 }

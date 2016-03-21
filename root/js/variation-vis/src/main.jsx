@@ -7,6 +7,8 @@ import ColorScheme from './DataDecorator.js';
 import { Button, Popover, Overlay } from 'react-bootstrap';
 import { ButtonGroup, ButtonToolbar, Glyphicon } from 'react-bootstrap';
 import svgPanZoom from 'svg-pan-zoom';
+
+import { GeneModel } from './Utils.js';
 require('./main.less');
 
 const DEFAULT_VISIBLE_WIDTH = 100;
@@ -389,4 +391,8 @@ class App extends React.Component {
 
 
 render(<App/>, document.getElementById('variation-vis-container'));
+
+export default {
+  GeneModel
+}
 
