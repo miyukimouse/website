@@ -10,7 +10,7 @@ export class GeneModel {
     this.geneId = geneId;
   }
 
-  getAlignedDNASequence() {
+  getAlignedDNA() {
     const url = this._urlFor('homology/id/' + this.geneId, {
       sequence: 'cdna',
       type: 'orthologues'
@@ -20,7 +20,7 @@ export class GeneModel {
       .then((data) => this._parseAligned(data));    
   }
 
-  getAlignedProteinSequence() {
+  getAlignedProtein() {
     const url = this._urlFor('homology/id/' + this.geneId, {
       sequence: 'protein',
       type: 'orthologues'      
@@ -59,11 +59,35 @@ export class GeneModel {
   }
 
 
-  getRelativeCoords(coords, markerCoords) {
+  getRelativeCoords(coords) {
+    return this.getGene().then((data) => {
+      const geneStart = data[0]['start'];
+      const geneEnd = data[0]['end'];
 
+      // convert from 1 base coordinates relative to chromoseome
+      //to relative to gene (0 based start, and 1 based end)
+      return {
+        start: coords.start - geneStart,
+        end: coords.end - geneStart + 1
+      };
+    });
   }
 
   getAlignmentCoords(coords) {
+    return this.getAlignedDNA().then((data) => {
+      if (!this._alignmentCoordConverter){
+        this._alignmentCoordConverter = this._createAlignedCoordConverter(data.source.align_seq);
+      }
+    })
+    .then(() => {
+      return this.getRelativeCoords(coords);
+    })
+    .then((relativeCoords) => {
+      return {
+        start: this._alignmentCoordConverter.convert(relativeCoords.start),
+        end: this._alignmentCoordConverter.convert(relativeCoords.end)
+      };
+    });
 
   }
 
@@ -105,5 +129,17 @@ export class GeneModel {
     .join(delimiter);
 
     return `/rest/parasite/${path}?${paramsStr}`;
+  }
+
+  _createAlignedCoordConverter(alignedSeq) {
+    const _coordsMap = [];
+    for (let i=0; i<alignedSeq.length; i++){
+      if (alignedSeq[i] !== '-'){
+        _coordsMap.push(i);
+      }
+    }
+    return {
+      convert: (coord) => _coordsMap[coord]
+    };
   }
 }
