@@ -28,7 +28,10 @@ class App extends React.Component {
 
       // zoomPan
       isZoomPanOccuring: false,
-      zoomPanEventId: 0
+      zoomPanEventId: 0,
+
+      // track data
+      tracks: []
      };
   }
 
@@ -158,8 +161,10 @@ class App extends React.Component {
 
 
   componentDidMount() {
-    this._setupZoomPan();
-
+    this._getData();
+    // setTimeout(() =>
+    //   this._setupZoomPan()
+    //   , 5000);
   }
 
   _setupZoomPan() {
@@ -247,6 +252,43 @@ class App extends React.Component {
     }, 200);
   }
 
+
+  _getData() {
+    const model = new GeneModel('WBGene00225050');
+    const dnaTrackIndex = 0;
+    model.getAlignedDNA().then((data) => {
+      this._setTrackState({
+        sequence: data.source.align_seq
+      }, dnaTrackIndex,
+      () => this._setupZoomPan());
+    });
+    // model.getAlignedExons().then((exons) => {
+    //   this._setTrackState({
+    //     data: [exons[0]]
+    //   });
+    // });
+  }
+
+  _setTrackState(data, index, callback) {
+    // this returns a new set of track data, without modifying the original
+    this.setState((prevState) => {
+      const newTrackData = {
+        ...prevState.tracks[index],
+        ...data
+      };
+      console.log(newTrackData);
+    //  console.log(prevState.tracks.splice(index, 1, newTrackData));
+      const newTracks = prevState.tracks.slice(0, index)
+        .concat(newTrackData)
+        .concat(prevState.tracks.slice(index+1));
+      console.log(newTracks);
+      return {
+        tracks: newTracks
+      }
+    }, callback);
+
+  }
+
   // componentWillUpdate() {
   //   // this.svgElement.destroy();
   // }
@@ -326,50 +368,21 @@ class App extends React.Component {
           onWheel={this.handlePan}
           viewBox={this.getViewBox()}
           preserveAspectRatio="none meet">
-          <Track index={0}
-            //tip="one track"
-            onTooltipShow={this.showTooltip}
-            onTooltipHide={this.hideTooltip}
-            sequence={sequence1}
-            data={data1}
-            colorScheme={colorSchemeA}
-            width={width}/>
-          <Track index={1}
-            //tip="one track"
-            onTooltipShow={this.showTooltip}
-            onTooltipHide={this.hideTooltip}
-            sequence={sequence1}
-            data={data1}
-            colorScheme={colorSchemeA}
-            width={width}/>
-          <Track index={2} tip="one track"
-            onTooltipShow={this.showTooltip}
-            onTooltipHide={this.hideTooltip}
-            sequenceLength={sequence1.length}
-            data={variations1}
-            width={width}/>
-          <Track index={4}
-            //tip="one track"
-            onTooltipShow={this.showTooltip}
-            onTooltipHide={this.hideTooltip}
-            sequence={sequence1}
-            data={data1}
-            colorScheme={colorSchemeA}
-            width={width}/>
-          <Track index={3} tip="one track"
-            onTooltipShow={this.showTooltip}
-            onTooltipHide={this.hideTooltip}
-            sequenceLength={sequence1.length}
-            data={variations1}
-            width={width}/>
-          <Track index={5}
-            //tip="one track"
-            onTooltipShow={this.showTooltip}
-            onTooltipHide={this.hideTooltip}
-            sequence={sequence1}
-            data={data1}
-            colorScheme={colorSchemeA}
-            width={width}/>
+          {
+            [1,2,3,4].map((a, index) => {
+              console.log(trackData);
+              const trackData = this.state.tracks[index];
+              return trackData && trackData.sequence ? <Track index={index}
+                key={`track${index}`}
+                //tip="one track"
+                onTooltipShow={this.showTooltip}
+                onTooltipHide={this.hideTooltip}
+                sequence={sequence1}
+                data={trackData.data}
+                colorScheme={colorSchemeA}
+                width={width}/> : null;
+            })
+          }
         </svg>
         { this.state.tooltip
           ? <Tooltip {...this.state.tooltip}/>

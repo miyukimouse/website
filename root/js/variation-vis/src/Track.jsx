@@ -97,7 +97,7 @@ export default class Track extends React.Component {
         <rect
           x="0"
           y={this.getVerticalPosition()}
-          width={this.props.width} height={this.props.height} fillOpacity="0"/>
+          width={this.props.width} height={this.props.height} fillOpacity="0.5"/>
 
         {
           this.renderData()

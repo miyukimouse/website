@@ -17,13 +17,13 @@ export class GeneModel {
     });
     console.log(url);
     return this._getOrFetch('_aligned_dna', url)
-      .then((data) => this._parseAligned(data));    
+      .then((data) => this._parseAligned(data));
   }
 
   getAlignedProtein() {
     const url = this._urlFor('homology/id/' + this.geneId, {
       sequence: 'protein',
-      type: 'orthologues'      
+      type: 'orthologues'
     });
     console.log(url);
     return this._getOrFetch('_aligned_protein', url)
@@ -44,6 +44,13 @@ export class GeneModel {
     });
     console.log(url);
     return this._getOrFetch('_exon', url);
+  }
+
+  getAlignedExons(){
+    return this.getExons().then((exons) => {
+      console.log(exons);
+      return exons.map((e) => this.getAlignmentCoords(e));
+    })
   }
 
   getDomains() {
@@ -67,6 +74,7 @@ export class GeneModel {
       // convert from 1 base coordinates relative to chromoseome
       //to relative to gene (0 based start, and 1 based end)
       return {
+        ...console,
         start: coords.start - geneStart,
         end: coords.end - geneStart + 1
       };
@@ -83,7 +91,9 @@ export class GeneModel {
       return this.getRelativeCoords(coords);
     })
     .then((relativeCoords) => {
+      console.log(relativeCoords);
       return {
+        ...coords,
         start: this._alignmentCoordConverter.convert(relativeCoords.start),
         end: this._alignmentCoordConverter.convert(relativeCoords.end)
       };

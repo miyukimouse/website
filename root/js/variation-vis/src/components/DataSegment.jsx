@@ -34,6 +34,16 @@ export default class Button extends React.Component {
   // componentDidUpdate() {
   // }
 
+  _getDimension() {
+    let {width} = this.props;
+    width = width < 1 ? 1 : width;
+
+    return {
+      ...this.props,
+      width
+    }
+  }
+
   _getLabelVisibility() {
     if (this.state.labelWidthInitial && this._getLabelScaledWidth() < this.props.width * 0.8){
       return 'visible';
@@ -68,7 +78,7 @@ export default class Button extends React.Component {
 
     return (
       <g>
-        <rect {...this.props}/>
+        <rect {...this._getDimension()}/>
         <text ref="label"
               is="svg-text"
               visibility={this._getLabelVisibility()}
