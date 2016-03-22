@@ -50,32 +50,21 @@ class App extends React.Component {
     }
   }
 
-  createZoomHandler = (multiple, locatable) => {
+  getZoomHandler = (multiple) => {
     return (event) => {
-      this.setState((prevState) => {
-        const newZoomFactor = prevState.zoomFactor * multiple;
-        const newCenter = locatable ? this.svgX(event.target.clientX) : this.state.center;
-        return {
-          center: newCenter,
-          zoomFactor: newZoomFactor < 1 ? 1 : newZoomFactor
-        }
-      })
+      if (this.state.zoomPan){
+        this.state.zoomPan.zoomBy(multiple);
+      }
     }
 
   }
 
-  handlePan = (event) => {
-    // console.log(event.deltaX);
-    // const now = (new Date()).getTime();
-    // console.log(now);
-    // if (now - this.state.lastMoveTime > 300){
-    //   const xMovement = event.deltaX;
-    //   this.setState((prevState) => {
-    //     return {
-    //       center: prevState.center + xMovement / 1
-    //     }
-    //   })
-    // }
+  getPanHandler = (delta) => {
+    return () => {
+      if (this.state.zoomPan){
+        this.state.zoomPan.panBy({x: delta, y: 0});
+      }
+    }
   }
 
   _getVisibleWidth = () => {
@@ -169,6 +158,11 @@ class App extends React.Component {
 
 
   componentDidMount() {
+    this._setupZoomPan();
+
+  }
+
+  _setupZoomPan() {
     const svgElement = svgPanZoom('#svg-browser', {
     //  viewportSelector: '.svg-pan-zoom_viewport'
     panEnabled: true,
@@ -320,10 +314,10 @@ class App extends React.Component {
         <div style={{margin: "20px", height: 30}}>
           <ButtonToolbar>
             <ButtonGroup>
-              <Button><Glyphicon glyph="zoom-in" /></Button>
-              <Button><Glyphicon glyph="zoom-out" /></Button>
-              <Button><Glyphicon glyph="chevron-left" /></Button>
-              <Button><Glyphicon glyph="chevron-right" /></Button>
+              <Button onClick={this.getZoomHandler(2)}><Glyphicon glyph="zoom-in" /></Button>
+              <Button onClick={this.getZoomHandler(0.5)}><Glyphicon glyph="zoom-out" /></Button>
+              <Button onClick={this.getPanHandler(200)}><Glyphicon glyph="chevron-left" /></Button>
+              <Button onClick={this.getPanHandler(-200)}><Glyphicon glyph="chevron-right" /></Button>
             </ButtonGroup>
           </ButtonToolbar>
         </div>
