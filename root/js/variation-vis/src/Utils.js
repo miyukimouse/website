@@ -15,7 +15,7 @@ export class GeneModel {
       sequence: 'cdna',
       type: 'orthologues'
     });
-    console.log(url);
+
     return this._getOrFetch('_aligned_dna', url)
       .then((data) => this._parseAligned(data));
   }
@@ -25,7 +25,7 @@ export class GeneModel {
       sequence: 'protein',
       type: 'orthologues'
     });
-    console.log(url);
+
     return this._getOrFetch('_aligned_protein', url)
       .then((data) => this._parseAligned(data));
   }
@@ -38,18 +38,29 @@ export class GeneModel {
     return null;
   }
 
-  getExons() {
-    const url = this._urlFor('overlap/id/' + this.geneId, {
-      feature: 'exon'
+  _parseCoords(data=[]) {
+    return data.map((coords) => {
+      const {start, end} = coords;
+      return {
+        ...coords,
+        start: start - 1,  // 0 based start
+        end: end   // 1 based end
+      }
     });
-    console.log(url);
-    return this._getOrFetch('_exon', url);
   }
 
-  getAlignedExons(){
-    return this.getExons().then((exons) => {
-      console.log(exons);
-      return exons.map((e) => this.getAlignmentCoords(e));
+  // getCDSs() {
+  //   const url = this._urlFor('overlap/id/' + this.geneId, {
+  //     feature: 'cds'
+  //   });
+  //   console.log(url);
+  //   return this._getOrFetch('_cds', url)
+  //     .then((data) => this._parseCoords(data));
+  // }
+
+  getAlignedCDSs(){
+    return this.getCDSs().then((cdss) => {
+      return cdss.map((e) => this.getAlignmentCoords(e));
     })
   }
 
@@ -57,27 +68,26 @@ export class GeneModel {
 
   }
 
-  getGene() {
+  getCDSs() {
     const url = this._urlFor('overlap/id/' + this.geneId, {
-      feature: 'gene'
+      feature: 'cds'
     });
-    console.log(url);
-    return this._getOrFetch('_gene', url);
+
+    return this._getOrFetch('_cds', url)
+      .then((data) => this._parseCoords(data));
   }
 
-
+  // get coordinate relative to the coding sequence
   getRelativeCoords(coords) {
-    return this.getGene().then((data) => {
-      const geneStart = data[0]['start'];
-      const geneEnd = data[0]['end'];
-
-      // convert from 1 base coordinates relative to chromoseome
-      //to relative to gene (0 based start, and 1 based end)
+    return this.getCDSs().then((data) => {
+      if (!this._splicedCoordConverter){
+        this._splicedCoordConverter =  this._createSplicedCoordConverter(data);
+      }
       return {
-        ...console,
-        start: coords.start - geneStart,
-        end: coords.end - geneStart + 1
-      };
+        ...coords,
+        start: this._splicedCoordConverter.convert(coords.start),
+        end: this._splicedCoordConverter.convert(coords.end - 1) + 1 // end coord here is considered outside side of CDS, would have getting undefined
+      }
     });
   }
 
@@ -88,9 +98,11 @@ export class GeneModel {
       }
     })
     .then(() => {
+      console.log(coords);
       return this.getRelativeCoords(coords);
     })
     .then((relativeCoords) => {
+      console.log('relativeCoords:');
       console.log(relativeCoords);
       return {
         ...coords,
@@ -107,7 +119,9 @@ export class GeneModel {
       if (this[name]) {
         resolve(this[name]);
       } else {
+        console.log(url);
         jquery.ajax(url, {
+        //  contentType: 'application/json',
           success: (result) => {
             this[name] = result;
             resolve(result);
@@ -141,6 +155,7 @@ export class GeneModel {
     return `/rest/parasite/${path}?${paramsStr}`;
   }
 
+// used to convert to coordinates relative to gapped sequence generated during alignment
   _createAlignedCoordConverter(alignedSeq) {
     const _coordsMap = [];
     for (let i=0; i<alignedSeq.length; i++){
@@ -148,8 +163,37 @@ export class GeneModel {
         _coordsMap.push(i);
       }
     }
+    _coordsMap.push(alignedSeq.length);  // for end coordinate
     return {
       convert: (coord) => _coordsMap[coord]
+    };
+  }
+
+// used to convert to coordinates relative to spliced transcript
+  _createSplicedCoordConverter(cdss) {
+    let _prev = 0;
+    const _table = [];
+
+    if (cdss[0].strand < 0) {
+      // negative strand
+      cdss = cdss.slice(0).reverse();
+    }
+    cdss.forEach((e, index) => {
+      const spliceLength = index > 0 ? e.start - cdss[index-1].end : 0;
+      _prev = _prev + spliceLength;
+      _table.push(_prev);
+    });
+
+    const _getSplicedCoord = (coord) => {
+      const index = cdss.findIndex((e) => coord >= e.start && coord < e.end);
+      if (index || index === 0) {
+        // coord occurs on one of the CDSs
+        const offset = coord - cdss[index].start; // offset to the start of the CDS
+        return _table[index] + offset;
+      }
+    }
+    return {
+      convert: _getSplicedCoord
     };
   }
 }

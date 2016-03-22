@@ -1,3 +1,4 @@
+import "babel-polyfill";
 import React from 'react';
 import { render } from 'react-dom';
 import Track from './Track.jsx';
@@ -174,7 +175,6 @@ class App extends React.Component {
     separateZoomsEnabled: true,
     beforeZoom: (zooms) => {
       if (this.state.zoomLockOn) {
-        console.log('zoom canceled')
         return false;
       }
       return {x: true, y: false};
@@ -221,7 +221,7 @@ class App extends React.Component {
     $('#svg-browser').css({width: '100%', height:'100%'})
     svgElement.resize()
 //svgElement.setAttribute('width', 500)
-    console.log(svgElement.getZoom());
+
     this.setState({
       zoomPan: svgElement
     });
@@ -262,11 +262,11 @@ class App extends React.Component {
       }, dnaTrackIndex,
       () => this._setupZoomPan());
     });
-    // model.getAlignedExons().then((exons) => {
-    //   this._setTrackState({
-    //     data: [exons[0]]
-    //   });
-    // });
+    model.getAlignedCDSs().then((cdss) => {
+      this._setTrackState({
+        data: [cdss[0]]
+      });
+    });
   }
 
   _setTrackState(data, index, callback) {
@@ -276,7 +276,6 @@ class App extends React.Component {
         ...prevState.tracks[index],
         ...data
       };
-      console.log(newTrackData);
     //  console.log(prevState.tracks.splice(index, 1, newTrackData));
       const newTracks = prevState.tracks.slice(0, index)
         .concat(newTrackData)
@@ -369,9 +368,7 @@ class App extends React.Component {
           viewBox={this.getViewBox()}
           preserveAspectRatio="none meet">
           {
-            [1,2,3,4].map((a, index) => {
-              console.log(trackData);
-              const trackData = this.state.tracks[index];
+            this.state.tracks.map((trackData, index) => {
               return trackData && trackData.sequence ? <Track index={index}
                 key={`track${index}`}
                 //tip="one track"
