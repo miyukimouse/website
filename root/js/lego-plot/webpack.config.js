@@ -39,7 +39,7 @@ module.exports = {
     historyApiFallback: true,
     host: '0.0.0.0',
     hot: true,
-    port: 9004,
+    port: process.env.DEV_PORT,
     publicPath: '/static',
     proxy: {
       '/api/*': {
@@ -47,6 +47,10 @@ module.exports = {
         rewrite: function(req) {
           req.url = req.url.replace(/^\/api/, '');
         },
+        // toProxy: true,
+        // autoRewrite: true,
+        changeOrigin: true, // changes the origin of the host header to the target URL,
+                            // otherwise an Nginx landing page is the response somehow...
         secure: false,
       },
     },

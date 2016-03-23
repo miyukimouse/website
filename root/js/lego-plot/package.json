@@ -4,7 +4,7 @@
   "description": "plot GO model graph",
   "scripts": {
     "build": "webpack",
-    "start": "webpack-dev-server  --inline --hot",
+    "start": "DEV_PORT=9004 webpack-dev-server  --inline --hot",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
