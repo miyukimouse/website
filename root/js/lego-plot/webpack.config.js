@@ -39,6 +39,8 @@ module.exports = {
           test: /\.less$/,
           loader: ExtractTextPlugin.extract("style-loader", "css-loader!less-loader")
       },
+      // load html template file
+      { test: /\.html$/, loader: "raw-loader" },
       // the url-loader uses DataUrls.
       // the file-loader emits files.
       { test: /\.(woff|woff2)$/,  loader: "url-loader?limit=10000&mimetype=application/font-woff" },
@@ -48,7 +50,8 @@ module.exports = {
     ]
   },
   plugins: [
-    new webpack.IgnorePlugin(/ringo\/httpclient$/)
+    new webpack.IgnorePlugin(/ringo\/httpclient$/),
+    new ExtractTextPlugin( "bundle.css" )
   ],
   // resolve: {
   //   root: path.resolve(__dirname),

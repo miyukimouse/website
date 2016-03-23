@@ -31,7 +31,6 @@ var us = require('underscore');
 ///
 
 // Global variables.
-//var endpoint_location = 'http://0.0.0.0:9004/api/';
 var endpoint_location = require.main === module ? 'http://amigo-dev-golr.berkeleybop.org/' : '/api/';
 //var endpoint_location = 'http://amigo-dev-golr.berkeleybop.org/';
 var max_model_count = 11;
