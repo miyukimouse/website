@@ -110,7 +110,7 @@ function get_graph(gid){
         size: 10
       }
     };
-    network = new vis.Network(container, data, options);
+    var network = new vis.Network(container, data, options);
 
   });
 }

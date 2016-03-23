@@ -1,5 +1,6 @@
 var path = require('path');
 var webpack = require('webpack');
+var ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 module.exports = {
   devtool: 'eval',
@@ -15,14 +16,36 @@ module.exports = {
     // name of the global var
     library: "LegoPlot"
   },
+  externals: {
+    // require("jquery") is external and available
+    //  on the global var jQuery
+    "jquery": "jQuery"
+  },
   module: {
-    // loaders: [
-    //   {
-    //     test: /\.js$/,
-    //     loaders: [ 'babel' ],
-    //  //   include: path.join(__dirname, 'src')
-    //   }
-    // ]
+    loaders: [
+      {
+        test: /\.(js|jsx)$/,
+        loaders: ['babel'],
+        include: path.join(__dirname, 'src')
+      },
+      // Extract css files
+      {
+          test: /\.css$/,
+          loader: ExtractTextPlugin.extract("style-loader", "css-loader")
+      },
+      // Optionally extract less files
+      // or any other compile-to-css language
+      {
+          test: /\.less$/,
+          loader: ExtractTextPlugin.extract("style-loader", "css-loader!less-loader")
+      },
+      // the url-loader uses DataUrls.
+      // the file-loader emits files.
+      { test: /\.(woff|woff2)$/,  loader: "url-loader?limit=10000&mimetype=application/font-woff" },
+      { test: /\.ttf$/,    loader: "file-loader" },
+      { test: /\.eot$/,    loader: "file-loader" },
+      { test: /\.svg$/,    loader: "file-loader" }
+    ]
   },
   plugins: [
     new webpack.IgnorePlugin(/ringo\/httpclient$/)
