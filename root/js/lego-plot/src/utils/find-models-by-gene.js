@@ -18,7 +18,6 @@ var golr_conf = require('golr-conf');
 var golr_manager = require('bbop-manager-golr');
 var golr_response = require('bbop-response-golr');
 var model = require('bbop-graph-noctua');
-var utils = require('./utils.js');
 
 // Engine for use.
 var node_engine = require('bbop-rest-manager').node;
@@ -124,17 +123,14 @@ function get_model(gp_id, callback){
         each(resp.documents(), function(doc){
 
           if( doc && doc['owl_blob_json'] ){
-
             // Grab model JSON and convert it into an operable
             // graph.
             var jobj = JSON.parse(doc['owl_blob_json']);
-            var graph = new noctua_graph();
-            graph.load_data_basic(jobj);
+
+            callback(jobj);
 
             // The final thing that we'll do.
             ll('Model: ' + doc['annotation_unit']);
-            var context = utils.build_context(jobj);
-            callback(graph, context);
           }
         });
       });
@@ -164,13 +160,15 @@ if(require.main === module) {
   }else{
     // Trigger initial action.
     //meta_manager.search();
-    get_model(gp_id, function(graph){
+    get_model(gp_id, function(graphJSON){
+      var graph = new noctua_graph();
+      graph.load_data_basic(graphJSON);
       if( graph.id() ){
         ll(' Graph id: ' + graph.id());
         //  ll(graph);
-        ll(JSON.stringify(graph, null,2));
+        ll(JSON.stringify(graphJSON, null,2));
       }
-      ll(' Node count: ' + graph.all_nodes().length);
+      //ll(' Node count: ' + graph.all_nodes().length);
     });
   }
 }
