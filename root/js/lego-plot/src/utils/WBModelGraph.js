@@ -9,6 +9,7 @@ export default class WBModelGraph {
     _noctuaGraph.load_data_basic(graphJSON);
     this._noctuaGraph = _noctuaGraph;
     this._raw = graphJSON;
+    this.setMode();
   }
 
   setMode(mode){

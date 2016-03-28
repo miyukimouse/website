@@ -11,11 +11,25 @@ export default class WBModelGraphView {
 
   update(mode) {
     this._wbModelGraph.setMode(mode);
-    const nodes = this._wbModelGraph.getNodes();
+    console.log(this._wbModelGraph.getNodes());
+    const nodes = this.decorateNodes(this._wbModelGraph.getNodes());
     const edges = this._wbModelGraph.getEdges();
 
     this.visual.nodes.update(nodes);
     this.visual.edges.update(edges);
+  }
+
+  decorateNodes(nodes){
+    return nodes.map((v) => {
+      const shape = 'circle';
+      const label = this.prettyLabel(v.label);
+      return {
+        ...v,
+        label,
+        shape,
+        mass:10
+      }
+    })
   }
 
   _createVisual(container) {
@@ -24,12 +38,22 @@ export default class WBModelGraphView {
     var edges = new vis.DataSet(this._wbModelGraph.getEdges());
 
     var options = {
+      physics: {
+        enabled: true,
+        hierarchicalRepulsion: {
+          // centralGravity: 0.0,
+          // springLength: 100,
+          // springConstant: 0.02,
+          nodeDistance: 200,
+          damping: 0.29
+        },
+      },
       layout: {
         improvedLayout: true,
         hierarchical: {
           enabled:true,
-          // levelSeparation: 150,
-          // nodeSpacing: 100,
+          levelSeparation: 250,
+          // nodeSpacing: 200,
           // treeSpacing: 200,
           // blockShifting: true,
           // edgeMinimization: true,
@@ -37,6 +61,9 @@ export default class WBModelGraphView {
           direction: 'UD',        // UD, DU, LR, RL
           sortMethod: 'directed'   // hubsize, directed
         }
+      },
+      interaction:{
+        navigationButtons: true
       },
       nodes : {
         shape: 'dot',
@@ -48,11 +75,11 @@ export default class WBModelGraphView {
 
     network.once('stabilized', function(){
       network.setOptions({
-        physics: {
-          stabilization: {
-            onlyDynamicEdges: true
-          }
-        }
+        // physics: {
+        //   stabilization: {
+        //     onlyDynamicEdges: true
+        //   }
+        // }
       });
     });
 
@@ -86,7 +113,7 @@ export default class WBModelGraphView {
   /*
    convert a long label text into mulitple lines
   */
-  static prettyLabel(label){
+  prettyLabel(label){
     var max_line_length = 20;
     var words = label.split(/\s+/);
     var lines = [];

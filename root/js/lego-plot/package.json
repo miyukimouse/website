@@ -14,11 +14,11 @@
     "bbop-manager-golr": "0.0.4",
     "bbop-response-golr": "0.0.5",
     "bbop-rest-manager": "sibyl229/bbop-rest-manager",
+    "bootstrap": "^3.3.6",
     "golr-conf": "0.0.3",
     "minimist": "~1.1.1",
     "underscore": "~1.8.3",
-    "vis": "^4.15.0",
-    "bootstrap": "^3.3.6"
+    "vis": "^4.15.1"
   },
   "author": "",
   "license": "ISC",
