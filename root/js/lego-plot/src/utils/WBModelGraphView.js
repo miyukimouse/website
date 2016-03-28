@@ -11,10 +11,9 @@ export default class WBModelGraphView {
 
   update(mode) {
     this._wbModelGraph.setMode(mode);
-    console.log(this._wbModelGraph.getNodes());
     const nodes = this.decorateNodes(this._wbModelGraph.getNodes());
-    const edges = this._wbModelGraph.getEdges();
-
+    const edges = this.decorateEdges(this._wbModelGraph.getEdges());
+console.log(edges);
     this.visual.nodes.update(nodes);
     this.visual.edges.update(edges);
   }
@@ -23,13 +22,33 @@ export default class WBModelGraphView {
     return nodes.map((v) => {
       const shape = 'circle';
       const label = this.prettyLabel(v.label);
+      const title = v.label;
       return {
         ...v,
         label,
         shape,
-        mass:10
+        title,
+        // scaling: {
+        //   min: 1,
+        //   max: 1
+        //   //label: false,
+        // },
+        font: {
+        //  size: 30,
+        },
+        //mass:10
       }
     })
+  }
+
+  decorateEdges(edges){
+    return edges.map((e) => {
+      const value = 5;
+      return {
+        ...e,
+        value,
+      }
+    });
   }
 
   _createVisual(container) {
@@ -63,11 +82,12 @@ export default class WBModelGraphView {
         }
       },
       interaction:{
-        navigationButtons: true
+        navigationButtons: true,
+        tooltipDelay: 100,
       },
       nodes : {
         shape: 'dot',
-        size: 10
+        //size: 10
       }
     };
 

@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "amigo2": "2.4.3",
+    "babel-polyfill": "^6.7.4",
     "bbop-core": "0.0.5",
     "bbop-graph-noctua": "0.0.26",
     "bbop-manager-golr": "0.0.4",
