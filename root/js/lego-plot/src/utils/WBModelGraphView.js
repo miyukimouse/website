@@ -6,27 +6,25 @@ export default class WBModelGraphView {
     this._wbModelGraph = new WBModelGraph(graphJSON);
     this.visual = this._createVisual(container);
 
-    this.update();
+    this.update('simple');
   }
 
   update(mode) {
-    this._wbModelGraph.setMode(mode);
-    const nodes = this.decorateNodes(this._wbModelGraph.getNodes());
-    const edges = this.decorateEdges(this._wbModelGraph.getEdges());
-console.log(edges);
+    //this._wbModelGraph.setMode(mode);
+    const nodes = this.decorateNodes(this._wbModelGraph.getNodes(), mode);
+    const edges = this.decorateEdges(this._wbModelGraph.getEdges(), mode);
+
     this.visual.nodes.update(nodes);
     this.visual.edges.update(edges);
   }
 
-  decorateNodes(nodes){
+  decorateNodes(nodes, mode){
     return nodes.map((v) => {
-      const shape = 'circle';
       const label = this.prettyLabel(v.label);
       const title = v.label;
-      return {
+      const sharedConfig = {
         ...v,
         label,
-        shape,
         title,
         // scaling: {
         //   min: 1,
@@ -38,15 +36,50 @@ console.log(edges);
         },
         //mass:10
       }
+
+      if (this._wbModelGraph.isMajorNode(v)){
+        return {
+          ...sharedConfig,
+          shape: 'circle',
+          shadow: true,
+        };
+      } else {
+        return {
+          ...sharedConfig,
+          hidden: mode === 'simple',
+          //physics: false
+          physics: mode !== 'simple',
+        }
+      }
     })
   }
 
-  decorateEdges(edges){
+  decorateEdges(edges, mode){
+    const shared = {
+      font: {
+        align: 'bottom'
+      },
+      arrows:'to'
+    };
+
     return edges.map((e) => {
-      const value = 5;
-      return {
-        ...e,
-        value,
+      if (this._wbModelGraph.isMajorEdge(e)){
+        return {
+          ...e,
+          ...shared,
+          shape: 'circle',
+          color: e.predicate_id === 'RO:0002213' ? '#d95f02' : '#7570b3',
+          shadow: true,
+          width: 5
+        };
+      } else {
+        return {
+          ...e,
+          ...shared,
+          //physics: false,
+          physics: mode !== 'simple',
+          hidden: mode === 'simple'
+        }
       }
     });
   }
@@ -59,12 +92,13 @@ console.log(edges);
     var options = {
       physics: {
         enabled: true,
+        stabilization: false,
         hierarchicalRepulsion: {
           // centralGravity: 0.0,
           // springLength: 100,
           // springConstant: 0.02,
           nodeDistance: 200,
-          damping: 0.29
+          damping: 0.49
         },
       },
       layout: {
@@ -96,6 +130,7 @@ console.log(edges);
     network.once('stabilized', function(){
       network.setOptions({
         // physics: {
+        //   ...options.physics,
         //   stabilization: {
         //     onlyDynamicEdges: true
         //   }

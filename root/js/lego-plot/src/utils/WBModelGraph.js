@@ -1,6 +1,8 @@
 import { graph as noctua_graph } from 'bbop-graph-noctua';
 import { hashify } from 'bbop-core';
 
+const MAJOR_PREDICATES = new Set(["RO:0002213", "BFO:0000050"]);
+const MINOR_PREDICATES = new Set(["RO:0002233","RO:0002234","RO:0002333","RO:0002488","BFO:0000066","BFO:0000051", "BFO:0000050"]);
 
 export default class WBModelGraph {
   constructor(graphJSON) {
@@ -10,20 +12,41 @@ export default class WBModelGraph {
     this._noctuaGraph = _noctuaGraph;
     this._raw = graphJSON;
     //this.setMode();
+    this._nodes = this._parseNodes();
+    this._edges = this._parseEdges();
   }
 
-  setMode(mode){
-    let ignoredEdges = []
-    if (mode === 'simple') {
-      ignoredEdges = ["RO:0002233","RO:0002234","RO:0002333","RO:0002488","BFO:0000066","BFO:0000051", "BFO:0000050"];
-    }else {
-      ignoredEdges = ["RO:0002233","RO:0002234","RO:0002333","RO:0002488","BFO:0000066","BFO:0000051", "BFO:0000050"];
+  getEdges(){
+    //return this._edges.filter((e) => MAJOR_PREDICATES.has(e.predicate_id));
+    return this._edges.slice();  // shallow copy of the array
+  }
+
+  isMajorEdge(edge){
+    return MAJOR_PREDICATES.has(edge.predicate_id);
+  }
+
+  getNodes(){
+    return this._nodes.slice();
+  }
+
+  isMajorNode(node){
+
+    if (!this.majorNodeKeys) {
+      // infer major nodes based on major predicates
+      const majorNodeKeys = [];
+      this._edges.forEach((e) => {
+        if (MAJOR_PREDICATES.has(e.predicate_id)){
+          majorNodeKeys.push(e.to, e.from);
+        }
+      });
+      this.majorNodeKeys = new Set(majorNodeKeys);
     }
-    this._noctuaGraph.fold_go_noctua(ignoredEdges);
+
+    return this.majorNodeKeys.has(node.id);
   }
 
 
-  getNodes() {
+  _parseNodes() {
     const graph = this._noctuaGraph;
 
     // graph.fold_go_noctua(["RO:0002233","RO:0002234","RO:0002333","RO:0002488","BFO:0000066","BFO:0000051", "BFO:0000050"]);
@@ -67,17 +90,18 @@ export default class WBModelGraph {
     return nodes;
   }
 
-  getEdges(graph) {
+  _parseEdges(graph) {
 
     const edges = this._noctuaGraph.all_edges().map((e) => {
 
-      const edge_label = this._getEdgeLabel(e.predicate_id());
+      const predicate_id = e.predicate_id();
+      const edge_label = this._getEdgeLabel(predicate_id);
       return {
         id: e.id(),
+        predicate_id: predicate_id,
         from: e.subject_id(),
         to: e.object_id(),
-        label: edge_label,
-        arrows:'to',
+        label: edge_label
       };
     });
 
