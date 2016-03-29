@@ -3,7 +3,7 @@ var webpack = require('webpack');
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 module.exports = {
-  devtool: 'eval',
+  devtool: 'source-map',
   entry: [
     './src/main.js'
   ],
@@ -56,7 +56,18 @@ module.exports = {
   },
   plugins: [
     new webpack.IgnorePlugin(/ringo\/httpclient$/),
-    new ExtractTextPlugin( "bundle.css" )
+    new ExtractTextPlugin( "bundle.css" ),
+    new webpack.DefinePlugin({
+        'process.env': {
+            // This has effect on the react lib size
+            'NODE_ENV': JSON.stringify('production'),
+        }
+    }),
+    new webpack.optimize.DedupePlugin(),
+    new webpack.optimize.OccurenceOrderPlugin(),
+    new webpack.optimize.UglifyJsPlugin({compress: {
+        warnings: false
+    }})
   ],
   // resolve: {
   //   root: path.resolve(__dirname),
