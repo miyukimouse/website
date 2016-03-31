@@ -3,7 +3,7 @@ var webpack = require('webpack');
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 module.exports = {
-  devtool: 'source-map',
+  devtool: process.env.DEV_PORT ? 'eval' : 'source-map',
   entry: [
     './src/main.js'
   ],
@@ -60,7 +60,7 @@ module.exports = {
     new webpack.DefinePlugin({
         'process.env': {
             // This has effect on the react lib size
-            'NODE_ENV': JSON.stringify('production'),
+            'NODE_ENV': process.env.DEV_PORT ? JSON.stringify('development') : JSON.stringify('production'),
         }
     }),
     new webpack.optimize.DedupePlugin(),
