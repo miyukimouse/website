@@ -45,6 +45,23 @@ export default class WBModelGraph {
     return this.majorNodeKeys.has(node.id);
   }
 
+  getEdgeOfNode(node) {
+
+    if (!this.nodeToEdges) {
+      const nodeToEdges = {};
+
+      this._edges.forEach((e) => {
+        const nodeId = e.from;
+        nodeToEdges[nodeId] = nodeToEdges[nodeId] || [];
+        nodeToEdges[nodeId].push(e);
+      });
+
+      this.nodeToEdges = nodeToEdges;
+    }
+
+    return this.nodeToEdges[node.id] || [];
+  }
+
 
   _parseNodes() {
     const graph = this._noctuaGraph;

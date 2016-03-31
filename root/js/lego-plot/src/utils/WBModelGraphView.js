@@ -1,5 +1,6 @@
 import vis from 'vis';
 import WBModelGraph from './WBModelGraph';
+import getNodeFace from './NodeFace';
 
 export default class WBModelGraphView {
   constructor(graphJSON, container) {
@@ -40,8 +41,14 @@ export default class WBModelGraphView {
       if (this._wbModelGraph.isMajorNode(v)){
         return {
           ...sharedConfig,
-          shape: 'circle',
+       //   shape: 'circle',
           shadow: true,
+          image: getNodeFace(v, this._wbModelGraph.getEdgeOfNode(v)),
+          shape: 'image',
+          shapeProperties: {
+            useImageSize: true,
+            useBorderWithImage: true
+          }
         };
       } else {
         return {
