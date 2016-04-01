@@ -1,8 +1,13 @@
+import nodeTemplate from "./node.handlebars";
+
 export function getNodeFaceInHTML(node, associations){
-  return '<em>I</em> am' +
-      '<span style="color:white; text-shadow:0 0 20px #000000;">' +
-      JSON.stringify(associations, null,2) +
-      ' <a href="http://www.google.com">HTML in SVG!</a></span>';
+
+  return nodeTemplate({
+    title: 'aaaa',
+    associations: associations
+  });
+
+  return;
 }
 
 export default function getNodeFace(node, associations) {

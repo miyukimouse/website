@@ -1,0 +1,40 @@
+<style>
+
+.label-default {
+    background-color: #777;
+}
+
+.label {
+    display: inline;
+    padding: .2em .6em .3em;
+    font-size: 75%;
+    font-weight: 700;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: .25em;
+}
+
+* {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.node-face--association {
+  font-size: 6px;
+  border: 1px solid black;
+}
+
+</style>
+
+<strong>{{title}}</strong>
+<div class="node-face--association">
+  <ul>
+  {{#each associations}}
+  <li><span class="label label-default" style="background-color:{{color}}">{{label}}</span></li>
+  {{/each}}
+  </ul>
+</div>

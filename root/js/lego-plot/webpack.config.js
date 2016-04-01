@@ -51,7 +51,9 @@ module.exports = {
       {
         test: /\.(png|jpg|svg)$/,
         loader: 'url-loader?limit=8192'
-      }
+      },
+      // html templates
+      { test: /\.handlebars$/, loader: "handlebars-template-loader" }
     ]
   },
   plugins: [

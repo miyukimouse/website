@@ -17,6 +17,7 @@
     "bbop-rest-manager": "sibyl229/bbop-rest-manager",
     "bootstrap": "^3.3.6",
     "golr-conf": "0.0.3",
+    "handlebars": "^4.0.5",
     "minimist": "~1.1.1",
     "underscore": "~1.8.3",
     "vis": "^4.15.1"
@@ -32,6 +33,7 @@
     "css-loader": "^0.23.1",
     "extract-text-webpack-plugin": "^1.0.1",
     "file-loader": "^0.8.5",
+    "handlebars-template-loader": "^0.6.0",
     "less": "^2.6.1",
     "less-loader": "^2.2.2",
     "raw-loader": "^0.5.1",

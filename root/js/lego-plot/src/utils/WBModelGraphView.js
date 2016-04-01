@@ -38,12 +38,14 @@ export default class WBModelGraphView {
         //mass:10
       }
 
+      const associations = this.decorateEdges(this._wbModelGraph.getEdgeOfNode(v), mode);
+
       if (this._wbModelGraph.isMajorNode(v)){
         return {
           ...sharedConfig,
        //   shape: 'circle',
           shadow: true,
-          image: getNodeFace(v, this._wbModelGraph.getEdgeOfNode(v)),
+          image: getNodeFace(v, associations),
           shape: 'image',
           shapeProperties: {
             useImageSize: true,
@@ -75,7 +77,7 @@ export default class WBModelGraphView {
           ...e,
           ...shared,
           shape: 'circle',
-          color: e.predicate_id === 'RO:0002213' ? '#d95f02' : '#7570b3',
+          color: this.getEdgeColor(e),
           shadow: true,
           width: 5
         };
@@ -83,6 +85,7 @@ export default class WBModelGraphView {
         return {
           ...e,
           ...shared,
+          color: mode === 'simple' ? this.getEdgeColor(e) : null,
           //physics: false,
           physics: mode !== 'simple',
           hidden: mode === 'simple'
@@ -193,5 +196,17 @@ export default class WBModelGraphView {
       lines.push(partial_line);
     }
     return lines.join('\n');
+  }
+
+  getEdgeColor(edge){
+    if (!this._edgeToColor){
+      this._edgeToColor = {
+        'RO:0002213': '#d95f02',
+        'BFO:0000050': '#7570b3',
+        'BFO:0000066': '#33a02c',
+        'RO:0002333': '#1f78b4'
+      }
+    }
+    return this._edgeToColor[edge.predicate_id] || '#777';
   }
 }
