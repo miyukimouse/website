@@ -1,4 +1,5 @@
 import nodeTemplate from "./node.handlebars";
+import nodeModalTemplate from "./nodeModal.handlebars";
 
 export function getNodeFaceInHTML(node, associations){
 
@@ -35,4 +36,12 @@ export default function getNodeFace(node, associations) {
   var svg = new Blob([data], { type: 'image/svg+xml;charset=utf-8' });
   var url = DOMURL.createObjectURL(svg);
   return url;
+}
+
+export function getNodeModal(node, associations, modalContainer){
+  const modalHtml = nodeModalTemplate({
+    node,
+    associations
+  });
+  return modalHtml;
 }

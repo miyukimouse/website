@@ -1,6 +1,6 @@
 import vis from 'vis';
 import WBModelGraph from './WBModelGraph';
-import getNodeFace from './NodeFace';
+import getNodeFace, { getNodeModal } from './NodeFace';
 
 export default class WBModelGraphView {
   constructor(graphJSON, container) {
@@ -146,6 +146,20 @@ export default class WBModelGraphView {
         //   }
         // }
       });
+    });
+
+    network.on('selectNode', (params) => {
+      console.log(params);
+      const node = params.nodes[0];
+      const target = params.event.target;
+      const modalContainer = $(target).closest('.lego-graph-wrapper').find('.lego-modal-container');
+      modalContainer.html(getNodeModal(node, null, '.lego-modal-container'));
+
+      const modal = modalContainer.find('.node-modal').first();
+      modal.modal();
+      // unselect nodes on model hide, so node can be selected again
+      modal.on('hide.bs.modal', () => network.unselectAll());
+
     });
 
     function toggleVisibility(items, hidden) {
