@@ -2,6 +2,13 @@ var path = require('path');
 var webpack = require('webpack');
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
 
+var productionPlugins = process.env.DEV_PORT ? [] : [
+  new webpack.optimize.DedupePlugin(),
+  new webpack.optimize.OccurenceOrderPlugin(),
+  new webpack.optimize.UglifyJsPlugin({compress: {
+      warnings: false
+  }})];
+
 module.exports = {
   devtool: process.env.DEV_PORT ? 'eval' : 'source-map',
   entry: [
@@ -64,13 +71,8 @@ module.exports = {
             // This has effect on the react lib size
             'NODE_ENV': process.env.DEV_PORT ? JSON.stringify('development') : JSON.stringify('production'),
         }
-    }),
-    new webpack.optimize.DedupePlugin(),
-    new webpack.optimize.OccurenceOrderPlugin(),
-    new webpack.optimize.UglifyJsPlugin({compress: {
-        warnings: false
-    }})
-  ],
+    })
+  ].concat(productionPlugins),
   // resolve: {
   //   root: path.resolve(__dirname),
   //   alias: {
