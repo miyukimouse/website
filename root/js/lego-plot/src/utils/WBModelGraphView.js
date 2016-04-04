@@ -12,14 +12,18 @@ export default class WBModelGraphView {
 
   update(mode) {
     //this._wbModelGraph.setMode(mode);
-    const nodes = this.decorateNodes(this._wbModelGraph.getNodes(), mode);
-    const edges = this.decorateEdges(this._wbModelGraph.getEdges(), mode);
+    this._mode = mode;
+    const nodes = this.decorateNodes(this._wbModelGraph.getNodes());
+    const edges = this.decorateEdges(this._wbModelGraph.getEdges());
 
     this.visual.nodes.update(nodes);
     this.visual.edges.update(edges);
   }
 
-  decorateNodes(nodes, mode){
+  decorateNodes(nodes){
+
+    const mode = this._mode;
+
     return nodes.map((v) => {
       const label = this.prettyLabel(v.label);
       const title = v.label;
@@ -38,7 +42,7 @@ export default class WBModelGraphView {
         //mass:10
       }
 
-      const associations = this.decorateEdges(this._wbModelGraph.getEdgeOfNode(v), mode);
+      const associations = this.decorateEdges(this._wbModelGraph.getEdgesOfNode(v), mode);
 
       if (this._wbModelGraph.isMajorNode(v)){
         return {
@@ -63,13 +67,15 @@ export default class WBModelGraphView {
     })
   }
 
-  decorateEdges(edges, mode){
+  decorateEdges(edges){
     const shared = {
       font: {
         align: 'bottom'
       },
       arrows:'to'
     };
+
+    const mode = this._mode;
 
     return edges.map((e) => {
       if (this._wbModelGraph.isMajorEdge(e)){
@@ -150,10 +156,11 @@ export default class WBModelGraphView {
 
     network.on('selectNode', (params) => {
       console.log(params);
-      const node = params.nodes[0];
       const target = params.event.target;
       const modalContainer = $(target).closest('.lego-graph-wrapper').find('.lego-modal-container');
-      modalContainer.html(getNodeModal(node, null, '.lego-modal-container'));
+      const node = this._wbModelGraph.getNodeById(params.nodes[0]);
+      const associations =  this.decorateEdges(this._wbModelGraph.getEdgesOfNode(node));
+      modalContainer.html(getNodeModal(node, associations, '.lego-modal-container'));
 
       const modal = modalContainer.find('.node-modal').first();
       modal.modal();

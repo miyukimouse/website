@@ -11,7 +11,7 @@ export default class WBModelGraph {
     _noctuaGraph.load_data_basic(graphJSON);
     this._noctuaGraph = _noctuaGraph;
     this._raw = graphJSON;
-    //this.setMode();
+
     this._nodes = this._parseNodes();
     this._edges = this._parseEdges();
   }
@@ -26,7 +26,8 @@ export default class WBModelGraph {
   }
 
   getNodes(){
-    return this._nodes.slice();
+    const nodeHashMap = this._nodes;
+    return Object.keys(nodeHashMap).map((nid) => nodeHashMap[nid]);
   }
 
   isMajorNode(node){
@@ -45,7 +46,7 @@ export default class WBModelGraph {
     return this.majorNodeKeys.has(node.id);
   }
 
-  getEdgeOfNode(node) {
+  getEdgesOfNode(node) {
 
     if (!this.nodeToEdges) {
       const nodeToEdges = {};
@@ -53,13 +54,20 @@ export default class WBModelGraph {
       this._edges.forEach((e) => {
         const nodeId = e.from;
         nodeToEdges[nodeId] = nodeToEdges[nodeId] || [];
-        nodeToEdges[nodeId].push(e);
+        nodeToEdges[nodeId].push({
+          ...e,
+          toNode: this.getNodeById(e.to)
+        });
       });
 
       this.nodeToEdges = nodeToEdges;
     }
 
     return this.nodeToEdges[node.id] || [];
+  }
+
+  getNodeById(nid){
+    return this._nodes[nid];
   }
 
 
@@ -86,6 +94,7 @@ export default class WBModelGraph {
         if( ! bin[cat] ){ bin[cat] = []; }
           bin[cat].push(in_type);
       });
+
       var table_row = [];
       cat_list.forEach(function(cat_id){
         var accumulated_types = bin[cat_id];
@@ -93,18 +102,27 @@ export default class WBModelGraph {
         accumulated_types.forEach(function(atype){
           //var tt = widgetry.type_to_span(atype, aid);
           var tt = atype.to_string();
-          cell_cache.push(tt);
+          cell_cache.push({
+            label: tt,
+            class_id: atype.class_id(),
+            class_label: atype.class_label(),
+          });
         });
-        table_row.push(cell_cache.join("\n"));
+        table_row.push(cell_cache[0]);  //just take the first for now
       });
 
       return {
         id: n.id(),
-        label: table_row.join("\n")
+        ...table_row[0]  //just take the first for now
       };
     });
 
-    return nodes;
+    const nodeHashMap = {};
+    nodes.forEach((node) => {
+      nodeHashMap[node.id] = node;
+    });
+
+    return nodeHashMap;
   }
 
   _parseEdges(graph) {

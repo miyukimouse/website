@@ -39,6 +39,9 @@ export default function getNodeFace(node, associations) {
 }
 
 export function getNodeModal(node, associations, modalContainer){
+  console.log(node);
+  console.log(associations);
+  associations.sort((a, b) => a.predicate_id < b.predicate_id);
   const modalHtml = nodeModalTemplate({
     node,
     associations
