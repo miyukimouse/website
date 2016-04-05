@@ -10,7 +10,11 @@
         {{#each associations}}
         <li>
           <span class="label label-default" style="background-color:{{color}}">{{label}}</span>
-          {{toNode.class_id}}
+          {{#if toNode.link}}
+             <a href="{{toNode.link}}">{{toNode.class_label}}</a>
+          {{else}}
+            {{toNode.class_id}}
+          {{/if}}
         </li>
         {{/each}}
         </ul>

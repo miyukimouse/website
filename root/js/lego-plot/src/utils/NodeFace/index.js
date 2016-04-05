@@ -1,5 +1,6 @@
 import nodeTemplate from "./node.handlebars";
 import nodeModalTemplate from "./nodeModal.handlebars";
+import { tag2Url } from '../shared';
 
 export function getNodeFaceInHTML(node, associations){
 
@@ -39,9 +40,21 @@ export default function getNodeFace(node, associations) {
 }
 
 export function getNodeModal(node, associations, modalContainer){
+
+  associations = associations.map((e) => {
+    return {
+      ...e,
+      toNode: {
+        ...e.toNode,
+        link: tag2Url(e.toNode)
+      }
+    }
+  });
+  associations.sort((a, b) => a.predicate_id < b.predicate_id);
+
   console.log(node);
   console.log(associations);
-  associations.sort((a, b) => a.predicate_id < b.predicate_id);
+
   const modalHtml = nodeModalTemplate({
     node,
     associations

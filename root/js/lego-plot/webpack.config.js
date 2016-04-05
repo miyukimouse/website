@@ -9,6 +9,7 @@ var productionPlugins = process.env.DEV_PORT ? [] : [
       warnings: false
   }})];
 
+
 module.exports = {
   devtool: process.env.DEV_PORT ? 'eval' : 'source-map',
   entry: [
@@ -97,6 +98,42 @@ module.exports = {
         // autoRewrite: true,
         changeOrigin: true, // changes the origin of the host header to the target URL,
                             // otherwise an Nginx landing page is the response somehow...
+        secure: false,
+      },
+      '/species/*': {
+        target: 'http://www.wormbase.org',
+        changeOrigin: true, // changes the origin of the host header to the target URL,
+        // otherwise an Nginx landing page is the response somehow...
+        secure: false,
+      },
+      '/js/*': {
+        target: 'http://www.wormbase.org',
+        changeOrigin: true, // changes the origin of the host header to the target URL,
+        // otherwise an Nginx landing page is the response somehow...
+        secure: false,
+      },
+      '/css/*': {
+        target: 'http://www.wormbase.org',
+        changeOrigin: true, // changes the origin of the host header to the target URL,
+        // otherwise an Nginx landing page is the response somehow...
+        secure: false,
+      },
+      '/img/*': {
+        target: 'http://www.wormbase.org',
+        changeOrigin: true, // changes the origin of the host header to the target URL,
+        // otherwise an Nginx landing page is the response somehow...
+        secure: false,
+      },
+      '/rest/*': {
+        target: 'http://www.wormbase.org',
+        changeOrigin: true, // changes the origin of the host header to the target URL,
+        // otherwise an Nginx landing page is the response somehow...
+        secure: false,
+      },
+      '/search/*': {
+        target: 'http://www.wormbase.org',
+        changeOrigin: true, // changes the origin of the host header to the target URL,
+        // otherwise an Nginx landing page is the response somehow...
         secure: false,
       },
     },
