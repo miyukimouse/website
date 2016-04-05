@@ -52,6 +52,11 @@ export function getNodeModal(node, associations, modalContainer){
   });
   associations.sort((a, b) => a.predicate_id < b.predicate_id);
 
+  node = {
+    ...node,
+    link: tag2Url(node)
+  }
+
   console.log(node);
   console.log(associations);
 
