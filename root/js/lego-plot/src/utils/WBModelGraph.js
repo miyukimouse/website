@@ -1,6 +1,14 @@
 import { graph as noctua_graph } from 'bbop-graph-noctua';
 import { hashify } from 'bbop-core';
 
+export const PREDICATE_IDS = {
+  OCCURS_IN:   'BFO:0000066',
+  POSITIVELY_REGULATES: 'RO:0002213',
+  PART_OF: 'BFO:0000050',
+  ENABLED_BY: 'RO:0002333'
+};
+
+
 const MAJOR_PREDICATES = new Set(["RO:0002213", "BFO:0000050"]);
 const MINOR_PREDICATES = new Set(["RO:0002233","RO:0002234","RO:0002333","RO:0002488","BFO:0000066","BFO:0000051", "BFO:0000050"]);
 
@@ -18,10 +26,12 @@ export default class WBModelGraph {
 
   getEdges(){
     //return this._edges.filter((e) => MAJOR_PREDICATES.has(e.predicate_id));
-    return this._edges.slice();  // shallow copy of the array
+    const edgeHashMap = this._edges;
+    return Object.keys(edgeHashMap).map((eid) => edgeHashMap[eid]);
   }
 
-  isMajorEdge(edge){
+  isMajorEdge(eid){
+    const edge = this.getEdgeById(eid.id || eid);
     return MAJOR_PREDICATES.has(edge.predicate_id);
   }
 
@@ -30,12 +40,12 @@ export default class WBModelGraph {
     return Object.keys(nodeHashMap).map((nid) => nodeHashMap[nid]);
   }
 
-  isMajorNode(node){
+  isMajorNode(nid){
 
     if (!this.majorNodeKeys) {
       // infer major nodes based on major predicates
       const majorNodeKeys = [];
-      this._edges.forEach((e) => {
+      this.getEdges().forEach((e) => {
         if (MAJOR_PREDICATES.has(e.predicate_id)){
           majorNodeKeys.push(e.to, e.from);
         }
@@ -43,15 +53,15 @@ export default class WBModelGraph {
       this.majorNodeKeys = new Set(majorNodeKeys);
     }
 
-    return this.majorNodeKeys.has(node.id);
+    return this.majorNodeKeys.has(nid.id || nid);
   }
 
-  getEdgesOfNode(node) {
+  getEdgesOfNode(nid) {
 
     if (!this.nodeToEdges) {
       const nodeToEdges = {};
 
-      this._edges.forEach((e) => {
+      this.getEdges().forEach((e) => {
         const nodeId = e.from;
         nodeToEdges[nodeId] = nodeToEdges[nodeId] || [];
         nodeToEdges[nodeId].push({
@@ -63,11 +73,54 @@ export default class WBModelGraph {
       this.nodeToEdges = nodeToEdges;
     }
 
-    return this.nodeToEdges[node.id] || [];
+    return this.nodeToEdges[nid.id || nid] || [];
+  }
+
+
+  getEdgesInOfNode(nid) {
+
+    if (!this._nodeToEdgesIn) {
+      const nodeToEdgesIn = {};
+
+      this.getEdges().forEach((e) => {
+        const nodeId = e.to;
+        nodeToEdgesIn[nodeId] = nodeToEdgesIn[nodeId] || [];
+        nodeToEdgesIn[nodeId].push({
+          ...e,
+          fromNode: this.getNodeById(e.from)
+        });
+      });
+
+      this._nodeToEdgesIn = nodeToEdgesIn;
+    }
+
+    return this._nodeToEdgesIn[nid.id || nid] || [];
+  }
+
+  getNodeType(nid){
+    const edgeInToType = {};
+    [
+      [PREDICATE_IDS.OCCURS_IN, 'Cellular_component'],
+      [PREDICATE_IDS.POSITIVELY_REGULATES, 'Molecular_function'],
+      [PREDICATE_IDS.PART_OF, 'Biological_process']
+    ].forEach(([predicate_id, type]) => edgeInToType[predicate_id] = type)
+
+    if (nid) {
+      const edgesIn = this.getEdgesInOfNode(nid);
+      console.log(edgesIn);
+      console.log(edgeInToType);
+      const predicate_id = edgesIn.length > 0 ? edgesIn[0].predicate_id : null;
+      const type = predicate_id ? edgeInToType[predicate_id] : 'Molecular_function';  // assume root node is 'Molecular_function'
+      return type;
+    }
   }
 
   getNodeById(nid){
     return this._nodes[nid];
+  }
+
+  getEdgeById(eid){
+    return this._edges[eid];
   }
 
 
@@ -140,7 +193,12 @@ export default class WBModelGraph {
       };
     });
 
-    return edges;
+    const edgeHashMap = {};
+    edges.forEach((edge) => {
+      edgeHashMap[edge.id] = edge;
+    });
+
+    return edgeHashMap;
   }
 
   _getEdgeLabel(predicate_id) {

@@ -27,6 +27,9 @@ export default class WBModelGraphView {
     return nodes.map((v) => {
       const label = this.prettyLabel(v.label);
       const title = v.label;
+      const type = this._wbModelGraph.getNodeType(v.id);
+      console.log(`type: ${type}`);
+      const color = this.getNodeColor(type);
       const sharedConfig = {
         ...v,
         label,
@@ -40,6 +43,7 @@ export default class WBModelGraphView {
         //  size: 30,
         },
         //mass:10
+        color: color
       }
 
       const associations = this.decorateEdges(this._wbModelGraph.getEdgesOfNode(v), mode);
@@ -49,12 +53,13 @@ export default class WBModelGraphView {
           ...sharedConfig,
        //   shape: 'circle',
           shadow: true,
-          image: getNodeFace(v, associations),
-          shape: 'image',
-          shapeProperties: {
-            useImageSize: true,
-            useBorderWithImage: true
-          }
+          shape: 'circle',
+          // image: getNodeFace(v, associations),
+          // shape: 'image',
+          // shapeProperties: {
+          //   useImageSize: true,
+          //   useBorderWithImage: true
+          // }
         };
       } else {
         return {
@@ -230,4 +235,14 @@ export default class WBModelGraphView {
     }
     return this._edgeToColor[edge.predicate_id] || '#777';
   }
+
+  getNodeColor(node_type){
+    const nodeColors = {
+      'Molecular_function': '#d95f02',
+      'Biological_process': '#7570b3',
+      'Cellular_component': '#33a02c'
+    };
+    return nodeColors[node_type];
+  }
+
 }
