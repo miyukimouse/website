@@ -102,13 +102,12 @@ export default class WBModelGraph {
     [
       [PREDICATE_IDS.OCCURS_IN, 'Cellular_component'],
       [PREDICATE_IDS.POSITIVELY_REGULATES, 'Molecular_function'],
-      [PREDICATE_IDS.PART_OF, 'Biological_process']
+      [PREDICATE_IDS.PART_OF, 'Biological_process'],
+      [PREDICATE_IDS.ENABLED_BY, 'Other_entity']
     ].forEach(([predicate_id, type]) => edgeInToType[predicate_id] = type)
 
     if (nid) {
       const edgesIn = this.getEdgesInOfNode(nid);
-      console.log(edgesIn);
-      console.log(edgeInToType);
       const predicate_id = edgesIn.length > 0 ? edgesIn[0].predicate_id : null;
       const type = predicate_id ? edgeInToType[predicate_id] : 'Molecular_function';  // assume root node is 'Molecular_function'
       return type;

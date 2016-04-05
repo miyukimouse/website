@@ -2,6 +2,17 @@ import vis from 'vis';
 import WBModelGraph from './WBModelGraph';
 import getNodeFace, { getNodeModal } from './NodeFace';
 
+const COLORS = {
+  LIGHT_BLUE: '#A6CEE3',
+  DARK_BLUE: '#1F78B4',
+  LIGHT_GREEN: '#B2DF8A',
+  DARK_GREEN: '#33A02C',
+  LIGHT_ORANGE: '#FDBF6F',
+  DARK_ORANGE: '#FF7F00',
+  LIGHT_PURPLE: '#CAB2D6',
+  DARK_PURPLE: '#6A3D9A',
+}
+
 export default class WBModelGraphView {
   constructor(graphJSON, container) {
     this._wbModelGraph = new WBModelGraph(graphJSON);
@@ -28,8 +39,8 @@ export default class WBModelGraphView {
       const label = this.prettyLabel(v.label);
       const title = v.label;
       const type = this._wbModelGraph.getNodeType(v.id);
-      console.log(`type: ${type}`);
       const color = this.getNodeColor(type);
+
       const sharedConfig = {
         ...v,
         label,
@@ -96,7 +107,7 @@ export default class WBModelGraphView {
         return {
           ...e,
           ...shared,
-          color: mode === 'simple' ? this.getEdgeColor(e) : null,
+          color: this.getEdgeColor(e),
           //physics: false,
           physics: mode !== 'simple',
           hidden: mode === 'simple'
@@ -160,7 +171,6 @@ export default class WBModelGraphView {
     });
 
     network.on('selectNode', (params) => {
-      console.log(params);
       const target = params.event.target;
       const modalContainer = $(target).closest('.lego-graph-wrapper').find('.lego-modal-container');
       const node = this._wbModelGraph.getNodeById(params.nodes[0]);
@@ -227,10 +237,10 @@ export default class WBModelGraphView {
   getEdgeColor(edge){
     if (!this._edgeToColor){
       this._edgeToColor = {
-        'RO:0002213': '#d95f02',
-        'BFO:0000050': '#7570b3',
-        'BFO:0000066': '#33a02c',
-        'RO:0002333': '#1f78b4'
+        'RO:0002213':  COLORS.DARK_BLUE,
+        'BFO:0000050': COLORS.DARK_GREEN,
+        'BFO:0000066': COLORS.DARK_PURPLE,
+        'RO:0002333': COLORS.DARK_ORANGE
       }
     }
     return this._edgeToColor[edge.predicate_id] || '#777';
@@ -238,9 +248,10 @@ export default class WBModelGraphView {
 
   getNodeColor(node_type){
     const nodeColors = {
-      'Molecular_function': '#d95f02',
-      'Biological_process': '#7570b3',
-      'Cellular_component': '#33a02c'
+      'Molecular_function': COLORS.LIGHT_BLUE,
+      'Biological_process': COLORS.LIGHT_GREEN,
+      'Cellular_component': COLORS.LIGHT_PURPLE,
+      'Other_entity': COLORS.LIGHT_ORANGE
     };
     return nodeColors[node_type];
   }
