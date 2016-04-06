@@ -58,9 +58,6 @@ export function getNodeModal(node, associations, modalContainer){
     link: tag2Url(node)
   }
 
-  console.log(node);
-  console.log(associations);
-
   const modalHtml = nodeModalTemplate({
     node,
     associations

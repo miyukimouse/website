@@ -250,6 +250,7 @@ export default class WBModelGraphView {
   getEdgeColor(edge){
     if (!this._edgeToColor){
       this._edgeToColor = {
+        'RO:0002212':  COLORS.DARK_BLUE,
         'RO:0002213':  COLORS.DARK_BLUE,
         'BFO:0000050': COLORS.DARK_GREEN,
         'BFO:0000066': COLORS.DARK_PURPLE,

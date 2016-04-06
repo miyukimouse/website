@@ -4,12 +4,44 @@ import { hashify } from 'bbop-core';
 export const PREDICATE_IDS = {
   OCCURS_IN:   'BFO:0000066',
   POSITIVELY_REGULATES: 'RO:0002213',
+  NEGATIVELY_REGULATES: 'RO:0002212',
   PART_OF: 'BFO:0000050',
   ENABLED_BY: 'RO:0002333'
 };
 
+const DEFAULT_PROPERTIES = [
+  {
+    "type": "property",
+    "id": "BFO:0000066",
+    "label": "occurs in"
+  },
+  {
+    "type": "property",
+    "id": "RO:0002212",
+    "label": "negatively_regulates"
+  },
+  {
+    "type": "property",
+    "id": "RO:0002213",
+    "label": "positively_regulates"
+  },
+  {
+    "type": "property",
+    "id": "RO:0002333",
+    "label": "enabled_by"
+  },
+  {
+    "type": "property",
+    "id": "BFO:0000050",
+    "label": "part_of"
+  }
+];
 
-const MAJOR_PREDICATES = new Set(["RO:0002213", "BFO:0000050"]);
+
+const MAJOR_PREDICATES = new Set([
+  PREDICATE_IDS.POSITIVELY_REGULATES,
+  PREDICATE_IDS.NEGATIVELY_REGULATES,
+  PREDICATE_IDS.PART_OF]);
 const MINOR_PREDICATES = new Set(["RO:0002233","RO:0002234","RO:0002333","RO:0002488","BFO:0000066","BFO:0000051", "BFO:0000050"]);
 
 export default class WBModelGraph {
@@ -102,6 +134,7 @@ export default class WBModelGraph {
     [
       [PREDICATE_IDS.OCCURS_IN, 'Cellular_component'],
       [PREDICATE_IDS.POSITIVELY_REGULATES, 'Molecular_function'],
+      [PREDICATE_IDS.NEGATIVELY_REGULATES, 'Molecular_function'],
       [PREDICATE_IDS.PART_OF, 'Biological_process'],
       [PREDICATE_IDS.ENABLED_BY, 'Other_entity']
     ].forEach(([predicate_id, type]) => edgeInToType[predicate_id] = type)
@@ -182,7 +215,7 @@ export default class WBModelGraph {
     const edges = this._noctuaGraph.all_edges().map((e) => {
 
       const predicate_id = e.predicate_id();
-      const edge_label = this._getEdgeLabel(predicate_id);
+      const edge_label = this._getEdgeLabel(predicate_id) || predicate_id;
       return {
         id: e.id(),
         predicate_id: predicate_id,
@@ -204,7 +237,7 @@ export default class WBModelGraph {
     if (!this._predicateMap) {
       // initialize if not existent
       this._predicateMap = {};
-      this._raw.properties.forEach((predicate) => {
+      (this._raw.properties || DEFAULT_PROPERTIES).forEach((predicate) => {
         this._predicateMap[predicate.id] = (predicate.label || '').replace(/_/, ' ');
       });
     }

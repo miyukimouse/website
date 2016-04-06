@@ -106,6 +106,7 @@ function get_model(gp_id, callback){
         var muri = 'http://model.geneontology.org/' + mid.substr(-16);
         aunits_found.push(muri);
       });
+      // aunits_found = ["http://model.geneontology.org/56cbaef000000079"];
 
       // For the sake of ease, we'll create a new manager.
       var model_engine = new node_engine(golr_response);
