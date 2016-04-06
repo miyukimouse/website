@@ -6,7 +6,8 @@
         <h4 class="modal-title"><a href="{{node.link}}">{{ node.label }}</a></h4>
       </div>
       <div class="modal-body">
-        <ul>
+        <div class="modal-body--overview"></div>
+        <ul class="modal-body--associations">
         {{#each associations}}
         <li>
           <span class="label label-default" style="background-color:{{color}}">{{label}}</span>

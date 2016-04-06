@@ -1,0 +1,12 @@
+<div class="modal-body--overview">
+  <ul>
+  {{#each overview}}
+  <li>
+    <strong>
+      <span>{{@key}}:</span>
+    </strong>
+    {{this.data}}
+  </li>
+  {{/each}}
+  </ul>
+</div>

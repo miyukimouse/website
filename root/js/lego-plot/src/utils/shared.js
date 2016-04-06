@@ -38,3 +38,37 @@ function _getWormBaseTag(tag) {
     wbClass
   }
 }
+
+export function parseNodeOverview(node, json) {
+  const {wbClass} = _getWormBaseTag(node);
+  if (wbClass === 'go_term') {
+    return (new GONodeOverview(node, json)).getBlurb();
+  }
+}
+
+class NodeOverview {
+  constructor(node, json) {
+    this._node = node;
+    this._json = json;
+  }
+
+  getBlurb() {
+    return this._json.fields;
+  }
+}
+
+class GONodeOverview extends NodeOverview {
+
+  getBlurb(){
+    const {
+      definition,
+      type,
+    } = super.getBlurb();
+
+    return {
+      definition,
+      type
+    };
+  }
+
+}

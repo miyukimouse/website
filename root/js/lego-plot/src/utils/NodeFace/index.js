@@ -1,5 +1,6 @@
 import nodeTemplate from "./node.handlebars";
 import nodeModalTemplate from "./nodeModal.handlebars";
+import nodeModalOverviewTemplate from './nodeModalOverview.handlebars';
 import { tag2Url } from '../shared';
 
 export function getNodeFaceInHTML(node, associations){
@@ -65,4 +66,10 @@ export function getNodeModal(node, associations, modalContainer){
     associations
   });
   return modalHtml;
+}
+
+export function getNodeModalOverview(overview) {
+  return nodeModalOverviewTemplate({
+    overview: overview
+  });
 }
