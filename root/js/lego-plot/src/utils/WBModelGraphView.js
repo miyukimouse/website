@@ -1,6 +1,7 @@
 import vis from 'vis';
 import WBModelGraph from './WBModelGraph';
 import getNodeFace, { getNodeModal } from './NodeFace';
+import { tag2Rest } from './shared';
 
 const COLORS = {
   LIGHT_BLUE: '#A6CEE3',
@@ -176,6 +177,18 @@ export default class WBModelGraphView {
       const node = this._wbModelGraph.getNodeById(params.nodes[0]);
       const associations =  this.decorateEdges(this._wbModelGraph.getEdgesOfNode(node));
       modalContainer.html(getNodeModal(node, associations, '.lego-modal-container'));
+
+      this._currentNodeDataXHR = $.ajax({
+        url: tag2Rest(node, 'overview'),
+        success: (data, status, xhr) => {
+          if (xhr === this._currentNodeDataXHR) {
+            // prevents results from delayed ajax respnse get injected into the modal
+            console.log(data);
+          }
+        }
+      });
+      console.log(this._currentNodeDataXHR);
+
 
       const modal = modalContainer.find('.node-modal').first();
       modal.modal();
