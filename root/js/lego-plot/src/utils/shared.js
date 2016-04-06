@@ -32,6 +32,7 @@ function _getWormBaseTag(tag) {
   } else if (prefix === 'WB'){
     const idMatched = suffix.match(/WB(\w+?)\d+/);
     [wbId, wbClass] = idMatched ? idMatched : [suffix, 'all'];
+    wbClass =  wbClass.toLowerCase();
   }
   return {
     wbId,
@@ -41,8 +42,13 @@ function _getWormBaseTag(tag) {
 
 export function parseNodeOverview(node, json) {
   const {wbClass} = _getWormBaseTag(node);
+
   if (wbClass === 'go_term') {
     return (new GONodeOverview(node, json)).getBlurb();
+  } else if (wbClass === 'anatomy_term') {
+    return (new AnatomyNodeOverview(node, json)).getBlurb();
+  } else if (wbClass === 'gene') {
+    return (new GeneNodeOverview(node, json)).getBlurb();
   }
 }
 
@@ -55,6 +61,21 @@ class NodeOverview {
   getBlurb() {
     return this._json.fields;
   }
+
+  _cleanBlurb(obj) {
+    const newObj = {};
+    Object.keys(obj).forEach((key) => {
+      const hasData = obj[key] && obj[key].data;
+
+      // remove empty fields
+      if (hasData){
+        const newKey = key.replace(/_+/g, ' '); // remove underscore in field names
+        newObj[newKey] = obj[key];
+      }
+    });
+    return newObj;
+  }
+
 }
 
 class GONodeOverview extends NodeOverview {
@@ -62,13 +83,48 @@ class GONodeOverview extends NodeOverview {
   getBlurb(){
     const {
       definition,
-      type,
+      type
     } = super.getBlurb();
 
-    return {
+    return this._cleanBlurb({
       definition,
       type
-    };
+    });
+  }
+
+}
+
+
+class AnatomyNodeOverview extends NodeOverview {
+
+  getBlurb(){
+    const {
+      definition
+    } = super.getBlurb();
+
+    return this._cleanBlurb({
+      definition
+    });
+  }
+
+}
+
+class GeneNodeOverview extends NodeOverview {
+
+  getBlurb(){
+    const {
+      concise_description
+    } = super.getBlurb();
+
+    return this._cleanBlurb({
+      concise_description: {
+        data: this._getFieldData(concise_description).text
+      }
+    });
+  }
+
+  _getFieldData(field){
+    return (field && field.data) || {};
   }
 
 }

@@ -184,15 +184,12 @@ export default class WBModelGraphView {
         success: (data, status, xhr) => {
           if (xhr === this._currentNodeDataXHR) {
             // prevents results from delayed ajax respnse get injected into the modal
-            console.log(data);
             const context = parseNodeOverview(node, data);
             const overviewHtml = getNodeModalOverview(context);
-            console.log(overviewHtml);
             modal.find('.modal-body--overview').html(overviewHtml);
           }
         }
       });
-      console.log(this._currentNodeDataXHR);
 
       modal.modal();
       // unselect nodes on model hide, so node can be selected again
