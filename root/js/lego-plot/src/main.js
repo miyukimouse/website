@@ -1,8 +1,8 @@
+import 'babel-polyfill';
 import { GOClient, WBModelGraphView } from './utils';
 import $ from 'jquery';
 import '../node_modules/bootstrap/dist/js/bootstrap.js';
 import './main.less';
-import 'babel-polyfill';
 import page from './main.html';
 
 
