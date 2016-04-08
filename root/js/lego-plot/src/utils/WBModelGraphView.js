@@ -125,7 +125,7 @@ export default class WBModelGraphView {
     var options = {
       physics: {
         enabled: true,
-        stabilization: false,
+        stabilization: true,
         hierarchicalRepulsion: {
           // centralGravity: 0.0,
           // springLength: 100,
