@@ -60,8 +60,9 @@ export class GeneModel {
 
   getAlignedCDSs(){
     return this.getCDSs().then((cdss) => {
-      return cdss.map((e) => this.getAlignmentCoords(e));
-    })
+      const coordsPromises = cdss.map((e) => this.getAlignmentCoords(e));
+      return Promise.all(coordsPromises);
+    });
   }
 
   getDomains() {
@@ -84,7 +85,7 @@ export class GeneModel {
         this._splicedCoordConverter =  this._createSplicedCoordConverter(data);
       }
       return {
-        ...coords,
+//        ...coords,
         start: this._splicedCoordConverter.convert(coords.start),
         end: this._splicedCoordConverter.convert(coords.end - 1) + 1 // end coord here is considered outside side of CDS, would have getting undefined
       }
@@ -93,19 +94,19 @@ export class GeneModel {
 
   getAlignmentCoords(coords) {
     return this.getAlignedDNA().then((data) => {
+
       if (!this._alignmentCoordConverter){
-        this._alignmentCoordConverter = this._createAlignedCoordConverter(data.source.align_seq);
+        const fakeStopCodon = ' '.repeat(3); // to correct the cDNA sequence to match the model
+        this._alignmentCoordConverter = this._createAlignedCoordConverter(data.source.align_seq + fakeStopCodon);
       }
     })
     .then(() => {
-      console.log(coords);
       return this.getRelativeCoords(coords);
     })
     .then((relativeCoords) => {
-      console.log('relativeCoords:');
       console.log(relativeCoords);
       return {
-        ...coords,
+//        ...coords,
         start: this._alignmentCoordConverter.convert(relativeCoords.start),
         end: this._alignmentCoordConverter.convert(relativeCoords.end)
       };
@@ -164,6 +165,8 @@ export class GeneModel {
       }
     }
     _coordsMap.push(alignedSeq.length);  // for end coordinate
+    console.log(alignedSeq);
+    console.log(_coordsMap);
     return {
       convert: (coord) => _coordsMap[coord]
     };
@@ -171,25 +174,24 @@ export class GeneModel {
 
 // used to convert to coordinates relative to spliced transcript
   _createSplicedCoordConverter(cdss) {
-    let _prev = 0;
-    const _table = [];
+    cdss = cdss.slice(0).sort((a, b) => a.start - b.start);
+    const _prefixLengths = [0];
 
-    if (cdss[0].strand < 0) {
-      // negative strand
-      cdss = cdss.slice(0).reverse();
-    }
-    cdss.forEach((e, index) => {
-      const spliceLength = index > 0 ? e.start - cdss[index-1].end : 0;
-      _prev = _prev + spliceLength;
-      _table.push(_prev);
-    });
+    cdss.reduce((prev, segment, index) => {
+      const segmentLength = segment.end - segment.start;
+      const prefixLength = prev + segmentLength;
+      _prefixLengths.push(prefixLength);
+
+      return prefixLength;
+    }, _prefixLengths[0]);
+    console.log(_prefixLengths);
 
     const _getSplicedCoord = (coord) => {
-      const index = cdss.findIndex((e) => coord >= e.start && coord < e.end);
+      const index = cdss.findIndex((segment) => coord >= segment.start && coord < segment.end);
       if (index || index === 0) {
         // coord occurs on one of the CDSs
         const offset = coord - cdss[index].start; // offset to the start of the CDS
-        return _table[index] + offset;
+        return _prefixLengths[index] + offset;
       }
     }
     return {

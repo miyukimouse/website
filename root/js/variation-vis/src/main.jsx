@@ -263,8 +263,10 @@ class App extends React.Component {
       () => this._setupZoomPan());
     });
     model.getAlignedCDSs().then((cdss) => {
+      console.log('alignedCoords:');
+      console.log(cdss);
       this._setTrackState({
-        data: [cdss[0]]
+        data: cdss
       });
     });
   }
