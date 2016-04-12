@@ -263,11 +263,9 @@ class App extends React.Component {
       () => this._setupZoomPan());
     });
     model.getAlignedCDSs().then((cdss) => {
-      console.log('alignedCoords:');
-      console.log(cdss);
       this._setTrackState({
         data: cdss
-      });
+      }, dnaTrackIndex);
     });
   }
 
@@ -282,7 +280,7 @@ class App extends React.Component {
       const newTracks = prevState.tracks.slice(0, index)
         .concat(newTrackData)
         .concat(prevState.tracks.slice(index+1));
-      console.log(newTracks);
+
       return {
         tracks: newTracks
       }
@@ -352,6 +350,8 @@ class App extends React.Component {
       border:"1px solid black",
     }
 
+    console.log(this.state.tracks);
+
     return (
       <div className="bootstrap-style">
         <div style={{margin: "20px", height: 30}}>
@@ -376,7 +376,7 @@ class App extends React.Component {
                 //tip="one track"
                 onTooltipShow={this.showTooltip}
                 onTooltipHide={this.hideTooltip}
-                sequence={sequence1}
+                sequence={trackData.sequence}
                 data={trackData.data}
                 colorScheme={colorSchemeA}
                 width={width}/> : null;

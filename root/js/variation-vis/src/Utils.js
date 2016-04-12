@@ -93,20 +93,17 @@ export class GeneModel {
   }
 
   getAlignmentCoords(coords) {
-    console.log('getAlignmentCoords called')
+
     return this.getAlignedDNA().then((data) => {
-      console.log('got aligned DNA');
       if (!this._alignmentCoordConverter){
         const fakeStopCodon = ' '.repeat(3); // to correct the cDNA sequence to match the model
         this._alignmentCoordConverter = this._createAlignedCoordConverter(data.source.align_seq + fakeStopCodon);
       }
     })
     .then(() => {
-      console.log('got converter');
       return this.getRelativeCoords(coords);
     })
     .then((relativeCoords) => {
-      console.log(relativeCoords);
       return {
 //        ...coords,
         start: this._alignmentCoordConverter.convert(relativeCoords.start),
@@ -169,8 +166,7 @@ export class GeneModel {
       }
     }
     _coordsMap.push(alignedSeq.length);  // for end coordinate
-    console.log(alignedSeq);
-    console.log(_coordsMap);
+
     return {
       convert: (coord) => _coordsMap[coord]
     };
@@ -188,7 +184,6 @@ export class GeneModel {
 
       return prefixLength;
     }, _prefixLengths[0]);
-    console.log(_prefixLengths);
 
     const _getSplicedCoord = (coord) => {
       const index = cdss.findIndex((segment) => coord >= segment.start && coord < segment.end);
