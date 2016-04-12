@@ -93,14 +93,16 @@ export class GeneModel {
   }
 
   getAlignmentCoords(coords) {
+    console.log('getAlignmentCoords called')
     return this.getAlignedDNA().then((data) => {
-
+      console.log('got aligned DNA');
       if (!this._alignmentCoordConverter){
         const fakeStopCodon = ' '.repeat(3); // to correct the cDNA sequence to match the model
         this._alignmentCoordConverter = this._createAlignedCoordConverter(data.source.align_seq + fakeStopCodon);
       }
     })
     .then(() => {
+      console.log('got converter');
       return this.getRelativeCoords(coords);
     })
     .then((relativeCoords) => {
@@ -114,26 +116,28 @@ export class GeneModel {
 
   }
 
-
   _getOrFetch(name, url){
-    const dataPromise = new Promise((resolve, reject) => {
-      if (this[name]) {
-        resolve(this[name]);
-      } else {
+    if (!this._raw) {
+      // place to store raw results from previous requests
+      this._raw = {};
+    }
+
+    if (!this._raw[name]) {
+      this._raw[name] = new Promise((resolve, reject) => {
         console.log(url);
         jquery.ajax(url, {
         //  contentType: 'application/json',
           success: (result) => {
-            this[name] = result;
             resolve(result);
           },
           error: (error) => {
             reject(error);
           }
         });
-      }
-    });
-    return dataPromise;
+      });
+    }
+
+    return this._raw[name];
   }
 
 
