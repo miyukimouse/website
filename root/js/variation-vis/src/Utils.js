@@ -84,11 +84,17 @@ export class GeneModel {
       if (!this._splicedCoordConverter){
         this._splicedCoordConverter =  this._createSplicedCoordConverter(data);
       }
-      return {
+
+      const start = this._splicedCoordConverter.convert(coords.start);
+      const end = this._splicedCoordConverter.convert(coords.end - 1);  // end coord here is considered outside side of CDS, would have getting undefined
+      return coords.strand > 0 ? {
 //        ...coords,
-        start: this._splicedCoordConverter.convert(coords.start),
-        end: this._splicedCoordConverter.convert(coords.end - 1) + 1 // end coord here is considered outside side of CDS, would have getting undefined
-      }
+        start: start,
+        end: end + 1,  // 1-based end
+      } : {
+        start: end,
+        end: start + 1  // 1-based end
+      };
     });
   }
 
@@ -174,9 +180,8 @@ export class GeneModel {
 
 // used to convert to coordinates relative to spliced transcript
   _createSplicedCoordConverter(cdss) {
-    cdss = cdss.slice(0).sort((a, b) => a.start - b.start);
-    const _prefixLengths = [0];
 
+    const _prefixLengths = [0];
     cdss.reduce((prev, segment, index) => {
       const segmentLength = segment.end - segment.start;
       const prefixLength = prev + segmentLength;
@@ -185,14 +190,18 @@ export class GeneModel {
       return prefixLength;
     }, _prefixLengths[0]);
 
+    const strand = cdss[0].strand;
+
     const _getSplicedCoord = (coord) => {
       const index = cdss.findIndex((segment) => coord >= segment.start && coord < segment.end);
       if (index || index === 0) {
         // coord occurs on one of the CDSs
-        const offset = coord - cdss[index].start; // offset to the start of the CDS
+        // offset to the start of the CDS (start in the biological sense)
+        const offset = strand > 0 ? coord - cdss[index].start : cdss[index].end - coord - 1;
         return _prefixLengths[index] + offset;
       }
     }
+
     return {
       convert: _getSplicedCoord
     };
