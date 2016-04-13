@@ -4,7 +4,7 @@ import { render } from 'react-dom';
 import Track from './Track.jsx';
 //import Button from './components/Button.jsx';
 import Tooltip from './components/Tooltip.jsx';
-import ColorScheme from './DataDecorator.js';
+import ColorScheme, { COLORS } from './DataDecorator.js';
 import { Button, Popover, Overlay } from 'react-bootstrap';
 import { ButtonGroup, ButtonToolbar, Glyphicon } from 'react-bootstrap';
 import svgPanZoom from 'svg-pan-zoom';
@@ -336,7 +336,10 @@ class App extends React.Component {
       + 'LFDTSAGWMPNEYLEKVRVLYDYDAAKEDELTLRENAIVYVLKKNDDDWYEGVLDGVTGLFPGNYVVPV*';
 
 
-    const colorSchemeA = new ColorScheme();
+    const colorSchemeA = new ColorScheme((dat, index) => index % 2, {
+      0: COLORS.LIGHT_TEAL,
+      1: COLORS.PURPLE
+    });
     //const colorSchemeB = new ColorScheme()
 
     const width = 100;  // hard code this for now
