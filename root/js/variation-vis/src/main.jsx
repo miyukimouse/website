@@ -12,7 +12,7 @@ import svgPanZoom from 'svg-pan-zoom';
 import { GeneModel } from './Utils.js';
 require('./main.less');
 
-const DEFAULT_VISIBLE_WIDTH = 100;
+const DEFAULT_VISIBLE_WIDTH = 1000;
 
 class App extends React.Component {
 
@@ -82,6 +82,7 @@ class App extends React.Component {
 
   getViewBox = () => {
     const x = this._getXMin();
+    // return
     return [x, 0, DEFAULT_VISIBLE_WIDTH, 120].join(' ');
   }
 
@@ -169,7 +170,7 @@ class App extends React.Component {
   }
 
   _setupZoomPan() {
-    const svgElement = svgPanZoom('#svg-browser', {
+    const svgElement = svgPanZoom('#svg-browser-svg', {
     //  viewportSelector: '.svg-pan-zoom_viewport'
     panEnabled: true,
     separateZoomsEnabled: true,
@@ -200,7 +201,7 @@ class App extends React.Component {
       this.hideTooltip();
       this._zoomPanTimeout()
     }
-    , controlIconsEnabled: true
+    //, controlIconsEnabled: true
     //, zoomEnabled: false
     // , dblClickZoomEnabled: true
     , mouseWheelZoomEnabled: true
@@ -208,7 +209,7 @@ class App extends React.Component {
     , zoomScaleSensitivity: 0.2
     // , minZoom: 0.5
     , maxZoom: Infinity
-    //, fit: false
+    , fit: false
     , contain: false
     , center: false
     // , refreshRate: 'auto'
@@ -216,10 +217,14 @@ class App extends React.Component {
     // , onZoom: function(){}
     // , beforePan: function(){}
     // , onPan: function(){}
-    // , eventsListenerElement: null
+    , eventsListenerElement: document.querySelector('#svg-browser')
     });
-    $('#svg-browser').css({width: '100%', height:'100%'})
-    svgElement.resize()
+    $('#svg-browser-svg').css({
+     width: '100%',
+    height:'100%'
+    })
+    //svgElement
+    //svgElement.resize()
 //svgElement.setAttribute('width', 500)
 
     this.setState({
@@ -342,7 +347,7 @@ class App extends React.Component {
     });
     //const colorSchemeB = new ColorScheme()
 
-    const width = 100;  // hard code this for now
+    const width = DEFAULT_VISIBLE_WIDTH;  // hard code this for now
 
     const containerStyle = {
       // overflowX: 'scroll',
@@ -354,6 +359,7 @@ class App extends React.Component {
     }
 
     console.log(this.state.tracks);
+    console.log(this.getViewBox());
 
     return (
       <div className="bootstrap-style">
@@ -371,7 +377,13 @@ class App extends React.Component {
         <svg id="svg-browser" className={this.state.center}
           onWheel={this.handlePan}
           viewBox={this.getViewBox()}
-          preserveAspectRatio="none meet">
+          height="100%"
+          width="100%"
+          preserveAspectRatio="none">
+          <svg id="svg-browser-svg"
+          x={0} y={0}
+          //preserveAspectRatio="meet xMinYMin"
+          >
           {
             this.state.tracks.map((trackData, index) => {
               return trackData && trackData.sequence ? <Track index={index}
@@ -385,6 +397,7 @@ class App extends React.Component {
                 width={width}/> : null;
             })
           }
+          </svg>
         </svg>
         { this.state.tooltip
           ? <Tooltip {...this.state.tooltip}/>
