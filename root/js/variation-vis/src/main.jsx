@@ -363,6 +363,25 @@ class App extends React.Component {
 
     return (
       <div className="bootstrap-style">
+      {/*
+        <svg width="250" height="250" viewBox="0 0 250 250" enable-background="new 0 0 250 250">
+          <defs>
+            <filter id="demo2">
+              <feGaussianBlur stdDeviation="5" result="blur2" />
+              <feSpecularLighting result="spec2" in="blur2" specularConstant="1.4" specularExponent="13" lighting-color="#cccccc">
+                  <feDistantLight azimuth="25" elevation="40" />
+              </feSpecularLighting>
+              <feComposite in="SourceGraphic" in2="spec2" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" />
+          </filter>
+          </defs>
+          <desc>Red apple with brown stem and feDistantLight lighting source filter applied.</desc>
+          <g class="apple" filter="url(#demo2)">
+            <path fill="none" stroke="#59351C" strokeWidth="8" strokeLinecap="round" d="M124.4 52.3c0 0-10.2-18.7 7.7-45.3" />
+            <path fill="#ED6E46" stroke="#ED6E46" strokeWidth="6" strokeLinecap="round" stroke-linejoin="round" d="M218.6 144.3c-5.3 57.6-37.5 101.7-71.7 98.5 -7.2-0.7-13.9-3.4-19.9-7.7 -5.1 3.7-10.8 6-16.9 7 -34 5.2-68.6-37-77.3-94.2S44.5 40.2 78.5 35c15.9-2.4 31.8 5.5 45.3 20.3 12.2-14.5 27.1-22.5 42.5-21.1C200.5 37.4 223.9 86.7 218.6 144.3z" />
+          </g>
+        </svg>
+      */}
+
         <div style={{margin: "20px", height: 30}}>
           <ButtonToolbar>
             <ButtonGroup>
@@ -384,6 +403,15 @@ class App extends React.Component {
           x={0} y={0}
           //preserveAspectRatio="meet xMinYMin"
           >
+    <defs>
+      <filter id="demo2">
+        <feGaussianBlur stdDeviation={2 / (this.context.zoomFactor * this.context.zoomFactor || 1)} result="blur2" />
+          <feSpecularLighting result="spec2" in="blur2" specularConstant="1.4" specularExponent="13" lightingColor="#eeeeee">
+          <feDistantLight azimuth="270" elevation="20" />
+        </feSpecularLighting>
+        <feComposite in="SourceGraphic" in2="spec2" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" />
+    </filter>
+    </defs>
           {
             this.state.tracks.map((trackData, index) => {
               return trackData && trackData.sequence ? <Track index={index}

@@ -94,20 +94,23 @@ export default class Track extends React.Component {
 //    console.log(this);
     return (
       <g className="track">
+        <g filter="url(#demo2)">
         <rect
           x="0"
           y={this.getVerticalPosition()}
           width={this.props.width} height={this.props.height} fillOpacity="0.5"/>
-
         {
           this.renderData()
         }
+        </g>
+        <g>
         {
           this.renderContent()
         }
         {
           this.state.tooltip ? <Tooltip {...this.state.tooltip}/> : null
         }
+        </g>
       </g>
     );
   }
