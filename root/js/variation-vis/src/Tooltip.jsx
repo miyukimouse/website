@@ -18,8 +18,6 @@ export default class Tooltip extends React.Component {
 
   static contextTypes = {
     zoomFactor: React.PropTypes.number,
-    xMin: React.PropTypes.number,
-    center: React.PropTypes.number
   }
 
   getCoord = (offsets) => {

@@ -12,16 +12,20 @@ import svgPanZoom from 'svg-pan-zoom';
 import { GeneModel } from './Utils.js';
 require('./main.less');
 
-const DEFAULT_VISIBLE_WIDTH = 1000;
+const DEFAULT_SVG_INTERNAL_WIDTH = 100;
 
 class App extends React.Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      center: DEFAULT_VISIBLE_WIDTH/2,
+      //lastMoveTime: Number.NEGATIVE_INFINITY,
+
+      // zoomPan scale and position
       zoomFactor: 1,
-      lastMoveTime: Number.NEGATIVE_INFINITY,
+      xMin: 0,  // visible region of svg by internal coordinate
+      xMax: DEFAULT_SVG_INTERNAL_WIDTH,
+      fullWidth: DEFAULT_SVG_INTERNAL_WIDTH,
 
       // tooltips
       tooltip: null,
@@ -39,8 +43,8 @@ class App extends React.Component {
   static childContextTypes = {
     zoomFactor: React.PropTypes.number,
     viewWidth: React.PropTypes.number,
-    xMin: React.PropTypes.number,
-    center: React.PropTypes.number,
+    getXMin: React.PropTypes.func,
+    getXMax: React.PropTypes.func,
     isZoomPanOccuring: React.PropTypes.bool,
   }
 
@@ -48,8 +52,8 @@ class App extends React.Component {
     return {
       zoomFactor: this.state.zoomFactor,
       viewWidth: 500,
-      xMin: this._getXMin(),
-      center: this.state.center,
+      getXMin: this._getXMin,
+      getXMax: this._getXMax,
       isZoomPanOccuring: this.state.isZoomPanOccuring
     }
   }
@@ -71,19 +75,9 @@ class App extends React.Component {
     }
   }
 
-  _getVisibleWidth = () => {
-    return DEFAULT_VISIBLE_WIDTH;
-  }
-
-  _getXMin = () => {
-    return Math.floor(this.state.center - this._getVisibleWidth()/2);
-  }
-
-
   getViewBox = () => {
-    const x = this._getXMin();
-    // return
-    return [x, 0, DEFAULT_VISIBLE_WIDTH, 120].join(' ');
+    const {fullWidth} = this.state;
+    return [0, 0, fullWidth, 120].join(' ');
   }
 
 
@@ -183,22 +177,14 @@ class App extends React.Component {
     beforePan: () => {
       return {x: true, y: false};
     },
-    onZoom: (zooms) => {
+    onZoom: () => {
       this.hideTooltip();
-
-      this.setState((prevState) => {
-        const newZoomFactor = zooms.x;
-        const newCenter = false ? this.svgX(event.target.clientX) : this.state.center;
-        return {
-          center: newCenter,
-          zoomFactor: newZoomFactor //< 1 ? 1 : newZoomFactor
-        }
-      });
-
+      this._updateZoomPanState();
       this._zoomPanTimeout();
     },
     onPan: () => {
       this.hideTooltip();
+      this._updateZoomPanState();
       this._zoomPanTimeout()
     }
     //, controlIconsEnabled: true
@@ -230,8 +216,30 @@ class App extends React.Component {
     this.setState({
       zoomPan: svgElement
     });
+
     //this.svgElement = svgElement;
 
+  }
+
+  _updateZoomPanState = () => {
+    const {x: zoomFactor} = this.state.zoomPan.getZooms();
+    const {x: panOffset} = this.state.zoomPan.getPan();
+    const xMin = panOffset * -1 / zoomFactor;
+
+    this.setState((prevState) => {
+      return {
+        xMin: xMin,
+        zoomFactor: zoomFactor
+      }
+    });
+  }
+
+  _getXMin = () => {
+    return this.state.xMin;
+  }
+
+  _getXMax = () => {
+    return this.state.xMin + this.state.fullWidth / this.state.zoomFactor;
   }
 
   _zoomPanTimeout = () => {
@@ -262,8 +270,12 @@ class App extends React.Component {
     const model = new GeneModel('WBGene00225050');
     const dnaTrackIndex = 0;
     model.getAlignedDNA().then((data) => {
+      const referenceSequence = data.source.align_seq;
+      this.setState({
+        fullWidth: referenceSequence.length  // set the width of svg proportional to length of reference sequence
+      });
       this._setTrackState({
-        sequence: data.source.align_seq
+        sequence: referenceSequence
       }, dnaTrackIndex,
       () => this._setupZoomPan());
     });
@@ -347,8 +359,6 @@ class App extends React.Component {
     });
     //const colorSchemeB = new ColorScheme()
 
-    const width = DEFAULT_VISIBLE_WIDTH;  // hard code this for now
-
     const containerStyle = {
       // overflowX: 'scroll',
       // //padding: '0 5',
@@ -357,9 +367,6 @@ class App extends React.Component {
       height: 600,
       border:"1px solid black",
     }
-
-    console.log(this.state.tracks);
-    console.log(this.getViewBox());
 
     return (
       <div className="bootstrap-style">
@@ -393,7 +400,7 @@ class App extends React.Component {
           </ButtonToolbar>
         </div>
         <div id="svg-browser-container" ref="myContainer" style={containerStyle}>
-        <svg id="svg-browser" className={this.state.center}
+        <svg id="svg-browser"
           onWheel={this.handlePan}
           viewBox={this.getViewBox()}
           height="100%"
@@ -422,7 +429,7 @@ class App extends React.Component {
                 sequence={trackData.sequence}
                 data={trackData.data}
                 colorScheme={colorSchemeA}
-                width={width}/> : null;
+                width={this.state.fullWidth}/> : null;
             })
           }
           </svg>
