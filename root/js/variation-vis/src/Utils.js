@@ -60,13 +60,14 @@ export class HomologyModel extends WBDataModel {
     this.geneId = sourceGeneId;
     this.targetSpecies = targetSpecies;  // species to retrieve homology info from
 
-    const alignedDNAPromise = this.getAlignedDNA();
+    const alignedSourceDNAPromise = this.getAlignedSourceDNA();
+    const alignedTargetDNAPromise = this.getAlignedTargetDNA();
     this.targetGeneModel = this._getTargetGeneId().then((targetGeneId) => {
-      return new GeneModel(targetGeneId, alignedDNAPromise);
+      return new GeneModel(targetGeneId, alignedTargetDNAPromise);
     });
     // make sourceGeneModel a Promise to be consistent with the targetGeneModel
     this.sourceGeneModel = new Promise((resolve) => {
-      resolve(new GeneModel(sourceGeneId, alignedDNAPromise));
+      resolve(new GeneModel(sourceGeneId, alignedSourceDNAPromise));
     });
 
   }
@@ -84,6 +85,14 @@ export class HomologyModel extends WBDataModel {
 
     return this._getOrFetch('_aligned_dna', url)
       .then((data) => this._parseAligned(data));
+  }
+
+  getAlignedTargetDNA() {
+    return this.getAlignedDNA().then((data) => data.target);
+  }
+
+  getAlignedSourceDNA() {
+    return this.getAlignedDNA().then((data) => data.source);
   }
 
   getAlignedProtein() {
@@ -159,13 +168,17 @@ export class GeneModel extends WBDataModel {
       feature: 'cds'
     });
 
-    return this._getOrFetch('_cds', url)
+    return Promise.all([this._getOrFetch('_cds', url), this.alignedDNAPromise])
+      .then(([data, alignedDNA]) => {
+        return data.filter((cds) => cds.protein_id === alignedDNA.protein_id);
+      })
       .then((data) => this._parseCoords(data));
   }
 
   // get coordinate relative to the coding sequence
   getRelativeCoords(coords) {
     return this.getCDSs().then((data) => {
+
       if (!this._splicedCoordConverter){
         this._splicedCoordConverter =  this._createSplicedCoordConverter(data);
       }
@@ -188,7 +201,7 @@ export class GeneModel extends WBDataModel {
     return this.alignedDNAPromise.then((data) => {
       if (!this._alignmentCoordConverter){
         const fakeStopCodon = ' '.repeat(3); // to correct the cDNA sequence to match the model
-        this._alignmentCoordConverter = this._createAlignedCoordConverter(data.source.align_seq + fakeStopCodon);
+        this._alignmentCoordConverter = this._createAlignedCoordConverter(data.align_seq + fakeStopCodon);
       }
     })
     .then(() => {

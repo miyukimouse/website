@@ -218,7 +218,7 @@ class App extends React.Component {
     this.setState({
       zoomPan: svgElement
     });
-console.log('zoompan updated')
+
     //this.svgElement = svgElement;
 
   }
@@ -273,7 +273,6 @@ console.log('zoompan updated')
     const dnaTrackIndex = 0;
     const dnaTrackIndex2 = 1;
     const referencePromise = model.getAlignedDNA().then((data) => {
-      console.log(data);
       const referenceSequence = data.source.align_seq;
       this.setState({
         fullWidth: referenceSequence.length  // set the width of svg proportional to length of reference sequence
@@ -289,16 +288,14 @@ console.log('zoompan updated')
       }, dnaTrackIndex2);
     });
     model.sourceGeneModel.then((sourceGene) => sourceGene.getAlignedCDSs()).then((cdss) => {
-      console.log(cdss);
       this._setTrackState({
         data: cdss
       }, dnaTrackIndex);
     });
     model.targetGeneModel.then((targetGene) => targetGene.getAlignedCDSs()).then((cdss) => {
-      // console.log(cdss);
-      // this._setTrackState({
-      //   data: cdss
-      // }, dnaTrackIndex2);
+      this._setTrackState({
+        data: cdss
+      }, dnaTrackIndex2);
     });
   }
 
