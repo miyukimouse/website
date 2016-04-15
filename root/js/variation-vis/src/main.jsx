@@ -9,7 +9,7 @@ import { Button, Popover, Overlay } from 'react-bootstrap';
 import { ButtonGroup, ButtonToolbar, Glyphicon } from 'react-bootstrap';
 import svgPanZoom from 'svg-pan-zoom';
 
-import { GeneModel } from './Utils.js';
+import { HomologyModel } from './Utils.js';
 require('./main.less');
 
 const DEFAULT_SVG_INTERNAL_WIDTH = 100;
@@ -22,6 +22,7 @@ class App extends React.Component {
       //lastMoveTime: Number.NEGATIVE_INFINITY,
 
       // zoomPan scale and position
+      zoomPan: null,
       zoomFactor: 1,
       xMin: 0,  // visible region of svg by internal coordinate
       xMax: DEFAULT_SVG_INTERNAL_WIDTH,
@@ -163,6 +164,7 @@ class App extends React.Component {
     //   , 5000);
   }
 
+
   _setupZoomPan() {
     const svgElement = svgPanZoom('#svg-browser-svg', {
     //  viewportSelector: '.svg-pan-zoom_viewport'
@@ -216,7 +218,7 @@ class App extends React.Component {
     this.setState({
       zoomPan: svgElement
     });
-
+console.log('zoompan updated')
     //this.svgElement = svgElement;
 
   }
@@ -267,9 +269,11 @@ class App extends React.Component {
 
 
   _getData() {
-    const model = new GeneModel('WBGene00225050');
+    const model = new HomologyModel('WBGene00225050');
     const dnaTrackIndex = 0;
-    model.getAlignedDNA().then((data) => {
+    const dnaTrackIndex2 = 1;
+    const referencePromise = model.getAlignedDNA().then((data) => {
+      console.log(data);
       const referenceSequence = data.source.align_seq;
       this.setState({
         fullWidth: referenceSequence.length  // set the width of svg proportional to length of reference sequence
@@ -278,11 +282,23 @@ class App extends React.Component {
         sequence: referenceSequence
       }, dnaTrackIndex,
       () => this._setupZoomPan());
+
+      // show homolog sequence
+      this._setTrackState({
+        sequence: data.target.align_seq
+      }, dnaTrackIndex2);
     });
-    model.getAlignedCDSs().then((cdss) => {
+    model.sourceGeneModel.then((sourceGene) => sourceGene.getAlignedCDSs()).then((cdss) => {
+      console.log(cdss);
       this._setTrackState({
         data: cdss
       }, dnaTrackIndex);
+    });
+    model.targetGeneModel.then((targetGene) => targetGene.getAlignedCDSs()).then((cdss) => {
+      // console.log(cdss);
+      // this._setTrackState({
+      //   data: cdss
+      // }, dnaTrackIndex2);
     });
   }
 
@@ -419,6 +435,7 @@ class App extends React.Component {
         <feComposite in="SourceGraphic" in2="spec2" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" />
     </filter>
     </defs>
+          <g>
           {
             this.state.tracks.map((trackData, index) => {
               return trackData && trackData.sequence ? <Track index={index}
@@ -432,6 +449,7 @@ class App extends React.Component {
                 width={this.state.fullWidth}/> : null;
             })
           }
+          </g>
           </svg>
         </svg>
         { this.state.tooltip
@@ -450,6 +468,6 @@ class App extends React.Component {
 render(<App/>, document.getElementById('variation-vis-container'));
 
 export default {
-  GeneModel
+  HomologyModel
 }
 

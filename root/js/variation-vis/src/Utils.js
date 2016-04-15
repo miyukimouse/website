@@ -2,13 +2,79 @@ import jquery from 'jquery';
 
 export const TRACK_HEIGHT = 20;
 
-
-
-export class GeneModel {
-
-  constructor(geneId) {
-    this.geneId = geneId;
+export class WBDataModel {
+  constructor(){
+    // place to store raw results from previous requests
+    this._raw = {};
   }
+
+  _getOrFetch(name, url){
+
+    if (!this._raw[name]) {
+      this._raw[name] = new Promise((resolve, reject) => {
+        console.log(url);
+        jquery.ajax(url, {
+        //  contentType: 'application/json',
+          success: (result) => {
+            resolve(result);
+          },
+          error: (error) => {
+            console.log(`Error: ${error}`);
+            reject(error);
+          }
+        });
+      });
+    }
+
+    return this._raw[name];
+  }
+
+
+  _urlFor(path, params={}) {
+    const delimiter = ';';
+    const paramsNew = {
+      ...params,
+      'content-type': 'application/json'
+    };
+    const paramsStr = Object.keys(paramsNew)
+    .map((key) => {
+      const value = paramsNew[key];
+      if (Array.isArray(value)){
+        return value.map((v) => `${key}=${v}`).join(delimiter);
+      }
+      return `${key}=${value}`;
+    })
+    .join(delimiter);
+
+    return `/rest/parasite/${path}?${paramsStr}`;
+  }
+}
+
+/*
+  handles homology info and aligned sequence fetching, i.e. with the /homology/id/ API.
+  Delegate gene specific tasks to GeneModel class
+*/
+export class HomologyModel extends WBDataModel {
+  constructor(sourceGeneId, targetSpecies='homo_sapiens'){
+    super();
+    this.geneId = sourceGeneId;
+    this.targetSpecies = targetSpecies;  // species to retrieve homology info from
+
+    const alignedDNAPromise = this.getAlignedDNA();
+    this.targetGeneModel = this._getTargetGeneId().then((targetGeneId) => {
+      return new GeneModel(targetGeneId, alignedDNAPromise);
+    });
+    // make sourceGeneModel a Promise to be consistent with the targetGeneModel
+    this.sourceGeneModel = new Promise((resolve) => {
+      resolve(new GeneModel(sourceGeneId, alignedDNAPromise));
+    });
+
+  }
+
+  getSouceGeneModel() {
+
+  }
+
 
   getAlignedDNA() {
     const url = this._urlFor('homology/id/' + this.geneId, {
@@ -33,9 +99,28 @@ export class GeneModel {
   _parseAligned(data) {
     if (data['data'].length > 0){
       const homologs = data['data'][0].homologies;
-      return homologs[0];
+      return homologs.find((h) => h.target.species === this.targetSpecies);
     }
     return null;
+  }
+
+  _getTargetGeneId() {
+    return this.getAlignedDNA().then((data) => {
+      return data.target.id;
+    });
+  }
+}
+
+/*
+  handles data fetchin and coordinates conversion for CDS and protein domains,
+  which are specific to a gene
+*/
+export class GeneModel extends WBDataModel {
+
+  constructor(geneId, alignedDNAPromise) {
+    super();
+    this.geneId = geneId;
+    this.alignedDNAPromise = alignedDNAPromise;
   }
 
   _parseCoords(data=[]) {
@@ -100,7 +185,7 @@ export class GeneModel {
 
   getAlignmentCoords(coords) {
 
-    return this.getAlignedDNA().then((data) => {
+    return this.alignedDNAPromise.then((data) => {
       if (!this._alignmentCoordConverter){
         const fakeStopCodon = ' '.repeat(3); // to correct the cDNA sequence to match the model
         this._alignmentCoordConverter = this._createAlignedCoordConverter(data.source.align_seq + fakeStopCodon);
@@ -119,49 +204,6 @@ export class GeneModel {
 
   }
 
-  _getOrFetch(name, url){
-    if (!this._raw) {
-      // place to store raw results from previous requests
-      this._raw = {};
-    }
-
-    if (!this._raw[name]) {
-      this._raw[name] = new Promise((resolve, reject) => {
-        console.log(url);
-        jquery.ajax(url, {
-        //  contentType: 'application/json',
-          success: (result) => {
-            resolve(result);
-          },
-          error: (error) => {
-            reject(error);
-          }
-        });
-      });
-    }
-
-    return this._raw[name];
-  }
-
-
-  _urlFor(path, params={}) {
-    const delimiter = ';';
-    const paramsNew = {
-      ...params,
-      'content-type': 'application/json'
-    };
-    const paramsStr = Object.keys(paramsNew)
-    .map((key) => {
-      const value = paramsNew[key];
-      if (Array.isArray(value)){
-        return value.map((v) => `${key}=${v}`).join(delimiter);
-      }
-      return `${key}=${value}`;
-    })
-    .join(delimiter);
-
-    return `/rest/parasite/${path}?${paramsStr}`;
-  }
 
 // used to convert to coordinates relative to gapped sequence generated during alignment
   _createAlignedCoordConverter(alignedSeq) {
@@ -204,6 +246,21 @@ export class GeneModel {
 
     return {
       convert: _getSplicedCoord
+    };
+  }
+
+// used to convert to map the genomic coordinate for target to that of the source
+  _createAlignedCoordConverter(alignedSeq) {
+    const _coordsMap = [];
+    for (let i=0; i<alignedSeq.length; i++){
+      if (alignedSeq[i] !== '-'){
+        _coordsMap.push(i);
+      }
+    }
+    _coordsMap.push(alignedSeq.length);  // for end coordinate
+
+    return {
+      convert: (coord) => _coordsMap[coord]
     };
   }
 }
