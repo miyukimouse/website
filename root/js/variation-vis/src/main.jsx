@@ -27,6 +27,7 @@ class App extends React.Component {
       xMin: 0,  // visible region of svg by internal coordinate
       xMax: DEFAULT_SVG_INTERNAL_WIDTH,
       fullWidth: DEFAULT_SVG_INTERNAL_WIDTH,
+      viewWidth: 500,
 
       // tooltips
       tooltip: null,
@@ -46,15 +47,18 @@ class App extends React.Component {
     viewWidth: React.PropTypes.number,
     getXMin: React.PropTypes.func,
     getXMax: React.PropTypes.func,
+    //toApparentWidth: React.PropTypes.func,
+    toWidth: React.PropTypes.func,
     isZoomPanOccuring: React.PropTypes.bool,
   }
 
   getChildContext() {
     return {
       zoomFactor: this.state.zoomFactor,
-      viewWidth: 500,
+      viewWidth: this.state.viewWidth,
       getXMin: this._getXMin,
       getXMax: this._getXMax,
+      toWidth: this._toWidth,
       isZoomPanOccuring: this.state.isZoomPanOccuring
     }
   }
@@ -244,6 +248,12 @@ class App extends React.Component {
     return this.state.xMin + this.state.fullWidth / this.state.zoomFactor;
   }
 
+  // convert apparent width to with used by SVG internally
+  _toWidth = (apparentWidth) => {
+    const apparentFullWidth = this.state.viewWidth * this.state.zoomFactor;
+    return apparentWidth * this.state.fullWidth / apparentFullWidth;
+  }
+
   _zoomPanTimeout = () => {
     let zoomPanEventId;
     this.setState((prevState) => {
@@ -295,12 +305,17 @@ class App extends React.Component {
     // load CDS on DNA tracks
     model.sourceGeneModel.then((sourceGeneModel) => sourceGeneModel.getAlignedCDSs()).then((cdss) => {
       this._setTrackState({
-        data: cdss
+        data: cdss.map((cds, i) => {
+          console.log(cds);
+          return {...cds, tip: 'CDS' + i};
+        })
       }, dnaTrackIndex);
     });
     model.targetGeneModel.then((targetGeneModel) => targetGeneModel.getAlignedCDSs()).then((cdss) => {
       this._setTrackState({
-        data: cdss
+        data: cdss.map((cds, i) => {
+          return {...cds, tip: 'CDS' + i};
+        })
       }, dnaTrackIndex2);
     });
 
@@ -416,7 +431,7 @@ class App extends React.Component {
       // overflowX: 'scroll',
       // //padding: '0 5',
       // width: 400
-      width: 500,
+      width: this.state.viewWidth,
       height: 600,
       border:"1px solid black",
     }

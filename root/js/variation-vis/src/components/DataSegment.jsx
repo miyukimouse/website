@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
 
+const CharApparentWidth = 8;
+
 export default class Button extends React.Component {
 
   static propTypes = {
@@ -19,20 +21,10 @@ export default class Button extends React.Component {
   }
 
   static contextTypes = {
-    zoomFactor: React.PropTypes.number
+    zoomFactor: React.PropTypes.number,
+    toWidth: React.PropTypes.func,
   }
 
-  componentDidMount() {
-    const labelNode = this.refs.label;
-    const labelWidthInitial = labelNode.getBBox().width;
-
-    this.setState({
-      labelWidthInitial
-    });
-  }
-
-  // componentDidUpdate() {
-  // }
 
   _getDimension() {
     let {width} = this.props;
@@ -44,52 +36,45 @@ export default class Button extends React.Component {
     }
   }
 
-  _getLabelVisibility() {
-    if (this.state.labelWidthInitial && this._getLabelScaledWidth() < this.props.width * 0.8){
-      return 'visible';
-    }else{
-      return 'hidden';
-    }
+  _isLabelVisible(labelText) {
+    return this._getLabelScaledWidth(labelText) < this.props.width * 0.8;
   }
 
-  _getLabelScaledWidth() {
-    return this.state.labelWidthInitial / this.context.zoomFactor;
+  _getLabelScaledWidth(labelText) {
+    const apparentLabelWidth = labelText.length * CharApparentWidth;
+    const width = this.context.toWidth(apparentLabelWidth);
+    return width;
   }
 
-  _getLabelCoords() {
+  _getLabelCoords(labelText) {
     const x = this.props.x + this.props.width / 2;
-    const y = this.props.y + 5;
+    const y = this.props.y + 13;
 
-    if (this.state.labelWidthInitial) {
-      return {
-        x,
-        y,
-        textLength: this._getLabelScaledWidth()
-      }
-    } else {
-      return {
-        x,
-        y
-      }
+    return {
+      x,
+      y,
+      textLength: this._getLabelScaledWidth(labelText)
     }
   }
 
   render() {
+    const labelText =  this.props.tip;
 
     return (
       <g>
         <rect {...this._getDimension()}/>
-        <text ref="label"
+        { labelText && this._isLabelVisible(labelText) ?
+          <text ref="label"
               is="svg-text"
-              visibility={this._getLabelVisibility()}
               text-anchor='middle'
               font-size="4"
               lengthAdjust="spacingAndGlyphs"
-              {...this._getLabelCoords()}>
-        {
-          this.props.tip
+              {...this._getLabelCoords(labelText)}>
+          {
+            labelText
+          }
+          </text> : null
         }
-        </text>
       </g>);
   }
 };

@@ -173,10 +173,11 @@ export class GeneModel extends WBDataModel {
       const start = this._splicedCoordConverter.convert(coords.start);
       const end = this._splicedCoordConverter.convert(coords.end - 1);  // end coord here is considered outside side of CDS, would have getting undefined
       return coords.strand > 0 ? {
-//        ...coords,
+        ...coords,
         start: start,
         end: end + 1,  // 1-based end
       } : {
+        ...coords,
         start: end,
         end: start + 1  // 1-based end
       };
@@ -196,7 +197,7 @@ export class GeneModel extends WBDataModel {
     })
     .then((relativeCoords) => {
       return {
-//        ...coords,
+        ...coords,
         start: this._alignedCDSCoordConverter.convert(relativeCoords.start),
         end: this._alignedCDSCoordConverter.convert(relativeCoords.end)
       };
@@ -228,7 +229,8 @@ export class GeneModel extends WBDataModel {
   toAlignedDomainsCoords(coords) {
     return this.alignedProteinPromise.then((data) => {
       if (!this._alignedProteinCoordConverter){
-        this._alignedProteinCoordConverter = this._createAlignedCoordConverter(data.align_seq);
+        const fakeStopCodon = ' ';
+        this._alignedProteinCoordConverter = this._createAlignedCoordConverter(data.align_seq + fakeStopCodon);
       }
     })
     .then(() => {
