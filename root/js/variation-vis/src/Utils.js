@@ -62,20 +62,18 @@ export class HomologyModel extends WBDataModel {
 
     const alignedSourceDNAPromise = this.getAlignedSourceDNA();
     const alignedTargetDNAPromise = this.getAlignedTargetDNA();
-    this.targetGeneModel = this._getTargetGeneId().then((targetGeneId) => {
-      return new GeneModel(targetGeneId, alignedTargetDNAPromise);
-    });
+    const alignedSourceProteinPromise = this.getAlignedSourceProtein();
+    const alignedTargetProteinPromise = this.getAlignedTargetProtein();
+
     // make sourceGeneModel a Promise to be consistent with the targetGeneModel
     this.sourceGeneModel = new Promise((resolve) => {
-      resolve(new GeneModel(sourceGeneId, alignedSourceDNAPromise));
+      resolve(new GeneModel(sourceGeneId, alignedSourceDNAPromise, alignedSourceProteinPromise));
+    });
+    this.targetGeneModel = this._getTargetGeneId().then((targetGeneId) => {
+      return new GeneModel(targetGeneId, alignedTargetDNAPromise, alignedTargetProteinPromise);
     });
 
   }
-
-  getSouceGeneModel() {
-
-  }
-
 
   getAlignedDNA() {
     const url = this._urlFor('homology/id/' + this.geneId, {
@@ -105,10 +103,19 @@ export class HomologyModel extends WBDataModel {
       .then((data) => this._parseAligned(data));
   }
 
+  getAlignedTargetProtein() {
+    return this.getAlignedProtein().then((data) => data.target);
+  }
+
+  getAlignedSourceProtein() {
+    return this.getAlignedProtein().then((data) => data.source);
+  }
+
   _parseAligned(data) {
     if (data['data'].length > 0){
       const homologs = data['data'][0].homologies;
-      return homologs.find((h) => h.target.species === this.targetSpecies);
+      const selectHomolog = homologs.find((h) => h.target.species === this.targetSpecies);
+      return selectHomolog;
     }
     return null;
   }
@@ -126,41 +133,21 @@ export class HomologyModel extends WBDataModel {
 */
 export class GeneModel extends WBDataModel {
 
-  constructor(geneId, alignedDNAPromise) {
+  constructor(geneId, alignedDNAPromise, alignedProteinPromise) {
     super();
     this.geneId = geneId;
     this.alignedDNAPromise = alignedDNAPromise;
+    this.alignedProteinPromise = alignedProteinPromise;
   }
 
-  _parseCoords(data=[]) {
-    return data.map((coords) => {
-      const {start, end} = coords;
-      return {
-        ...coords,
-        start: start - 1,  // 0 based start
-        end: end   // 1 based end
-      }
-    });
-  }
 
-  // getCDSs() {
-  //   const url = this._urlFor('overlap/id/' + this.geneId, {
-  //     feature: 'cds'
-  //   });
-  //   console.log(url);
-  //   return this._getOrFetch('_cds', url)
-  //     .then((data) => this._parseCoords(data));
-  // }
+  /*  CDS related */
 
   getAlignedCDSs(){
     return this.getCDSs().then((cdss) => {
-      const coordsPromises = cdss.map((e) => this.getAlignmentCoords(e));
+      const coordsPromises = cdss.map((e) => this.toAlignedCDSCoords(e));
       return Promise.all(coordsPromises);
     });
-  }
-
-  getDomains() {
-
   }
 
   getCDSs() {
@@ -176,7 +163,7 @@ export class GeneModel extends WBDataModel {
   }
 
   // get coordinate relative to the coding sequence
-  getRelativeCoords(coords) {
+  getCDSCoords(coords) {
     return this.getCDSs().then((data) => {
 
       if (!this._splicedCoordConverter){
@@ -196,29 +183,80 @@ export class GeneModel extends WBDataModel {
     });
   }
 
-  getAlignmentCoords(coords) {
+  toAlignedCDSCoords(coords) {
 
     return this.alignedDNAPromise.then((data) => {
-      if (!this._alignmentCoordConverter){
+      if (!this._alignedCDSCoordConverter){
         const fakeStopCodon = ' '.repeat(3); // to correct the cDNA sequence to match the model
-        this._alignmentCoordConverter = this._createAlignedCoordConverter(data.align_seq + fakeStopCodon);
+        this._alignedCDSCoordConverter = this._createAlignedCoordConverter(data.align_seq + fakeStopCodon);
       }
     })
     .then(() => {
-      return this.getRelativeCoords(coords);
+      return this.getCDSCoords(coords);
     })
     .then((relativeCoords) => {
       return {
 //        ...coords,
-        start: this._alignmentCoordConverter.convert(relativeCoords.start),
-        end: this._alignmentCoordConverter.convert(relativeCoords.end)
+        start: this._alignedCDSCoordConverter.convert(relativeCoords.start),
+        end: this._alignedCDSCoordConverter.convert(relativeCoords.end)
       };
     });
 
   }
 
 
-// used to convert to coordinates relative to gapped sequence generated during alignment
+  /* Protein related */
+
+  getAlignedDomains() {
+    return this.getDomains().then((domains) => {
+      const coordsPromises = domains.map((d) => this.toAlignedDomainsCoords(d));
+      return Promise.all(coordsPromises);
+    })
+  }
+
+  getDomains() {
+    return this.alignedProteinPromise.then((data) => {
+      const url = this._urlFor('overlap/translation/' + data.protein_id, {
+        type: 'pfam'
+      });
+
+      return this._getOrFetch('_domains', url)
+        .then((data) => this._parseCoords(data));
+    });
+  }
+
+  toAlignedDomainsCoords(coords) {
+    return this.alignedProteinPromise.then((data) => {
+      if (!this._alignedProteinCoordConverter){
+        this._alignedProteinCoordConverter = this._createAlignedCoordConverter(data.align_seq);
+      }
+    })
+    .then(() => {
+      return {
+        ...coords,
+        start: this._alignedProteinCoordConverter.convert(coords.start),
+        end: this._alignedProteinCoordConverter.convert(coords.end)
+      };
+    });
+
+  }
+
+  /* helpers used for coordinates converstion, etc */
+
+  // use 0 based start and 1 based end for easier use with Array and for computing length
+  _parseCoords(data=[]) {
+    return data.map((coords) => {
+      const {start, end} = coords;
+      return {
+        ...coords,
+        start: start - 1,  // 0 based start
+        end: end   // 1 based end
+      }
+    });
+  }
+
+
+  // used to convert to coordinates relative to gapped sequence generated during alignment
   _createAlignedCoordConverter(alignedSeq) {
     const _coordsMap = [];
     for (let i=0; i<alignedSeq.length; i++){
@@ -233,7 +271,7 @@ export class GeneModel extends WBDataModel {
     };
   }
 
-// used to convert to coordinates relative to spliced transcript
+  // used to convert to coordinates relative to spliced transcript
   _createSplicedCoordConverter(cdss) {
 
     const _prefixLengths = [0];
@@ -259,21 +297,6 @@ export class GeneModel extends WBDataModel {
 
     return {
       convert: _getSplicedCoord
-    };
-  }
-
-// used to convert to map the genomic coordinate for target to that of the source
-  _createAlignedCoordConverter(alignedSeq) {
-    const _coordsMap = [];
-    for (let i=0; i<alignedSeq.length; i++){
-      if (alignedSeq[i] !== '-'){
-        _coordsMap.push(i);
-      }
-    }
-    _coordsMap.push(alignedSeq.length);  // for end coordinate
-
-    return {
-      convert: (coord) => _coordsMap[coord]
     };
   }
 }

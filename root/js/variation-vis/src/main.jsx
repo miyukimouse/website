@@ -269,9 +269,13 @@ class App extends React.Component {
 
 
   _getData() {
-    const model = new HomologyModel('WBGene00225050');
+//    const model = new HomologyModel('WBGene00225050');
+    const model = new HomologyModel('WBGene00015146');
     const dnaTrackIndex = 0;
-    const dnaTrackIndex2 = 1;
+    const dnaTrackIndex2 = 3;
+    const proteinTrackIndex = 1;
+    const proteinTrackIndex2 = 2;
+
     const referencePromise = model.getAlignedDNA().then((data) => {
       const referenceSequence = data.source.align_seq;
       this.setState({
@@ -287,15 +291,52 @@ class App extends React.Component {
         sequence: data.target.align_seq
       }, dnaTrackIndex2);
     });
-    model.sourceGeneModel.then((sourceGene) => sourceGene.getAlignedCDSs()).then((cdss) => {
+
+    // load CDS on DNA tracks
+    model.sourceGeneModel.then((sourceGeneModel) => sourceGeneModel.getAlignedCDSs()).then((cdss) => {
       this._setTrackState({
         data: cdss
       }, dnaTrackIndex);
     });
-    model.targetGeneModel.then((targetGene) => targetGene.getAlignedCDSs()).then((cdss) => {
+    model.targetGeneModel.then((targetGeneModel) => targetGeneModel.getAlignedCDSs()).then((cdss) => {
       this._setTrackState({
         data: cdss
       }, dnaTrackIndex2);
+    });
+
+    // load protein sequence track
+    model.getAlignedSourceProtein().then((data) => {
+      this._setTrackState({
+        name: 'protein',
+        sequence: data.align_seq
+      }, proteinTrackIndex);
+    });
+    model.getAlignedTargetProtein().then((data) => {
+      this._setTrackState({
+        sequence: data.align_seq
+      }, proteinTrackIndex2);
+    });
+
+    // load protein domain tracks
+    model.sourceGeneModel.then((sourceGeneModel) => sourceGeneModel.getAlignedDomains()).then((domains) => {
+      this._setTrackState({
+        data: domains.map((d) => {
+          return {
+            ...d,
+            tip: d.description || ''
+          };
+        })
+      }, proteinTrackIndex);
+    });
+    model.targetGeneModel.then((targetGeneModel) => targetGeneModel.getAlignedDomains()).then((domains) => {
+      this._setTrackState({
+        data: domains.map((d) => {
+          return {
+            ...d,
+            tip: d.description || ''
+          };
+        })
+      }, proteinTrackIndex);
     });
   }
 
@@ -306,10 +347,9 @@ class App extends React.Component {
         ...prevState.tracks[index],
         ...data
       };
-    //  console.log(prevState.tracks.splice(index, 1, newTrackData));
-      const newTracks = prevState.tracks.slice(0, index)
-        .concat(newTrackData)
-        .concat(prevState.tracks.slice(index+1));
+
+      const newTracks = prevState.tracks.slice(0);
+      newTracks[index] = newTrackData;
 
       return {
         tracks: newTracks
@@ -381,6 +421,8 @@ class App extends React.Component {
       border:"1px solid black",
     }
 
+    console.log(this.state.tracks)
+
     return (
       <div className="bootstrap-style">
       {/*
@@ -437,7 +479,7 @@ class App extends React.Component {
             this.state.tracks.map((trackData, index) => {
               return trackData && trackData.sequence ? <Track index={index}
                 key={`track${index}`}
-                //tip="one track"
+                tip={trackData.tip}
                 onTooltipShow={this.showTooltip}
                 onTooltipHide={this.hideTooltip}
                 sequence={trackData.sequence}
