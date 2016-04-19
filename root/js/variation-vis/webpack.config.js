@@ -65,7 +65,7 @@ module.exports = {
     port: 9004,
     publicPath: '/static',
     proxy: {
-      '/rest/parasite/*': {
+      '/rest/*': {
         target: 'http://dev.wormbase.org:5000',
         // rewrite: function(req) {
         //   req.url = req.url.replace(/^\/api/, '');

@@ -1,4 +1,9 @@
 import jquery from 'jquery';
+import BinnedLoader from './BinnedLoader';
+
+export const DataLoader = {
+  BinnedLoader,
+}
 
 export const TRACK_HEIGHT = 20;
 
@@ -30,7 +35,7 @@ export class WBDataModel {
   }
 
 
-  _urlFor(path, params={}) {
+  _urlFor(path, params={}, options={}) {
     const delimiter = ';';
     const paramsNew = {
       ...params,
@@ -46,7 +51,12 @@ export class WBDataModel {
     })
     .join(delimiter);
 
-    return `/rest/parasite/${path}?${paramsStr}`;
+    const {pathPrefix} = {
+      pathPrefix: '/rest/parasite',
+      ...options
+    };
+
+    return `${pathPrefix}/${path}?${paramsStr}`;
   }
 }
 
@@ -210,7 +220,7 @@ export class GeneModel extends WBDataModel {
 
   getAlignedDomains() {
     return this.getDomains().then((domains) => {
-      const coordsPromises = domains.map((d) => this.toAlignedDomainsCoords(d));
+      const coordsPromises = domains.map((d) => this.toAlignedProteinCoords(d));
       return Promise.all(coordsPromises);
     })
   }
@@ -226,7 +236,7 @@ export class GeneModel extends WBDataModel {
     });
   }
 
-  toAlignedDomainsCoords(coords) {
+  toAlignedProteinCoords(coords) {
     return this.alignedProteinPromise.then((data) => {
       if (!this._alignedProteinCoordConverter){
         const fakeStopCodon = ' ';
@@ -241,6 +251,47 @@ export class GeneModel extends WBDataModel {
       };
     });
 
+  }
+
+  getAlignedProteinLength() {
+    return this.alignedProteinPromise.then((data) => data.align_seq.length);
+  }
+
+  /* Variation related */
+  getAlignedVariations(source) {
+    return this.getVariations(source).then((variations) => {
+      const coordsPromises = variations.map((v) => this.toAlignedProteinCoords(v));
+      return Promise.all(coordsPromises);
+    });
+  }
+
+  getVariations(source) {
+    if (source === 'wormbase') {
+      return this._getVariationsWB();
+    }
+  }
+
+  _getVariationsWB() {
+    return this.alignedProteinPromise.then((data) => {
+      const url = this._urlFor(`gene/${data.id}/alleles_other`, {}, {
+        pathPrefix: '/rest/field'
+      });
+
+      return this._getOrFetch('_variations_wb', url)
+        .then((data) => {
+          const parsedData = (data.alleles_other.data || []).filter((dat) => {
+            return dat.aa_position || dat.aa_position === 0;
+          }).map((dat) => {
+            const aa_position = parseInt(dat.aa_position);
+            return {
+              ...dat,
+              start: aa_position - 1,  // 0 based start coord
+              end: aa_position // 1 based end coord
+            }
+          });
+          return parsedData;
+        });
+    });
   }
 
   /* helpers used for coordinates converstion, etc */

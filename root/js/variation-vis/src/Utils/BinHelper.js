@@ -65,8 +65,9 @@ class BinMachine {
 
   getBinListOf = (range) => {
     const {start, end} = range;
+    const featureLength = end - start;
     const startBin = this.getBinOf(start);
-    const endBin = this.getBinOf(end);
+    const endBin = featureLength > 1 ? this.getBinOf(end - 1) : startBin;  // end position is the position After a feature ends
     const binList = [];
     for (let bin=startBin; bin <= endBin; bin=bin+binWidth){
       binList.push(bin);

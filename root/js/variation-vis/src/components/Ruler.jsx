@@ -28,7 +28,6 @@ export default class Ruler extends React.Component {
     const tickPositions = getTicks(xMin, xMax, maxIntervalCount);
     const strokeWidth = this.context.toWidth(1);
     const yOffset = 100;
-    console.log(tickPositions);
 
     return (
       <g>

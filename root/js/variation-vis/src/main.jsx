@@ -283,9 +283,10 @@ class App extends React.Component {
 //    const model = new HomologyModel('WBGene00225050');
     const model = new HomologyModel('WBGene00015146');
     const dnaTrackIndex = 0;
-    const dnaTrackIndex2 = 3;
+    const dnaTrackIndex2 = 4;
     const proteinTrackIndex = 1;
-    const proteinTrackIndex2 = 2;
+    const proteinTrackIndex2 = 3;
+    const variationTrackIndex = 2;
 
     const referencePromise = model.getAlignedDNA().then((data) => {
       const referenceSequence = data.source.align_seq;
@@ -307,7 +308,6 @@ class App extends React.Component {
     model.sourceGeneModel.then((sourceGeneModel) => sourceGeneModel.getAlignedCDSs()).then((cdss) => {
       this._setTrackState({
         data: cdss.map((cds, i) => {
-          console.log(cds);
           return {...cds, tip: 'CDS' + i};
         })
       }, dnaTrackIndex);
@@ -353,6 +353,24 @@ class App extends React.Component {
           };
         })
       }, proteinTrackIndex);
+    });
+
+    // load variation tracks
+    model.sourceGeneModel.then((sourceGeneModel) => {
+      const variationsPromise = sourceGeneModel.getAlignedVariations('wormbase');
+      const proteinLengthPromise = sourceGeneModel.getAlignedProteinLength();
+      return Promise.all([variationsPromise, proteinLengthPromise]);
+    }).then(([variations, proteinLength]) => {
+      const trackData = {
+        sequenceLength: proteinLength,
+        data: variations.map((v) => {
+          return {
+            ...v,
+            tip: v.aa_change || ''
+          };
+        })
+      };
+      this._setTrackState(trackData, variationTrackIndex);
     });
   }
 
@@ -437,7 +455,7 @@ class App extends React.Component {
       border:"1px solid black",
     }
 
-    console.log(this.state.tracks)
+//    console.log(this.state.tracks)
 
     return (
       <div className="bootstrap-style">
@@ -497,12 +515,14 @@ class App extends React.Component {
           <g>
           {
             this.state.tracks.map((trackData, index) => {
-              return trackData && trackData.sequence ? <Track index={index}
+              const showTrack = trackData && (trackData.sequence || trackData.sequenceLength);
+              return showTrack ? <Track index={index}
                 key={`track${index}`}
                 tip={trackData.tip}
                 onTooltipShow={this.showTooltip}
                 onTooltipHide={this.hideTooltip}
                 sequence={trackData.sequence}
+                sequenceLength={trackData.sequenceLength}
                 data={trackData.data}
                 colorScheme={colorSchemeA}
                 width={this.state.fullWidth}/> : null;
