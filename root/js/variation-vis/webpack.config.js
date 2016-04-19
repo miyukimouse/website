@@ -50,13 +50,13 @@ module.exports = {
   plugins: [
     new ExtractTextPlugin( "bundle.css" )
   ],
-  // resolve: {
-  //   root: path.resolve(__dirname),
-  //   alias: {
-  //     ringo: 'ringojs-0.11.0/modules/ringo'
-  //   },
-  //   extentions: ['', '.js']
-  // },
+  resolve: {
+    // root: path.resolve(__dirname),
+    // alias: {
+    //   ringo: 'ringojs-0.11.0/modules/ringo'
+    // },
+    extensions: ['', '.js', '.jsx']
+  },
   devServer: {
     contentBase: './',
     historyApiFallback: true,

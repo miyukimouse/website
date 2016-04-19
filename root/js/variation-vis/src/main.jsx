@@ -1,16 +1,16 @@
 import "babel-polyfill";
 import React from 'react';
 import { render } from 'react-dom';
-import Track from './Track.jsx';
+import Track from './Track';
 //import Button from './components/Button.jsx';
-import Tooltip from './components/Tooltip.jsx';
-import Ruler from './components/Ruler.jsx';
-import ColorScheme, { COLORS } from './DataDecorator.js';
+import Tooltip from './components/Tooltip';
+import Ruler from './components/Ruler';
+import ColorScheme, { COLORS } from './DataDecorator';
 import { Button, Popover, Overlay } from 'react-bootstrap';
 import { ButtonGroup, ButtonToolbar, Glyphicon } from 'react-bootstrap';
 import svgPanZoom from 'svg-pan-zoom';
 
-import { HomologyModel } from './Utils.js';
+import { HomologyModel } from './Utils';
 require('./main.less');
 
 const DEFAULT_SVG_INTERNAL_WIDTH = 100;
