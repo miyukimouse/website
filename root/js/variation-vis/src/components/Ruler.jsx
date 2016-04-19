@@ -23,14 +23,22 @@ export default class Ruler extends React.Component {
 
   render() {
     const maxIntervalCount = 10;
-    const tickPositions = getTicks(this.context.getXMin(),
-      this.context.getXMax(), maxIntervalCount);
+    const xMin = this.context.getXMin();
+    const xMax = this.context.getXMax();
+    const tickPositions = getTicks(xMin, xMax, maxIntervalCount);
     const strokeWidth = this.context.toWidth(1);
     const yOffset = 100;
     console.log(tickPositions);
 
     return (
       <g>
+        <g filter="url(#demo2)">
+          <rect x={xMin}
+            y={yOffset}
+            width={xMax - xMin}
+            height={10}
+            fill="#cccccc"/>
+        </g>
         <g>
         {
           tickPositions.map((position, i) => {
