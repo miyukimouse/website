@@ -99,7 +99,7 @@ const getIntervalLength = (lower, upper, maxIntervalCount) => {
 
 const getTicks = (lower, upper, maxIntervalCount) => {
   const intervalLength = getIntervalLength(lower, upper, maxIntervalCount);
-  const minTick = intervalLength * Math.ceil(lower / intervalLength);
+  const minTick = intervalLength * Math.floor(lower / intervalLength);
   const tickList = [];
   for (let tick=minTick; tick < upper; tick=tick+intervalLength){
     tickList.push(tick);
