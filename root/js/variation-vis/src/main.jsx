@@ -4,6 +4,7 @@ import { render } from 'react-dom';
 import Track from './Track.jsx';
 //import Button from './components/Button.jsx';
 import Tooltip from './components/Tooltip.jsx';
+import Ruler from './components/Ruler.jsx';
 import ColorScheme, { COLORS } from './DataDecorator.js';
 import { Button, Popover, Overlay } from 'react-bootstrap';
 import { ButtonGroup, ButtonToolbar, Glyphicon } from 'react-bootstrap';
@@ -489,6 +490,7 @@ class App extends React.Component {
         <feComposite in="SourceGraphic" in2="spec2" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" />
     </filter>
     </defs>
+          <Ruler/>
           <g>
           {
             this.state.tracks.map((trackData, index) => {
