@@ -479,6 +479,9 @@ class App extends React.Component {
           preserveAspectRatio="none">
           <svg id="svg-browser-svg"
           x={0} y={0}
+          style={{
+            fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif'
+          }}
           //preserveAspectRatio="meet xMinYMin"
           >
     <defs>

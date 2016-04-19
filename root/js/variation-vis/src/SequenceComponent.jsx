@@ -57,7 +57,7 @@ class SequenceComponent extends React.Component {
               {...coords}
               text-anchor="start"
               font-size="4"
-              font-family="monospace,Courier New"
+              font-family='Menlo, Monaco, Consolas, "Courier New", monospace'
               textLength={width}
               lengthAdjust="spacingAndGlyphs"
               fill="#333333">
