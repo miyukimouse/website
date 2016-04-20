@@ -81,6 +81,15 @@ class App extends React.Component {
     }
   }
 
+  handleZoomPanReset = () => {
+    const zoomPan = this.state.zoomPan;
+    zoomPan.zoom(1);
+    zoomPan.pan({
+      x: 0,
+      y: 0
+    })
+  }
+
   getViewBox = () => {
     const {fullWidth} = this.state;
     return [0, 0, fullWidth, 120].join(' ');
@@ -476,11 +485,14 @@ class App extends React.Component {
 
         <div style={{margin: "20px", height: 30}}>
           <ButtonToolbar>
-            <ButtonGroup>
+            <ButtonGroup bsSize="large">
               <Button onClick={this.getZoomHandler(2)}><Glyphicon glyph="zoom-in" /></Button>
               <Button onClick={this.getZoomHandler(0.5)}><Glyphicon glyph="zoom-out" /></Button>
               <Button onClick={this.getPanHandler(200)}><Glyphicon glyph="chevron-left" /></Button>
               <Button onClick={this.getPanHandler(-200)}><Glyphicon glyph="chevron-right" /></Button>
+            </ButtonGroup>
+            <ButtonGroup>
+              <Button onClick={this.handleZoomPanReset} bsSize="large" style={{fontSize:14}}>Reset</Button>
             </ButtonGroup>
           </ButtonToolbar>
         </div>
