@@ -10,11 +10,10 @@ import { Button, Popover, Overlay } from 'react-bootstrap';
 import { ButtonGroup, ButtonToolbar, Glyphicon } from 'react-bootstrap';
 import svgPanZoom from 'svg-pan-zoom';
 
-import { HomologyModel, DataLoader } from './Utils';
+import { HomologyModel } from './Utils';
 require('./main.less');
 
 const DEFAULT_SVG_INTERNAL_WIDTH = 100;
-const DEFAULT_MAX_BIN_COUNT = 500;  // default maximum number of bins to show in the visible region
 
 class App extends React.Component {
 
@@ -362,16 +361,9 @@ class App extends React.Component {
       const proteinLengthPromise = sourceGeneModel.getAlignedProteinLength();
       return Promise.all([variationsPromise, proteinLengthPromise]);
     }).then(([variations, proteinLength]) => {
-      const binnedVariations = new DataLoader.BinnedLoader(variations,
-        this._getXMin(), this._getXMax(), DEFAULT_MAX_BIN_COUNT);
       const trackData = {
         sequenceLength: proteinLength,
-        data: binnedVariations.map((bin) => {
-          return {
-            ...bin,
-            tip: bin.data.map((v) => v.composite_change || '').join('<br/>')
-          };
-        }),
+        data: variations,
         trackComponent: VariationTrack
       };
       this._setTrackState(trackData, variationTrackIndex);
@@ -530,7 +522,9 @@ class App extends React.Component {
                 sequenceLength={trackData.sequenceLength}
                 data={trackData.data}
                 colorScheme={colorSchemeA}
-                width={this.state.fullWidth}/> : null;
+                width={this.state.fullWidth}
+                xMin={this._getXMin()}
+                xMax={this._getXMax()}/> : null;
             })
           }
           </g>

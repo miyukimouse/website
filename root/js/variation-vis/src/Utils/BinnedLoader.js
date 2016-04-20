@@ -2,7 +2,6 @@ import { BinMachine } from './BinHelper';
 
 export default function BinnedLoader(data, lower, upper, maxBinCount) {
   const binMinchine = new BinMachine(lower, upper, maxBinCount);
-  console.log(binMinchine);
   const binWidth = binMinchine.binWidth;
   const binToData = {};
 
@@ -17,12 +16,15 @@ export default function BinnedLoader(data, lower, upper, maxBinCount) {
     });
   });
 
-  const binnedData = Object.keys(binToData).map((binStr) => {
+  const binnedData = [];
+  Object.keys(binToData).forEach((binStr) => {
     const bin = Number(binStr);  // first convert string to number
-    return {
-      start: bin,
-      end: bin + binWidth,
-      data: binToData[bin]
+    if (bin || bin === 0){
+      binnedData.push({
+        start: bin,
+        end: bin + binWidth,
+        data: binToData[bin]
+      });
     }
   });
 

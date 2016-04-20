@@ -1,53 +1,7 @@
-const getBinWidth = (lower, upper, maxBinCount) => {
-  const delta = (upper - lower) / maxBinCount;
-  const dCount = _countDigits(delta);
-  const coefficent = delta / Math.pow(10, dCount - 1);  // the coefficient in scientific notation
-  let l;
-  if (coefficent <= 1){
-    l =  1;
-  }else if (coefficent<= 2){
-    l = 2;
-  }else if (coefficent<=5){
-    l = 5;
-  }else{
-    l = 10;
-  }
-  return l * Math.pow(10, dCount - 1);
-}
-
-// console.log(getBinWidth(99, 1233, 10))
-
-
-const getBins = (lower, upper, maxBinCount) => {
-  const binWidth = getBinWidth(lower, upper, maxBinCount);
-  const minBin = binWidth * Math.floor(lower / binWidth);
-  const binList = [];
-  for (let bin=minBin; bin < upper; bin=bin+binWidth){
-    binList.push(bin);
-  }
-  return binList;
-}
-
-// console.log(getBins(99, 233, 10))
-// console.log(getBins(99, 1233, 10))
-// console.log(getBins(99, 4233, 10))
-// console.log(getBins(99, 9233, 10))
-
-
-const _countDigits = (n) => {
-  if (n < 1) {
-    return 0;
-  }else{
-    return Math.floor(Math.log10(n)) + 1;
-  }
-}
-// console.log(_countDigits(1023))
-
-
 class BinMachine {
 
   constructor(lower, upper, maxBinCount) {
-    const binWidth = getBinWidth(lower, upper, maxBinCount);
+    const binWidth = this._getBinWidth(lower, upper, maxBinCount);
     this.minBin = binWidth * Math.floor(lower / binWidth);
     this.maxBin = binWidth * Math.ceil(upper / binWidth);
     this.binWidth = binWidth;
@@ -75,10 +29,13 @@ class BinMachine {
     }
     return binList;
   }
+
+  _getBinWidth = (lower, upper, maxBinCount) => {
+    const delta = (upper - lower) / maxBinCount;
+    return Math.ceil(delta);
+  }
 }
 
 export {
-  getBins,
-  getBinWidth,
   BinMachine
 }
