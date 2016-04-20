@@ -47,9 +47,10 @@ const _countDigits = (n) => {
 class BinMachine {
 
   constructor(lower, upper, maxBinCount) {
-    this.binWidth = getBinWidth(lower, upper, maxBinCount);
+    const binWidth = getBinWidth(lower, upper, maxBinCount);
     this.minBin = binWidth * Math.floor(lower / binWidth);
     this.maxBin = binWidth * Math.ceil(upper / binWidth);
+    this.binWidth = binWidth;
   }
 
   // the bin that the value belongs to
@@ -69,7 +70,7 @@ class BinMachine {
     const startBin = this.getBinOf(start);
     const endBin = featureLength > 1 ? this.getBinOf(end - 1) : startBin;  // end position is the position After a feature ends
     const binList = [];
-    for (let bin=startBin; bin <= endBin; bin=bin+binWidth){
+    for (let bin=startBin; bin <= endBin; bin=bin+this.binWidth){
       binList.push(bin);
     }
     return binList;

@@ -10,10 +10,11 @@ import { Button, Popover, Overlay } from 'react-bootstrap';
 import { ButtonGroup, ButtonToolbar, Glyphicon } from 'react-bootstrap';
 import svgPanZoom from 'svg-pan-zoom';
 
-import { HomologyModel } from './Utils';
+import { HomologyModel, DataLoader } from './Utils';
 require('./main.less');
 
 const DEFAULT_SVG_INTERNAL_WIDTH = 100;
+const DEFAULT_MAX_BIN_COUNT = 500;  // default maximum number of bins to show in the visible region
 
 class App extends React.Component {
 
@@ -361,12 +362,14 @@ class App extends React.Component {
       const proteinLengthPromise = sourceGeneModel.getAlignedProteinLength();
       return Promise.all([variationsPromise, proteinLengthPromise]);
     }).then(([variations, proteinLength]) => {
+      const binnedVariations = new DataLoader.BinnedLoader(variations,
+        this._getXMin(), this._getXMax(), DEFAULT_MAX_BIN_COUNT);
       const trackData = {
         sequenceLength: proteinLength,
-        data: variations.map((v) => {
+        data: binnedVariations.map((bin) => {
           return {
-            ...v,
-            tip: v.aa_change || ''
+            ...bin,
+            tip: bin.data.map((v) => v.composite_change || '').join('<br/>')
           };
         })
       };

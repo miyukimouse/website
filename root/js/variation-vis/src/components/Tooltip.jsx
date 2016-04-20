@@ -146,7 +146,7 @@ export default class Tooltip extends React.Component {
           placement="top"
           positionLeft={left}
           positionTop={top}>
-          {this.props.content}
+          <div dangerouslySetInnerHTML={{__html: this.props.content}} />
         </Popover>
         : null;
   }
