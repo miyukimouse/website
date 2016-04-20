@@ -1,7 +1,7 @@
 import "babel-polyfill";
 import React from 'react';
 import { render } from 'react-dom';
-import Track from './Track';
+import BasicTrack, { VariationTrack } from './Tracks';
 //import Button from './components/Button.jsx';
 import Tooltip from './components/Tooltip';
 import Ruler from './components/Ruler';
@@ -371,7 +371,8 @@ class App extends React.Component {
             ...bin,
             tip: bin.data.map((v) => v.composite_change || '').join('<br/>')
           };
-        })
+        }),
+        trackComponent: VariationTrack
       };
       this._setTrackState(trackData, variationTrackIndex);
     });
@@ -519,7 +520,8 @@ class App extends React.Component {
           {
             this.state.tracks.map((trackData, index) => {
               const showTrack = trackData && (trackData.sequence || trackData.sequenceLength);
-              return showTrack ? <Track index={index}
+              const TrackComponent = trackData.trackComponent || BasicTrack;
+              return showTrack ? <TrackComponent index={index}
                 key={`track${index}`}
                 tip={trackData.tip}
                 onTooltipShow={this.showTooltip}
