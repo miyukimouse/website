@@ -23,6 +23,7 @@ export default class BasicTrack extends React.Component {
     onTooltipShow: React.PropTypes.func,
     onTooltipHide: React.PropTypes.func,
     colorScheme: React.PropTypes.object,
+    y: React.PropTypes.number,
     width: React.PropTypes.number,
     height: React.PropTypes.number
   }
@@ -42,12 +43,12 @@ export default class BasicTrack extends React.Component {
 
   static defaultProps = {
     width: 100,
-    height: 10,
+    height: 25,
     data: []
   }
 
   getVerticalPosition = () => {
-    return this.props.index * TRACK_HEIGHT;
+    return this.props.y;
   }
 
   getHorizontalPosition = (dat) => {

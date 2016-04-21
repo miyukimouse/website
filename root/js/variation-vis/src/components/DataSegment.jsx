@@ -48,7 +48,7 @@ export default class Button extends React.Component {
 
   _getLabelCoords(labelText) {
     const x = this.props.x + this.props.width / 2;
-    const y = this.props.y + 13;
+    const y = this.props.y + 40;
 
     return {
       x,
@@ -67,7 +67,7 @@ export default class Button extends React.Component {
           <text ref="label"
               is="svg-text"
               text-anchor='middle'
-              font-size="4"
+              font-size="12"
               lengthAdjust="spacingAndGlyphs"
               {...this._getLabelCoords(labelText)}>
           {

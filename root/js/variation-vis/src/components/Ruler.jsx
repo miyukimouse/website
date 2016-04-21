@@ -27,7 +27,7 @@ export default class Ruler extends React.Component {
     const xMax = this.context.getXMax();
     const tickPositions = getTicks(xMin, xMax, maxIntervalCount);
     const strokeWidth = this.context.toWidth(1);
-    const yOffset = 100;
+    const yOffset = 0;
 
     return (
       <g>
@@ -35,7 +35,7 @@ export default class Ruler extends React.Component {
           <rect x={xMin}
             y={yOffset}
             width={xMax - xMin}
-            height={10}
+            height={30}
             fill="#cccccc"/>
         </g>
         <g>
@@ -43,7 +43,7 @@ export default class Ruler extends React.Component {
           tickPositions.map((position, i) => {
             return <line key={`tick-${i}`}
               x1={position} y1={yOffset}
-              x2={position} y2={yOffset + 3}
+              x2={position} y2={yOffset + 10}
               stroke="black"
               strokeWidth={strokeWidth}/>
           })
@@ -53,8 +53,8 @@ export default class Ruler extends React.Component {
         {
           tickPositions.map((position, i) => {
             return <text key={`tick-${i}`}
-              x={position} y={yOffset+6}
-              fontSize={4}
+              x={position} y={yOffset+20}
+              fontSize={12}
               textAnchor="middle"
               fill="black"
               textLength={this.getTickLabelWidth(position)}

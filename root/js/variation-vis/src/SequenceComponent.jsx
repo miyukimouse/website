@@ -28,7 +28,7 @@ class SequenceComponent extends React.Component {
 
     return {
       x: 0,
-      y: y + (yOffset || 0) + 7
+      y: y + (yOffset || 0) + 15
     }
   }
 
@@ -56,7 +56,7 @@ class SequenceComponent extends React.Component {
               class="sequence-text"
               {...coords}
               text-anchor="start"
-              font-size="4"
+              font-size="12"
               font-family='Menlo, Monaco, Consolas, "Courier New", monospace'
               textLength={width}
               lengthAdjust="spacingAndGlyphs"

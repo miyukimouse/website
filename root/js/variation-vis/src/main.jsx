@@ -14,6 +14,7 @@ import { HomologyModel } from './Utils';
 require('./main.less');
 
 const DEFAULT_SVG_INTERNAL_WIDTH = 100;
+const DEFAULT_SVG_HEIGHT = 600;  // use the same vertical coordinate system for internal vs apparent
 
 class App extends React.Component {
 
@@ -92,7 +93,7 @@ class App extends React.Component {
 
   getViewBox = () => {
     const {fullWidth} = this.state;
-    return [0, 0, fullWidth, 120].join(' ');
+    return [0, 0, fullWidth, DEFAULT_SVG_HEIGHT].join(' ');
   }
 
 
@@ -203,7 +204,7 @@ class App extends React.Component {
       this._updateZoomPanState();
       this._zoomPanTimeout()
     }
-    //, controlIconsEnabled: true
+    // , controlIconsEnabled: true
     //, zoomEnabled: false
     // , dblClickZoomEnabled: true
     , mouseWheelZoomEnabled: true
@@ -458,7 +459,7 @@ class App extends React.Component {
       // //padding: '0 5',
       // width: 400
       width: this.state.viewWidth + trackLabelColumnWidth,
-      height: 600,
+      height: DEFAULT_SVG_HEIGHT,
       // border:"1px solid black",
       position: "relative"
     }
@@ -521,7 +522,8 @@ class App extends React.Component {
           preserveAspectRatio="none"
           style={{
             position: 'relative',
-            left: trackLabelColumnWidth
+            left: trackLabelColumnWidth,
+            border:"1px solid #666666",
           }}>
           <svg id="svg-browser-svg"
           x={0} y={0}
@@ -533,7 +535,7 @@ class App extends React.Component {
     <defs>
       <filter id="demo2">
         <feGaussianBlur stdDeviation={2 / (this.context.zoomFactor * this.context.zoomFactor || 1)} result="blur2" />
-          <feSpecularLighting result="spec2" in="blur2" specularConstant="1.4" specularExponent="13" lightingColor="#eeeeee">
+          <feSpecularLighting result="spec2" in="blur2" specularConstant="1.4" specularExponent="13" lightingColor="#888888">
           <feDistantLight azimuth="270" elevation="20" />
         </feSpecularLighting>
         <feComposite in="SourceGraphic" in2="spec2" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" />
@@ -546,7 +548,7 @@ class App extends React.Component {
               const showTrack = trackData && (trackData.sequence || trackData.sequenceLength);
               const TrackComponent = trackData.trackComponent || BasicTrack;
               return showTrack ? <TrackComponent
-                index={index}
+              //  index={index}
                 key={`track${index}`}
                 tip={trackData.tip}
                 onTooltipShow={this.showTooltip}
@@ -556,6 +558,7 @@ class App extends React.Component {
                 data={trackData.data}
                 colorScheme={colorSchemeA}
                 width={this.state.fullWidth}
+                y={60 * index + 50}
                 xMin={this._getXMin()}
                 xMax={this._getXMax()}/> : null;
             })
