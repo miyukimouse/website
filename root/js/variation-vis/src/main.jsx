@@ -303,13 +303,16 @@ class App extends React.Component {
       this.setState({
         fullWidth: referenceSequence.length  // set the width of svg proportional to length of reference sequence
       });
+
       this._setTrackState({
+        name: `${data.source.protein_id} (cDNA)`,
         sequence: referenceSequence
       }, dnaTrackIndex,
       () => this._setupZoomPan());
 
       // show homolog sequence
       this._setTrackState({
+        name: `${data.target.protein_id} (cDNA)`,
         sequence: data.target.align_seq
       }, dnaTrackIndex2);
     });
@@ -333,12 +336,13 @@ class App extends React.Component {
     // load protein sequence track
     model.getAlignedSourceProtein().then((data) => {
       this._setTrackState({
-        name: 'protein',
+        name: `${data.protein_id} (protein)`,
         sequence: data.align_seq
       }, proteinTrackIndex);
     });
     model.getAlignedTargetProtein().then((data) => {
       this._setTrackState({
+        name: `${data.protein_id} (protein)`,
         sequence: data.align_seq
       }, proteinTrackIndex2);
     });
@@ -372,6 +376,7 @@ class App extends React.Component {
       return Promise.all([variationsPromise, proteinLengthPromise]);
     }).then(([variations, proteinLength]) => {
       const trackData = {
+        name: `B0336.6.2 (variations)`,
         sequenceLength: proteinLength,
         data: variations,
         trackComponent: VariationTrack
@@ -452,7 +457,7 @@ class App extends React.Component {
     });
     //const colorSchemeB = new ColorScheme()
 
-    const trackLabelColumnWidth = 100;
+    const trackLabelColumnWidth = 150;
 
     const containerStyle = {
       // overflowX: 'scroll',
@@ -487,7 +492,7 @@ class App extends React.Component {
         </svg>
       */}
 
-        <div style={{margin: "20px", height: 30}}>
+        <div style={{margin: "20px auto 20px 250px", height: 30}}>
           <ButtonToolbar>
             <ButtonGroup bsSize="large">
               <Button onClick={this.getZoomHandler(2)}><Glyphicon glyph="zoom-in" /></Button>
@@ -503,16 +508,21 @@ class App extends React.Component {
         <div id="svg-browser-container" ref="myContainer" style={containerStyle}>
         <div class="track-label-column"
           style={{
-            width: trackLabelColumnWidth
+            width: trackLabelColumnWidth,
+            position: 'relative'
           }}>
-          <div style={{
-            position: 'absolute',
-            top: 20,
-            left: 0,
-            height: 50,
-            width: 50,
-            border: "1px solid black"
-          }}>Stuff</div>
+          {
+            this.state.tracks.map((trackData, index ) => {
+            return <div style={{
+                position: 'absolute',
+                width: '80%',
+                top: 60 * index + 45,
+                left: 0,
+              }}><h5 style={{
+                textAlign: 'right'
+              }}>{trackData.name}</h5></div>
+            })
+          }
         </div>
         <svg id="svg-browser"
           onWheel={this.handlePan}
@@ -523,7 +533,7 @@ class App extends React.Component {
           style={{
             position: 'relative',
             left: trackLabelColumnWidth,
-            border:"1px solid #666666",
+            border:"1px solid #aaaaaa",
           }}>
           <svg id="svg-browser-svg"
           x={0} y={0}
