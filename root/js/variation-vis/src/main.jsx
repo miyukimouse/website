@@ -223,7 +223,7 @@ class App extends React.Component {
     });
     $('#svg-browser-svg').css({
      width: '100%',
-    height:'100%'
+   // height:'100%'
     })
     //svgElement
     //svgElement.resize()
@@ -451,13 +451,16 @@ class App extends React.Component {
     });
     //const colorSchemeB = new ColorScheme()
 
+    const trackLabelColumnWidth = 100;
+
     const containerStyle = {
       // overflowX: 'scroll',
       // //padding: '0 5',
       // width: 400
-      width: this.state.viewWidth,
+      width: this.state.viewWidth + trackLabelColumnWidth,
       height: 600,
-      border:"1px solid black",
+      // border:"1px solid black",
+      position: "relative"
     }
 
 //    console.log(this.state.tracks)
@@ -497,12 +500,29 @@ class App extends React.Component {
           </ButtonToolbar>
         </div>
         <div id="svg-browser-container" ref="myContainer" style={containerStyle}>
+        <div class="track-label-column"
+          style={{
+            width: trackLabelColumnWidth
+          }}>
+          <div style={{
+            position: 'absolute',
+            top: 20,
+            left: 0,
+            height: 50,
+            width: 50,
+            border: "1px solid black"
+          }}>Stuff</div>
+        </div>
         <svg id="svg-browser"
           onWheel={this.handlePan}
           viewBox={this.getViewBox()}
           height="100%"
-          width="100%"
-          preserveAspectRatio="none">
+          width={this.state.viewWidth}
+          preserveAspectRatio="none"
+          style={{
+            position: 'relative',
+            left: trackLabelColumnWidth
+          }}>
           <svg id="svg-browser-svg"
           x={0} y={0}
           style={{
@@ -525,7 +545,8 @@ class App extends React.Component {
             this.state.tracks.map((trackData, index) => {
               const showTrack = trackData && (trackData.sequence || trackData.sequenceLength);
               const TrackComponent = trackData.trackComponent || BasicTrack;
-              return showTrack ? <TrackComponent index={index}
+              return showTrack ? <TrackComponent
+                index={index}
                 key={`track${index}`}
                 tip={trackData.tip}
                 onTooltipShow={this.showTooltip}
