@@ -497,8 +497,8 @@ class App extends React.Component {
             <ButtonGroup bsSize="large">
               <Button onClick={this.getZoomHandler(2)}><Glyphicon glyph="zoom-in" /></Button>
               <Button onClick={this.getZoomHandler(0.5)}><Glyphicon glyph="zoom-out" /></Button>
-              <Button onClick={this.getPanHandler(200)}><Glyphicon glyph="chevron-left" /></Button>
-              <Button onClick={this.getPanHandler(-200)}><Glyphicon glyph="chevron-right" /></Button>
+              <Button onClick={this.getPanHandler(this.state.fullWidth/2)}><Glyphicon glyph="chevron-left" /></Button>
+              <Button onClick={this.getPanHandler(this.state.fullWidth/(-2))}><Glyphicon glyph="chevron-right" /></Button>
             </ButtonGroup>
             <ButtonGroup>
               <Button onClick={this.handleZoomPanReset} bsSize="large" style={{fontSize:14}}>Reset</Button>
