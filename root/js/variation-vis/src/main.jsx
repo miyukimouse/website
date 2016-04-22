@@ -576,11 +576,11 @@ class App extends React.Component {
           </g>
           </svg>
         </svg>
+        </div>
         { this.state.tooltip
           ? <Tooltip {...this.state.tooltip}/>
           : null
         }
-        </div>
       </div>
     );
   }
