@@ -84,11 +84,15 @@ class App extends React.Component {
 
   handleZoomPanReset = () => {
     const zoomPan = this.state.zoomPan;
-    zoomPan.zoom(1);
-    zoomPan.pan({
-      x: 0,
-      y: 0
-    })
+    if (zoomPan){
+      const zoom = 0.95;  // add a padding to default view by zooming out
+      const deltaWidth = this.state.fullWidth * (1 - zoom);
+      zoomPan.zoom(zoom);
+      zoomPan.pan({
+        x: deltaWidth/2,  // re-center after zooming
+        y: 0
+      })
+    }
   }
 
   getViewBox = () => {
@@ -232,6 +236,8 @@ class App extends React.Component {
 
     this.setState({
       zoomPan: svgElement
+    }, () => {
+      this.handleZoomPanReset();
     });
 
     //this.svgElement = svgElement;
