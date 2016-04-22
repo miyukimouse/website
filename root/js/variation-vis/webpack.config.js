@@ -2,6 +2,13 @@ var path = require('path');
 var webpack = require('webpack');
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
 
+var productionPlugins = process.env.DEV_PORT ? [] : [
+  new webpack.optimize.DedupePlugin(),
+  new webpack.optimize.OccurenceOrderPlugin(),
+  new webpack.optimize.UglifyJsPlugin({compress: {
+      warnings: false
+  }})];
+
 module.exports = {
   devtool: 'eval',
   entry: [
@@ -48,8 +55,14 @@ module.exports = {
     "jquery": "jQuery"
   },
   plugins: [
-    new ExtractTextPlugin( "bundle.css" )
-  ],
+    new ExtractTextPlugin( "bundle.css" ),
+    new webpack.DefinePlugin({
+      'process.env': {
+          // This has effect on the react lib size
+          'NODE_ENV': process.env.DEV_PORT ? JSON.stringify('development') : JSON.stringify('production'),
+      }
+    })
+  ].concat(productionPlugins),
   resolve: {
     // root: path.resolve(__dirname),
     // alias: {
@@ -62,7 +75,7 @@ module.exports = {
     historyApiFallback: true,
     host: '0.0.0.0',
     hot: true,
-    port: 9004,
+    port: process.env.DEV_PORT,
     publicPath: '/static',
     proxy: {
       '/rest/*': {
