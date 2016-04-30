@@ -19,7 +19,6 @@ export class WBDataModel {
       this._raw[name] = new Promise((resolve, reject) => {
         console.log(url);
         jquery.ajax(url, {
-        //  contentType: 'application/json',
           success: (result) => {
             resolve(result);
           },
@@ -39,7 +38,7 @@ export class WBDataModel {
     const delimiter = ';';
     const paramsNew = {
       ...params,
-      'content-type': 'application/json'
+      //'content-type': 'application/json'
     };
     const paramsStr = Object.keys(paramsNew)
     .map((key) => {
@@ -273,7 +272,9 @@ export class GeneModel extends WBDataModel {
 
   _getVariationsWB() {
     return this.alignedProteinPromise.then((data) => {
-      const url = this._urlFor(`gene/${data.id}/alleles_other`, {}, {
+      const url = this._urlFor(`gene/${data.id}/alleles_other`, {
+        'content-type': 'application/json'
+      }, {
         pathPrefix: '/rest/field'
       });
 
