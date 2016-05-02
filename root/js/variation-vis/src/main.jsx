@@ -410,32 +410,20 @@ class App extends React.Component {
 
   }
 
-  _getDefaultTrackYPosition(trackIndex) {
-    return 60 * trackIndex + 50;
+  _getTrackYPosition(trackIndex, trackYOffset=50) {
+    const tracksAbove = this.state.tracks.slice(0, trackIndex);
+    const yPosition =  tracksAbove.reduce((accumulator, trackData) => {
+      return accumulator + (trackData.outerHeight || 60);
+    }, trackYOffset);
+
+    return yPosition;
   }
 
-  handleTrackHeightChange = (trackIndex, deltaHeight) => {
-    console.log(`trackHeight change handler called with: ${trackIndex}`);
-    // if the height of one track changes, the Y positions of tracks below need to update
-    this.setState((prevState) => {
-      const affectedIndexOffset = trackIndex + 1;
-      const affectedTracks = prevState.tracks.slice(affectedIndexOffset);
-      const newAffectedTracks = affectedTracks.map((trackData, i) => {
-        const affectedTrackIndex = affectedIndexOffset + i;
-        const previousY = trackData.y || trackData.y === 0 || this._getDefaultTrackYPosition(affectedTrackIndex);
-        console.log(`prevY is ${previousY}`)
-        return {
-          ...trackData,
-          y: 0 + previousY + deltaHeight
-        }
-      })
-      const newTracks = prevState.tracks.slice(0, affectedIndexOffset).concat(newAffectedTracks);
-      console.log(newTracks)
-
-      return {
-        tracks: newTracks
-      }
-    });
+  handleTrackHeightChange = (trackIndex, newHeight) => {
+    console.log(`trackHeight change handler called with: ${trackIndex} and newHeight=${newHeight}`);
+    this._setTrackState({
+      outerHeight: newHeight
+    }, trackIndex);
   }
 
 
@@ -505,7 +493,7 @@ class App extends React.Component {
       position: "relative"
     }
 
-//    console.log(this.state.tracks)
+    console.log(this.state.tracks)
 
     return (
       <div className="bootstrap-style">
@@ -552,7 +540,7 @@ class App extends React.Component {
             return <div style={{
                 position: 'absolute',
                 width: '80%',
-                top: 60 * index + 45,
+                top: this._getTrackYPosition(index, 40),
                 left: 0,
               }}><h5 style={{
                 textAlign: 'right'
@@ -605,7 +593,7 @@ class App extends React.Component {
                 colorScheme={colorSchemeA}
                 width={this.state.fullWidth}
                 onHeightChange={this.handleTrackHeightChange}
-                y={trackData.y || this._getDefaultTrackYPosition(index)}
+                y={this._getTrackYPosition(index)}
                 xMin={this._getXMin()}
                 xMax={this._getXMax()}/> : null;
             })

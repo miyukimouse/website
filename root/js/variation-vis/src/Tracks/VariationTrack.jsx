@@ -28,7 +28,7 @@ export default class VariationTrack extends React.Component {
         allowHeightChange: false
       }, () => {
         console.log(`mounting ${this.props.index}`);
-        this.props.onHeightChange(this.props.index, 40);
+        this.props.onHeightChange(this.props.index, 180);
       });
     }
   }
