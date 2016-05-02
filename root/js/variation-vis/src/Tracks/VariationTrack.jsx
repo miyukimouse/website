@@ -23,13 +23,10 @@ export default class VariationTrack extends React.Component {
 
 
   componentDidMount() {
-    console.log(this.state);
-//    const hasData =
     if (this.state.allowHeightChange){
       this.setState({
         allowHeightChange: false
       }, () => {
-        console.log(`mounting ${this.props.index}`);
         const binLengths = this._bin(this.props.data).map((bin) => bin.data.length);
         const numOfSubtracks = Math.max(...binLengths);
         const newTrackHeight = 20 + numOfSubtracks * SUBTRACK_HEIGHT;
@@ -126,8 +123,7 @@ export default class VariationTrack extends React.Component {
     const data = this._getDataWithIdentifier();
     const binnedData = this._bin(data);
     const subtrackData = this._decompose(binnedData);
-    console.log(binnedData);
-    console.log(subtrackData);
+
     return <g>
       {
         subtrackData.map((subtrackData, index) => {
