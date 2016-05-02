@@ -59,6 +59,7 @@ export default class BasicTrack extends React.Component {
     }
   }
 
+
   /* data series within a track */
   renderData(){
     const data = this.props.colorScheme

@@ -9,6 +9,28 @@ export default class VariationTrack extends React.Component {
     ...BasicTrack.propTypes,
     xMin: React.PropTypes.number,
     xMax: React.PropTypes.number,
+    onHeightChange: React.PropTypes.func,
+  }
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      allowHeightChange: true
+    };
+  }
+
+
+  componentDidMount() {
+    console.log(this.state);
+//    const hasData =
+    if (this.state.allowHeightChange){
+      this.setState({
+        allowHeightChange: false
+      }, () => {
+        console.log(`mounting ${this.props.index}`);
+        this.props.onHeightChange(this.props.index, 40);
+      });
+    }
   }
 
   _parseData(variations) {

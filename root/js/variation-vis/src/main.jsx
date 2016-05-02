@@ -178,6 +178,7 @@ class App extends React.Component {
 
   componentDidMount() {
     this._getData();
+    console.log('app mount')
     // setTimeout(() =>
     //   this._setupZoomPan()
     //   , 5000);
@@ -409,6 +410,35 @@ class App extends React.Component {
 
   }
 
+  _getDefaultTrackYPosition(trackIndex) {
+    return 60 * trackIndex + 50;
+  }
+
+  handleTrackHeightChange = (trackIndex, deltaHeight) => {
+    console.log(`trackHeight change handler called with: ${trackIndex}`);
+    // if the height of one track changes, the Y positions of tracks below need to update
+    this.setState((prevState) => {
+      const affectedIndexOffset = trackIndex + 1;
+      const affectedTracks = prevState.tracks.slice(affectedIndexOffset);
+      const newAffectedTracks = affectedTracks.map((trackData, i) => {
+        const affectedTrackIndex = affectedIndexOffset + i;
+        const previousY = trackData.y || trackData.y === 0 || this._getDefaultTrackYPosition(affectedTrackIndex);
+        console.log(`prevY is ${previousY}`)
+        return {
+          ...trackData,
+          y: 0 + previousY + deltaHeight
+        }
+      })
+      const newTracks = prevState.tracks.slice(0, affectedIndexOffset).concat(newAffectedTracks);
+      console.log(newTracks)
+
+      return {
+        tracks: newTracks
+      }
+    });
+  }
+
+
   // componentWillUpdate() {
   //   // this.svgElement.destroy();
   // }
@@ -564,7 +594,7 @@ class App extends React.Component {
               const showTrack = trackData && (trackData.sequence || trackData.sequenceLength);
               const TrackComponent = trackData.trackComponent || BasicTrack;
               return showTrack ? <TrackComponent
-              //  index={index}
+                index={index}
                 key={`track${index}`}
                 tip={trackData.tip}
                 onTooltipShow={this.showTooltip}
@@ -574,7 +604,8 @@ class App extends React.Component {
                 data={trackData.data}
                 colorScheme={colorSchemeA}
                 width={this.state.fullWidth}
-                y={60 * index + 50}
+                onHeightChange={this.handleTrackHeightChange}
+                y={trackData.y || this._getDefaultTrackYPosition(index)}
                 xMin={this._getXMin()}
                 xMax={this._getXMax()}/> : null;
             })
