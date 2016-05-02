@@ -493,7 +493,7 @@ class App extends React.Component {
       position: "relative"
     }
 
-    console.log(this.state.tracks)
+//    console.log(this.state.tracks)
 
     return (
       <div className="bootstrap-style">
