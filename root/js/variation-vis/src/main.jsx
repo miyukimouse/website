@@ -298,7 +298,9 @@ class App extends React.Component {
 
   _getData() {
 //    const model = new HomologyModel('WBGene00225050');
-    const model = new HomologyModel('WBGene00015146');
+//    const model = new HomologyModel('WBGene00015146');  // abi-1
+//    const model = new HomologyModel('WBGene00006759');  //unc-22
+    const model = new HomologyModel('WBGene00000904');  //daf-8
     const dnaTrackIndex = 0;
     const dnaTrackIndex2 = 4;
     const proteinTrackIndex = 1;

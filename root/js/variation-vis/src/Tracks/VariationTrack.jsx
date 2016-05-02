@@ -1,6 +1,7 @@
 import React from 'react';
 import BasicTrack from './BasicTrack';
 import { DataLoader } from '../Utils';
+import ColorScheme, { COLORS } from '../DataDecorator';
 
 const DEFAULT_MAX_BIN_COUNT = 100;  // default maximum number of bins to show in the visible region
 const SUBTRACK_HEIGHT = 30;
@@ -105,6 +106,20 @@ export default class VariationTrack extends React.Component {
     return subtrackData;
   }
 
+  _getColorScheme() {
+    const knownChangeType = new Set(['Nonsense', 'Missense', 'Insertion', 'Deletion'])
+    return new ColorScheme((dat, index) => {
+      const descriptor = [].concat(dat.data.molecular_change, dat.data.effects);
+      const types = descriptor.filter((value) => knownChangeType.has(value));
+      return types.length > 0 ? types[0] : 'Other';
+    }, {
+      Nonsense: COLORS.RED,
+      Missense: COLORS.BLUE,
+      Insertion: COLORS.GREEN,
+      Deletion:COLORS.MAGENTA,
+      Other: COLORS.YELLOW
+    });
+  }
 
 
   render() {
@@ -119,6 +134,7 @@ export default class VariationTrack extends React.Component {
           return <BasicTrack
             {...this.props}
             y={this.props.y + SUBTRACK_HEIGHT * index}
+            colorScheme={this._getColorScheme()}
             data={subtrackData}/>
         })
       }

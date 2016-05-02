@@ -100,7 +100,7 @@ export default class BasicTrack extends React.Component {
         <rect
           x="0"
           y={this.getVerticalPosition()}
-          width={this.props.width} height={this.props.height} fillOpacity="0.5"/>
+          width={this.props.width} height={this.props.height} fillOpacity="0"/>
         {
           this.renderData()
         }
