@@ -274,15 +274,22 @@ export class GeneModel extends WBDataModel {
 
   _getVariationsWB() {
     return this.alignedProteinPromise.then((data) => {
-      const url = this._urlFor(`gene/${data.id}/alleles_other`, {
+      // const url = this._urlFor(`gene/${data.id}/alleles_other`, {
+      //   'content-type': 'application/json'
+      // }, {
+      //   pathPrefix: '/rest/field'
+      // });
+      const url = this._urlFor(`gene/${data.id}/genetics`, {
         'content-type': 'application/json'
       }, {
-        pathPrefix: '/rest/field'
+        pathPrefix: '/rest/widget'
       });
 
       return this._getOrFetch('_variations_wb', url)
         .then((data) => {
-          const parsedData = (data.alleles_other.data || []).filter((dat) => {
+          console.log(data);
+          const variationData = data.fields.alleles.data;
+          const parsedData = (variationData || []).filter((dat) => {
             return dat.aa_position || dat.aa_position === 0;
           }).map((dat) => {
             const aa_position = parseInt(dat.aa_position);

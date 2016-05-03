@@ -92,7 +92,7 @@ export default class VariationTrack extends React.Component {
         subtrackData[trackId].push({
           ...bin,
           data: dat,
-          tip: dat.composite_change
+          tip: dat.composite_change + `<br/>${dat.molecular_change}`
         });
 
         // used tracks are not available any more
