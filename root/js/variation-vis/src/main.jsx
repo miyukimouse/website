@@ -1,7 +1,7 @@
 import "babel-polyfill";
 import React from 'react';
 import { render } from 'react-dom';
-import BasicTrack, { VariationTrack } from './Tracks';
+import BasicTrack, { VariationTrack, AlignmentTrack } from './Tracks';
 //import Button from './components/Button.jsx';
 import Tooltip from './components/Tooltip';
 import Ruler from './components/Ruler';
@@ -346,13 +346,15 @@ class App extends React.Component {
     model.getAlignedSourceProtein().then((data) => {
       this._setTrackState({
         name: `${data.protein_id} (protein)`,
-        sequence: data.align_seq
+        sequence: data.align_seq,
+        trackComponent: AlignmentTrack
       }, proteinTrackIndex);
     });
     model.getAlignedTargetProtein().then((data) => {
       this._setTrackState({
         name: `${data.protein_id} (protein)`,
-        sequence: data.align_seq
+        sequence: data.align_seq,
+        trackComponent: AlignmentTrack
       }, proteinTrackIndex2);
     });
 

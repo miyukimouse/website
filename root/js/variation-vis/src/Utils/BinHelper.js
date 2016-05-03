@@ -1,7 +1,12 @@
-class BinMachine {
+export default class BinHelper {
+
+  static getBinWidth(lower, upper, maxBinCount) {
+    const delta = (upper - lower) / maxBinCount;
+    return Math.ceil(delta);
+  }
 
   constructor(lower, upper, maxBinCount) {
-    const binWidth = this._getBinWidth(lower, upper, maxBinCount);
+    const binWidth = BinHelper.getBinWidth(lower, upper, maxBinCount);
     this.minBin = binWidth * Math.floor(lower / binWidth);
     this.maxBin = binWidth * Math.ceil(upper / binWidth);
     this.binWidth = binWidth;
@@ -29,13 +34,8 @@ class BinMachine {
     }
     return binList;
   }
-
-  _getBinWidth = (lower, upper, maxBinCount) => {
-    const delta = (upper - lower) / maxBinCount;
-    return Math.ceil(delta);
-  }
 }
 
-export {
-  BinMachine
-}
+// export {
+//   BinMachine
+// }
