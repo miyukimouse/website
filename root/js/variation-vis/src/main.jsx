@@ -375,7 +375,7 @@ class App extends React.Component {
             tip: d.description || ''
           };
         })
-      }, proteinTrackIndex);
+      }, proteinTrackIndex2);
     });
 
     // load variation tracks
@@ -385,7 +385,7 @@ class App extends React.Component {
       return Promise.all([variationsPromise, proteinLengthPromise]);
     }).then(([variations, proteinLength]) => {
       const trackData = {
-        name: `B0336.6.2 (variations)`,
+        name: `R05D11.1 (variations)`,
         sequenceLength: proteinLength,
         data: variations,
         trackComponent: VariationTrack
