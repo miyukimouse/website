@@ -178,6 +178,7 @@ class App extends React.Component {
 
   componentDidMount() {
     this._getData();
+    console.log('app mount')
     // setTimeout(() =>
     //   this._setupZoomPan()
     //   , 5000);
@@ -297,7 +298,9 @@ class App extends React.Component {
 
   _getData() {
 //    const model = new HomologyModel('WBGene00225050');
-    const model = new HomologyModel('WBGene00015146');
+//    const model = new HomologyModel('WBGene00015146');  // abi-1
+//    const model = new HomologyModel('WBGene00006759');  //unc-22
+    const model = new HomologyModel('WBGene00000904');  //daf-8
     const dnaTrackIndex = 0;
     const dnaTrackIndex2 = 4;
     const proteinTrackIndex = 1;
@@ -408,6 +411,23 @@ class App extends React.Component {
     }, callback);
 
   }
+
+  _getTrackYPosition(trackIndex, trackYOffset=50) {
+    const tracksAbove = this.state.tracks.slice(0, trackIndex);
+    const yPosition =  tracksAbove.reduce((accumulator, trackData) => {
+      return accumulator + (trackData.outerHeight || 60);
+    }, trackYOffset);
+
+    return yPosition;
+  }
+
+  handleTrackHeightChange = (trackIndex, newHeight) => {
+    console.log(`trackHeight change handler called with: ${trackIndex} and newHeight=${newHeight}`);
+    this._setTrackState({
+      outerHeight: newHeight
+    }, trackIndex);
+  }
+
 
   // componentWillUpdate() {
   //   // this.svgElement.destroy();
@@ -522,7 +542,7 @@ class App extends React.Component {
             return <div style={{
                 position: 'absolute',
                 width: '80%',
-                top: 60 * index + 45,
+                top: this._getTrackYPosition(index, 40),
                 left: 0,
               }}><h5 style={{
                 textAlign: 'right'
@@ -564,7 +584,7 @@ class App extends React.Component {
               const showTrack = trackData && (trackData.sequence || trackData.sequenceLength);
               const TrackComponent = trackData.trackComponent || BasicTrack;
               return showTrack ? <TrackComponent
-              //  index={index}
+                index={index}
                 key={`track${index}`}
                 tip={trackData.tip}
                 onTooltipShow={this.showTooltip}
@@ -574,7 +594,8 @@ class App extends React.Component {
                 data={trackData.data}
                 colorScheme={colorSchemeA}
                 width={this.state.fullWidth}
-                y={60 * index + 50}
+                onHeightChange={this.handleTrackHeightChange}
+                y={this._getTrackYPosition(index)}
                 xMin={this._getXMin()}
                 xMax={this._getXMax()}/> : null;
             })
