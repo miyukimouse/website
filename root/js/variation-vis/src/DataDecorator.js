@@ -11,7 +11,8 @@ const COLOR_IDS  = {};
   'GREY',
   'MAGENTA',
   'LIGHT_TEAL',
-  'LIGHT_YELLOW'
+  'LIGHT_YELLOW',
+  'LIGTH_GREY',
 ].forEach((colorName, index) => COLOR_IDS[colorName] = index);
 export {
   COLOR_IDS as COLORS
@@ -29,7 +30,8 @@ const PALETTE = new Map([
   [COLOR_IDS.GREY, 'rgb(217,217,217)'],
   [COLOR_IDS.MAGENTA, 'rgb(188,128,189)'],
   [COLOR_IDS.LIGHT_TEAL, 'rgb(204,235,197)'],
-  [COLOR_IDS.LIGHT_YELLOW,'rgb(255,237,111)']
+  [COLOR_IDS.LIGHT_YELLOW,'rgb(255,237,111)'],
+  [COLOR_IDS.LIGTH_GREY, 'rgb(204,204,204)'],
 ]);
 
 export default class ColorScheme {

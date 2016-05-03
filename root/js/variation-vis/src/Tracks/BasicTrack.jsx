@@ -97,10 +97,6 @@ export default class BasicTrack extends React.Component {
     return (
       <g className="track">
         <g filter="url(#demo2)">
-        <rect
-          x="0"
-          y={this.getVerticalPosition()}
-          width={this.props.width} height={this.props.height} fillOpacity="0"/>
         {
           this.renderData()
         }

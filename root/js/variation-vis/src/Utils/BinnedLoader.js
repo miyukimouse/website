@@ -1,7 +1,7 @@
-import { BinMachine } from './BinHelper';
+import BinHelper from './BinHelper';
 
 export default function BinnedLoader(data, lower, upper, maxBinCount) {
-  const binMinchine = new BinMachine(lower, upper, maxBinCount);
+  const binMinchine = new BinHelper(lower, upper, maxBinCount);
   const binWidth = binMinchine.binWidth;
   const binToData = {};
 

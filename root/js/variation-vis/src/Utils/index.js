@@ -1,8 +1,10 @@
 import jquery from 'jquery';
 import BinnedLoader from './BinnedLoader';
+import BinHelper from './BinHelper';
 
 export const DataLoader = {
   BinnedLoader,
+  BinHelper
 }
 
 export const TRACK_HEIGHT = 20;

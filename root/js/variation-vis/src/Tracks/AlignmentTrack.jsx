@@ -8,7 +8,9 @@ const SUBTRACK_HEIGHT = 30;
 
 export default class AlignmnetTrack extends React.Component {
   static propTypes = {
-    ...BasicTrack.propTypes
+    ...BasicTrack.propTypes,
+    xMin: React.PropTypes.number,
+    xMax: React.PropTypes.number,
   }
 
   _getGapsCoords() {
@@ -22,7 +24,7 @@ export default class AlignmnetTrack extends React.Component {
       const start = sequence.indexOf('-', counter);
       const length = gap.length;
       const end = start + length;
-      counter += length;
+      counter = end;
 
       return {
         start,
@@ -34,14 +36,41 @@ export default class AlignmnetTrack extends React.Component {
 
   }
 
+  _keepLongGaps(gapsCoords) {
+    // converting the coordinate from cDNA to protein if necessary
+    const multiplier = this.props.sequence.search(/M/i) > -1 ? 3 : 1;  // check if sequence is amino acid sequence
+    const xMin = this.props.xMin/multiplier;
+    const xMax = this.props.xMax/multiplier;
+
+    const lengthThreshold = DataLoader.BinHelper.getBinWidth(
+      xMin, xMax, DEFAULT_MAX_BIN_COUNT);
+
+    const longGaps = gapsCoords.filter(({start, end}) =>{
+      return end - start > lengthThreshold;
+    });
+    return longGaps;
+  }
+
+  _getColorScheme() {
+    return new ColorScheme((dat, index) => {
+      return 'gap'
+    }, {
+      gap: COLORS.GREY
+    });
+  }
+
   render() {
     const gaps = this._getGapsCoords();
-    console.log();
+    const longGaps = this._keepLongGaps(gaps);
 
     return <g>
       <BasicTrack
         {...this.props}
         data={this.props.data}/>
+      <BasicTrack
+        {...this.props}
+        colorScheme={this._getColorScheme()}
+        data={longGaps}/>
     </g>;
   }
 }
