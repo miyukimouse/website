@@ -5,11 +5,31 @@ export default class BinHelper {
     return Math.ceil(delta);
   }
 
-  constructor(lower, upper, maxBinCount) {
+  static getBinDescriptor(lower, upper, maxBinCount) {
     const binWidth = BinHelper.getBinWidth(lower, upper, maxBinCount);
-    this.minBin = binWidth * Math.floor(lower / binWidth);
-    this.maxBin = binWidth * Math.ceil(upper / binWidth);
+    const minBin = binWidth * Math.floor(lower / binWidth);
+    const maxBin = binWidth * Math.ceil(upper / binWidth);
+    return {
+      binWidth,
+      minBin,
+      maxBin
+    }
+  }
+
+  static getBins(lower, upper, maxBinCount) {
+    const {minBin, maxBin, binWidth} = BinHelper.getBinDescriptor(lower, upper, maxBinCount);
+    const bins = [];
+    for (let binStart=minBin; binStart <= maxBin; binStart+=binWidth) {
+      bins.push(binStart);
+    }
+    return bins;
+  }
+
+  constructor(lower, upper, maxBinCount) {
+    const {minBin, maxBin, binWidth} = BinHelper.getBinDescriptor(lower, upper, maxBinCount);
     this.binWidth = binWidth;
+    this.minBin = minBin;
+    this.maxBin =  maxBin;
   }
 
   // the bin that the value belongs to
