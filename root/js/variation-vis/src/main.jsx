@@ -1,7 +1,8 @@
 import "babel-polyfill";
 import React from 'react';
 import { render } from 'react-dom';
-import BasicTrack, { VariationTrack, AlignmentTrack } from './Tracks';
+import BasicTrack, { VariationTrack, AlignmentTrack, ProteinConservationTrack } from './Tracks';
+console.log(ProteinConservationTrack);
 //import Button from './components/Button.jsx';
 import Tooltip from './components/Tooltip';
 import Ruler from './components/Ruler';
@@ -302,10 +303,11 @@ class App extends React.Component {
 //    const model = new HomologyModel('WBGene00006759');  //unc-22
     const model = new HomologyModel('WBGene00000904');  //daf-8
     const dnaTrackIndex = 0;
-    const dnaTrackIndex2 = 4;
-    const proteinTrackIndex = 1;
-    const proteinTrackIndex2 = 3;
-    const variationTrackIndex = 2;
+    const dnaTrackIndex2 = 5;
+    const proteinTrackIndex = 2;
+    const proteinTrackIndex2 = 4;
+    const variationTrackIndex = 1;
+    const conservationTrackIndex = 3;
 
     const referencePromise = model.getAlignedDNA().then((data) => {
       const referenceSequence = data.source.align_seq;
@@ -378,6 +380,18 @@ class App extends React.Component {
           };
         })
       }, proteinTrackIndex2);
+    });
+
+    // load concervation track
+    Promise.all([model.getAlignedSourceProtein(), model.getAlignedTargetProtein()]).then(([sourceData, targetData]) => {
+      const sourceSequence = sourceData.align_seq;
+      const targetSequence = targetData.align_seq;
+      this._setTrackState({
+        sequenceLength: sourceSequence.length,
+        sequenceList: [sourceSequence, targetSequence],
+        trackComponent: ProteinConservationTrack,
+        name: 'Protein Conservation',
+      }, conservationTrackIndex);
     });
 
     // load variation tracks
