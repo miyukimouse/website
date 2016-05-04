@@ -2,7 +2,6 @@ import "babel-polyfill";
 import React from 'react';
 import { render } from 'react-dom';
 import BasicTrack, { VariationTrack, AlignmentTrack, ProteinConservationTrack } from './Tracks';
-console.log(ProteinConservationTrack);
 //import Button from './components/Button.jsx';
 import Tooltip from './components/Tooltip';
 import Ruler from './components/Ruler';
@@ -179,7 +178,6 @@ class App extends React.Component {
 
   componentDidMount() {
     this._getData();
-    console.log('app mount')
     // setTimeout(() =>
     //   this._setupZoomPan()
     //   , 5000);
@@ -302,12 +300,12 @@ class App extends React.Component {
 //    const model = new HomologyModel('WBGene00015146');  // abi-1
 //    const model = new HomologyModel('WBGene00006759');  //unc-22
     const model = new HomologyModel('WBGene00000904');  //daf-8
-    const dnaTrackIndex = 0;
-    const dnaTrackIndex2 = 5;
-    const proteinTrackIndex = 2;
-    const proteinTrackIndex2 = 4;
-    const variationTrackIndex = 1;
-    const conservationTrackIndex = 3;
+
+    function _getTrackIndex(trackName) {
+      const tracks = ['sourceDNA', 'sourceVariation', 'sourceProtein', 'conservation',
+        'targetProtein', 'targetDNA'];
+      return tracks.findIndex((knowTrackName) => knowTrackName === trackName);
+    }
 
     const referencePromise = model.getAlignedDNA().then((data) => {
       const referenceSequence = data.source.align_seq;
@@ -316,70 +314,77 @@ class App extends React.Component {
       });
 
       this._setTrackState({
+        index: _getTrackIndex('sourceDNA'),
         name: `${data.source.protein_id} (cDNA)`,
         sequence: referenceSequence
-      }, dnaTrackIndex,
-      () => this._setupZoomPan());
+      }, () => this._setupZoomPan());
 
       // show homolog sequence
       this._setTrackState({
+        index: _getTrackIndex('targetDNA'),
         name: `${data.target.protein_id} (cDNA)`,
         sequence: data.target.align_seq
-      }, dnaTrackIndex2);
+      });
     });
 
     // load CDS on DNA tracks
     model.sourceGeneModel.then((sourceGeneModel) => sourceGeneModel.getAlignedCDSs()).then((cdss) => {
       this._setTrackState({
+        index: _getTrackIndex('sourceDNA'),
         data: cdss.map((cds, i) => {
           return {...cds, tip: 'CDS' + i};
         })
-      }, dnaTrackIndex);
+      });
     });
     model.targetGeneModel.then((targetGeneModel) => targetGeneModel.getAlignedCDSs()).then((cdss) => {
       this._setTrackState({
+        index: _getTrackIndex('targetDNA'),
         data: cdss.map((cds, i) => {
           return {...cds, tip: 'CDS' + i};
         })
-      }, dnaTrackIndex2);
+      });
     });
 
     // load protein sequence track
     model.getAlignedSourceProtein().then((data) => {
       this._setTrackState({
+        index: _getTrackIndex('sourceProtein'),
         name: `${data.protein_id} (protein)`,
         sequence: data.align_seq,
         trackComponent: AlignmentTrack
-      }, proteinTrackIndex);
+      });
     });
     model.getAlignedTargetProtein().then((data) => {
       this._setTrackState({
+        index: _getTrackIndex('targetProtein'),
         name: `${data.protein_id} (protein)`,
         sequence: data.align_seq,
         trackComponent: AlignmentTrack
-      }, proteinTrackIndex2);
+      });
     });
 
     // load protein domain tracks
     model.sourceGeneModel.then((sourceGeneModel) => sourceGeneModel.getAlignedDomains()).then((domains) => {
       this._setTrackState({
+        index: _getTrackIndex('sourceProtein'),
         data: domains.map((d) => {
           return {
             ...d,
             tip: d.description || ''
           };
         })
-      }, proteinTrackIndex);
+      });
     });
     model.targetGeneModel.then((targetGeneModel) => targetGeneModel.getAlignedDomains()).then((domains) => {
       this._setTrackState({
+        index: _getTrackIndex('targetProtein'),
         data: domains.map((d) => {
           return {
             ...d,
             tip: d.description || ''
           };
         })
-      }, proteinTrackIndex2);
+      });
     });
 
     // load concervation track
@@ -387,11 +392,12 @@ class App extends React.Component {
       const sourceSequence = sourceData.align_seq;
       const targetSequence = targetData.align_seq;
       this._setTrackState({
+        index: _getTrackIndex('conservation'),
         sequenceLength: sourceSequence.length,
         sequenceList: [sourceSequence, targetSequence],
         trackComponent: ProteinConservationTrack,
         name: 'Protein Conservation',
-      }, conservationTrackIndex);
+      });
     });
 
     // load variation tracks
@@ -401,16 +407,19 @@ class App extends React.Component {
       return Promise.all([variationsPromise, proteinLengthPromise]);
     }).then(([variations, proteinLength]) => {
       const trackData = {
+        index: _getTrackIndex('sourceVariation'),
         name: `R05D11.1 (variations)`,
         sequenceLength: proteinLength,
         data: variations,
         trackComponent: VariationTrack
       };
-      this._setTrackState(trackData, variationTrackIndex);
+      this._setTrackState(trackData);
     });
   }
 
-  _setTrackState(data, index, callback) {
+  _setTrackState(data, callback) {
+    const index = data.index;
+
     // this returns a new set of track data, without modifying the original
     this.setState((prevState) => {
       const newTrackData = {
@@ -440,8 +449,9 @@ class App extends React.Component {
   handleTrackHeightChange = (trackIndex, newHeight) => {
     console.log(`trackHeight change handler called with: ${trackIndex} and newHeight=${newHeight}`);
     this._setTrackState({
+      index: trackIndex,
       outerHeight: newHeight
-    }, trackIndex);
+    });
   }
 
 
@@ -560,7 +570,8 @@ class App extends React.Component {
                 width: '80%',
                 top: this._getTrackYPosition(index, 40),
                 left: 0,
-              }}><h5 style={{
+              }}
+              key={`track-label-${index}`}><h5 style={{
                 textAlign: 'right'
               }}>{trackData.name}</h5></div>
             })
@@ -596,9 +607,10 @@ class App extends React.Component {
           <Ruler/>
           <g>
           {
-            this.state.tracks.map((trackData, index) => {
+            this.state.tracks.map((trackData) => {
               const showTrack = trackData && (trackData.sequence || trackData.sequenceLength);
               const TrackComponent = trackData.trackComponent || BasicTrack;
+              const {index} = trackData; // note use the index contained in the data
               return showTrack ? <TrackComponent
                 index={index}
                 key={`track${index}`}
