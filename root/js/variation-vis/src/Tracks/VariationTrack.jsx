@@ -24,6 +24,7 @@ export default class VariationTrack extends React.Component {
 
   componentDidMount() {
     if (this.props.data && this.state.allowHeightChange){
+      console.log('will initiate height change')
       this.setState({
         allowHeightChange: false
       }, () => {

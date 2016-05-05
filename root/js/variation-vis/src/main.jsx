@@ -391,6 +391,7 @@ class App extends React.Component {
     Promise.all([model.getAlignedSourceProtein(), model.getAlignedTargetProtein()]).then(([sourceData, targetData]) => {
       const sourceSequence = sourceData.align_seq;
       const targetSequence = targetData.align_seq;
+      console.log(sourceData);
       this._setTrackState({
         index: _getTrackIndex('conservation'),
         sequenceLength: sourceSequence.length,
@@ -413,7 +414,7 @@ class App extends React.Component {
         data: variations,
         trackComponent: VariationTrack
       };
-      this._setTrackState(trackData);
+      // this._setTrackState(trackData);
     });
   }
 
@@ -612,6 +613,7 @@ class App extends React.Component {
               const TrackComponent = trackData.trackComponent || BasicTrack;
               const {index} = trackData; // note use the index contained in the data
               return showTrack ? <TrackComponent
+                {...trackData}
                 index={index}
                 key={`track${index}`}
                 tip={trackData.tip}
