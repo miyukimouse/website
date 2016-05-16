@@ -38,9 +38,12 @@ class App extends React.Component {
       // zoomPan
       isZoomPanOccuring: false,
       zoomPanEventId: 0,
+      zoomPanCallId: 0,  // avoid too many render by
+      // zoomPanEvents: [],
 
       // track data
-      tracks: []
+      tracks: [],
+
      };
   }
 
@@ -184,6 +187,15 @@ class App extends React.Component {
   }
 
 
+  shouldComponentUpdate(nextProps, nextState) {
+    // triggers state change Only if the zoomPanCallId has stablized,
+    // as zoomPanCallId changes when zoom pan is ongoing,
+    // which would result in a lot unnecessary calls.
+    // console.log(`${nextState.zoomPanCallId} ${this.state.zoomPanCallId}`);
+    return nextState.zoomPanCallId === this.state.zoomPanCallId;
+  }
+
+
   _setupZoomPan() {
     const svgElement = svgPanZoom('#svg-browser-svg', {
     //  viewportSelector: '.svg-pan-zoom_viewport'
@@ -245,16 +257,32 @@ class App extends React.Component {
   }
 
   _updateZoomPanState = () => {
+
     const {x: zoomFactor} = this.state.zoomPan.getZooms();
     const {x: panOffset} = this.state.zoomPan.getPan();
     const xMin = panOffset * -1 / zoomFactor;
+    const zoomPanCallId = this.state.zoomPanCallId + 1;
+    // const newZoomPanEvents = this.state.zoomPanEvents.concat({
+    //   zoomFactor,
+    //   panOffset,
+    //   zoomPanCallId,
+    // });
 
-    this.setState((prevState) => {
-      return {
-        xMin: xMin,
-        zoomFactor: zoomFactor
-      }
+    this.setState({
+      zoomPanCallId
     });
+
+    setTimeout(() => {
+      if (this.state.zoomPanCallId === zoomPanCallId) {
+        // if no new zoomPan events occur during the timeout
+        this.setState((prevState) => {
+          return {
+            xMin: xMin,
+            zoomFactor: zoomFactor
+          };
+        });
+      }
+    }, 400);
   }
 
   _getXMin = () => {

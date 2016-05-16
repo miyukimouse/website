@@ -49,7 +49,8 @@ export default class ProteinConcervationTrack extends React.Component {
     for (let i = 0; i < length; i++) {
       scores[i] = SubstitutionHelper.getSubstitutionScore(sequence1[i], sequence2[i]);
     }
-    return this._computeMedian(scores);
+    return this._computeMean(scores);
+    //return this._computeMedian(scores);
   }
 
   _computeMedian(values) {
@@ -62,12 +63,16 @@ export default class ProteinConcervationTrack extends React.Component {
     }
   }
 
+  _computeMean(values) {
+    const sum = values.reduce((sum, currentValue) => sum + currentValue, 0);
+    return sum / values.length;
+  }
 
   _getColorScheme(annotatedSegments) {
     return new ColorScheme((dat, index) => {
       return 'score';
     }, {
-      score: COLORS.BLACK
+      score: COLORS.ORANGE
     });
   }
 
@@ -80,15 +85,12 @@ export default class ProteinConcervationTrack extends React.Component {
       const score = this._getSegmentScore(segment);
       let standardizedScore = (score - scoreMin) / (scoreMax - scoreMin);
 
-      console.log(`op score ${standardizedScore}`)
-      console.log([score, scoreMin, scoreMax]);
-      console.log(segments);
       //standardizedScore = Math.round(standardizedScore * 10) /  10; // round to one decimal place
 
       return {
         ...segment[0],
         score: score,
-        fillOpacity: standardizedScore,
+        fillOpacity: 1 - standardizedScore,
       };
     });
   }
