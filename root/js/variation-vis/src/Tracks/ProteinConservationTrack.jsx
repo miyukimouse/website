@@ -70,9 +70,10 @@ export default class ProteinConcervationTrack extends React.Component {
 
   _getColorScheme(annotatedSegments) {
     return new ColorScheme((dat, index) => {
-      return 'score';
+      return dat.score > 0 ? 'positive' : 'nonPositive';
     }, {
-      score: COLORS.ORANGE
+      positive: COLORS.ORANGE,
+      nonPositive: COLORS.BLUE
     });
   }
 
@@ -83,26 +84,35 @@ export default class ProteinConcervationTrack extends React.Component {
 
     return segments.map((segment) => {
       const score = this._getSegmentScore(segment);
-      let standardizedScore = (score - scoreMin) / (scoreMax - scoreMin);
+      let standardizedScore = this._getStandardizedScore(score, scoreMin, scoreMax);
 
       //standardizedScore = Math.round(standardizedScore * 10) /  10; // round to one decimal place
-
       return {
         ...segment[0],
-        score: score,
-        fillOpacity: 1 - standardizedScore,
+        score: standardizedScore,
+        fillOpacity: Math.abs(standardizedScore),
       };
     });
+  }
+
+  _getStandardizedScore(score, scoreMin, scoreMax) {
+    if (!score) {
+      return 0;
+    }
+    const absoluteScore = Math.abs(score);
+    const absoluteBound = score === absoluteScore ? scoreMax : Math.abs(scoreMin);
+    return absoluteScore / absoluteBound * (score === absoluteScore ? 1 : -1);
   }
 
   render() {
     const segments = this._getSequenceSegments();
     const annotatedSegments = this._getAnnotatedSegments(segments);
-    // console.log(annotatedSegments);
+    const colorScheme = this._getColorScheme(annotatedSegments);
+    console.log(annotatedSegments);
     return true ? <g>
       <BasicTrack
         {...this.props}
-        colorScheme={this._getColorScheme()}
+        colorScheme={colorScheme}
         data={annotatedSegments}/>
     </g> : null;
   }

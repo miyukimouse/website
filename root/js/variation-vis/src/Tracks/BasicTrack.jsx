@@ -78,7 +78,7 @@ export default class BasicTrack extends React.Component {
             height={this.props.height}
             tip={dat.tip}
             fill={dat.color || 'grey'}
-            fillOpacity={dat.fillOpacity || 1}/>)
+            fillOpacity={(dat.fillOpacity || dat.fillOpacity === 0) ? dat.fillOpacity : 1}/>)
       })
     )
   }
