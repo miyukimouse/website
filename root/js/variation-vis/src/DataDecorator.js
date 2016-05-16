@@ -13,6 +13,7 @@ const COLOR_IDS  = {};
   'LIGHT_TEAL',
   'LIGHT_YELLOW',
   'LIGTH_GREY',
+  'BLACK',
 ].forEach((colorName, index) => COLOR_IDS[colorName] = index);
 export {
   COLOR_IDS as COLORS
@@ -32,6 +33,7 @@ const PALETTE = new Map([
   [COLOR_IDS.LIGHT_TEAL, 'rgb(204,235,197)'],
   [COLOR_IDS.LIGHT_YELLOW,'rgb(255,237,111)'],
   [COLOR_IDS.LIGTH_GREY, 'rgb(204,204,204)'],
+  [COLOR_IDS.BLACK, 'rgb(0,0,0)'],
 ]);
 
 export default class ColorScheme {

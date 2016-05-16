@@ -23,12 +23,13 @@ export default class VariationTrack extends React.Component {
 
 
   componentDidMount() {
-    if (this.state.allowHeightChange){
+    if (this.props.data && this.state.allowHeightChange){
+      console.log('will initiate height change')
       this.setState({
         allowHeightChange: false
       }, () => {
         const binLengths = this._bin(this.props.data).map((bin) => bin.data.length);
-        const numOfSubtracks = Math.max(...binLengths);
+        const numOfSubtracks = Math.max(...binLengths, 1);
         const newTrackHeight = 20 + numOfSubtracks * SUBTRACK_HEIGHT;
         this.props.onHeightChange(this.props.index, newTrackHeight);
       });
