@@ -29,7 +29,7 @@ export class WBDataModel {
           success: (result) => {
             resolve(result);
           },
-          error: (error) => {
+          error: ([,,error]) => {
             console.log(`Error: ${error}`);
             reject(error);
           }
