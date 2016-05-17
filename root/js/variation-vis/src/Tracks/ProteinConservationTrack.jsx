@@ -49,11 +49,12 @@ export default class ProteinConcervationTrack extends React.Component {
     for (let i = 0; i < length; i++) {
       scores[i] = SubstitutionHelper.getSubstitutionScore(sequence1[i], sequence2[i]);
     }
-    return this._computeMean(scores);
-    //return this._computeMedian(scores);
+    //return this._computeMean(scores);
+    return this._computeMedian(scores);
   }
 
   _computeMedian(values) {
+    // TODO: reimplement using randomized Quick select to reduce time complexity from O(nlog(n)) to O(n)
     const sortedValues = values.concat().sort();
     const mid = sortedValues.length / 2;
     if (values.length % 2 === 0) {
@@ -90,7 +91,7 @@ export default class ProteinConcervationTrack extends React.Component {
       return {
         ...segment[0],
         score: standardizedScore,
-        fillOpacity: Math.abs(standardizedScore),
+        fillOpacity: Math.sqrt(Math.max(0, standardizedScore)),
       };
     });
   }
@@ -108,7 +109,7 @@ export default class ProteinConcervationTrack extends React.Component {
     const segments = this._getSequenceSegments();
     const annotatedSegments = this._getAnnotatedSegments(segments);
     const colorScheme = this._getColorScheme(annotatedSegments);
-    console.log(annotatedSegments);
+    // console.log(annotatedSegments);
     return true ? <g>
       <BasicTrack
         {...this.props}
