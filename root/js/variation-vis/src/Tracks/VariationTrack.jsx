@@ -12,27 +12,27 @@ export default class VariationTrack extends React.Component {
     xMin: React.PropTypes.number,
     xMax: React.PropTypes.number,
     onHeightChange: React.PropTypes.func,
+    outerHeight: React.PropTypes.number,
   }
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      allowHeightChange: true
-    };
+  componentWillMount() {
+    this._updateTrackHeight(this.props);
   }
 
+  // componentWillReceiveProps(nextProps) {
+  //   this._updateTrackHeight(nextProps);
+  // }
 
-  componentDidMount() {
-    if (this.props.data && this.state.allowHeightChange){
-      console.log('will initiate height change')
-      this.setState({
-        allowHeightChange: false
-      }, () => {
-        const binLengths = this._bin(this.props.data).map((bin) => bin.data.length);
-        const numOfSubtracks = Math.max(...binLengths, 1);
-        const newTrackHeight = 20 + numOfSubtracks * SUBTRACK_HEIGHT;
-        this.props.onHeightChange(this.props.index, newTrackHeight);
-      });
+  _updateTrackHeight = (nextProps) => {
+    const {data, index, outerHeight, onHeightChange} = nextProps;
+    if (data){
+      const binLengths = this._bin(data).map((bin) => bin.data.length);
+      const numOfSubtracks = Math.max(...binLengths, 1);
+      const newTrackHeight = 20 + numOfSubtracks * SUBTRACK_HEIGHT;
+      if (newTrackHeight !== outerHeight) {
+        console.log('will initiate height change')
+        onHeightChange(index, newTrackHeight);
+      }
     }
   }
 

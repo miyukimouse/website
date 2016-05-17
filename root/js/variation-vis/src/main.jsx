@@ -419,7 +419,7 @@ class App extends React.Component {
     Promise.all([model.getAlignedSourceProtein(), model.getAlignedTargetProtein()]).then(([sourceData, targetData]) => {
       const sourceSequence = sourceData.align_seq;
       const targetSequence = targetData.align_seq;
-      console.log(sourceData);
+
       this._setTrackState({
         index: _getTrackIndex('conservation'),
         sequenceLength: sourceSequence.length,
@@ -442,7 +442,7 @@ class App extends React.Component {
         data: variations,
         trackComponent: VariationTrack
       };
-      // this._setTrackState(trackData);
+      this._setTrackState(trackData);
     });
   }
 
@@ -652,6 +652,7 @@ class App extends React.Component {
                 data={trackData.data}
                 colorScheme={colorSchemeA}
                 width={this.state.fullWidth}
+                outerHeight={trackData.outerHeight}
                 onHeightChange={this.handleTrackHeightChange}
                 y={this._getTrackYPosition(index)}
                 xMin={this._getXMin()}
