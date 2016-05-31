@@ -9,6 +9,7 @@ import ColorScheme, { COLORS } from './DataDecorator';
 import { Button, Popover, Overlay } from 'react-bootstrap';
 import { ButtonGroup, ButtonToolbar, Glyphicon } from 'react-bootstrap';
 import svgPanZoom from 'svg-pan-zoom';
+import Hammer from 'hammerjs';
 
 import { HomologyModel } from './Utils';
 require('./main.less');
@@ -196,7 +197,46 @@ class App extends React.Component {
   }
 
 
-  _setupZoomPan() {
+  _setupZoomPan = () => {
+
+    const eventsHandler = {
+      haltEventListeners: ['touchstart', 'touchend', 'touchmove', 'touchleave', 'touchcancel',
+        'mousedown', 'mousemove', 'mouseup'],
+      init: (options) => {
+        var instance = options.instance
+          , initialScale = 1
+          , pannedX = 0
+          , pannedY = 0;
+
+        // Init Hammer
+        this.hammer = new Hammer(options.eventsListenerElement)
+
+        // Handle double tap
+        this.hammer.on('doubletap', function(ev){
+          instance.zoomIn()
+        })
+
+        // Handle pan
+        this.hammer.on('panstart panmove', (ev) => {
+          // On pan start reset panned variables
+          if (ev.type === 'panstart') {
+            pannedX = 0
+          }
+          // Pan only the difference
+          const factor = (this.state.fullWidth) / this.state.viewWidth;
+          instance.panBy({x: (ev.deltaX - pannedX) * factor, y: false});
+          pannedX = ev.deltaX;
+
+        })
+
+        // Prevent moving the page on some devices when panning over SVG
+        options.svgElement.addEventListener('touchmove', function(e){ e.preventDefault(); });
+      },
+      destroy: () => {
+        this.hammer.destroy()
+      }
+    };
+
     const svgElement = svgPanZoom('#svg-browser-svg', {
     //  viewportSelector: '.svg-pan-zoom_viewport'
     panEnabled: true,
@@ -230,13 +270,14 @@ class App extends React.Component {
     , maxZoom: Infinity
     , fit: false
     , contain: false
-    , center: false
+    , center: false,
+    customEventsHandler: eventsHandler,
     // , refreshRate: 'auto'
     // , beforeZoom: function(){}
     // , onZoom: function(){}
     // , beforePan: function(){}
     // , onPan: function(){}
-    , eventsListenerElement: document.querySelector('#svg-browser')
+    eventsListenerElement: document.querySelector('#svg-browser')
     });
     $('#svg-browser-svg').css({
      width: '100%',

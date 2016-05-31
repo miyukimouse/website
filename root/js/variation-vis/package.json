@@ -10,6 +10,7 @@
   "dependencies": {
     "babel-polyfill": "^6.7.2",
     "bootstrap": "^3.3.6",
+    "hammerjs": "^2.0.8",
     "react": "^15.0.0",
     "react-bootstrap": "^0.28.5",
     "react-dom": "^15.0.0",
