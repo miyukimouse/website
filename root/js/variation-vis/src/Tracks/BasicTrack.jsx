@@ -94,7 +94,6 @@ export default class BasicTrack extends React.Component {
 
 
   render() {
-//    console.log(this);
     return (
       <g className="track">
         <g filter="url(#demo2)">
