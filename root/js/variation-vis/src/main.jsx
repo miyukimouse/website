@@ -281,7 +281,7 @@ class App extends React.Component {
         {
           this.renderToolbar()
         }
-        <div id="svg-browser-container" ref="myContainer" style={containerStyle}>
+        <div id="svg-browser-container" style={containerStyle}>
           <div class="track-label-column"
             style={{
               width: trackLabelColumnWidth,
@@ -303,9 +303,8 @@ class App extends React.Component {
           </div>
           <Viewer ref={(component) => this._viewerComponent = component}
             style={{
-              position: 'relative',
-              left: trackLabelColumnWidth,
-              border:"1px solid #aaaaaa"}}>
+              left: trackLabelColumnWidth
+            }}>
             {
               this.state.tracks.map((trackData) => {
                 const showTrack = trackData && (trackData.sequence || trackData.sequenceLength);
@@ -316,8 +315,6 @@ class App extends React.Component {
                   index={index}
                   key={`track${index}`}
                   tip={trackData.tip}
-                  onTooltipShow={this.showTooltip}
-                  onTooltipHide={this.hideTooltip}
                   sequence={trackData.sequence}
                   sequenceLength={trackData.sequenceLength}
                   data={trackData.data}

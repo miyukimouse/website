@@ -28,63 +28,17 @@ export default class Tooltip extends React.Component {
     content: React.PropTypes.string
   }
 
-
-  showTooltip = ({content, event}) => {
-
-    // // Get point in global SVG space
-    // function cursorPoint(evt){
-    //   // Create an SVGPoint for future math
-    //   const svg = evt.target.ownerSVGElement;
-    //   const pt = svg.createSVGPoint();
-    //   pt.x = evt.clientX;
-    //   pt.y = evt.clientY;
-    //   // return pt.matrixTransform(svg.getScreenCTM().inverse());
-    //   return {
-    //     x: 0,
-    //     y: 0
-    //   }
-    // }
-
-    // const {x, y} = cursorPoint(event);
-    console.log('called');
-
-    const containerBox = this.refs.myContainer.getBoundingClientRect();
-    const targetBox = event.target.getBoundingClientRect();
-    console.log('container box:');
-    console.log(containerBox);
-    console.log('target box');
-    console.log(targetBox);
-    const x = targetBox.left - containerBox.left;
-    const y = targetBox.top - containerBox.top;
-
-    event.stopPropagation();
-
-    this.setState((prevState, currProps) => {
-      return {
-        tooltip: {
-          x,
-          y,
-          width: targetBox.width,
-          height: targetBox.height,
-          content: content
-        },
-        tooltipEventID: prevState.tooltipEventID + 1,
-      };
-    });
-  }
-
-
   componentDidMount() {
     this.setState({
       ...this._getOrigin()
-    })
+    });
   }
 
   componentWillReceiveProps(nextProps) {
 //  componentDidUpdate() {
     this.setState({
       ...this._getOrigin()
-    })
+    })   
   }
 
 // point on target
@@ -121,11 +75,24 @@ export default class Tooltip extends React.Component {
     return intersect;
   }
 
-  // tooltip origin
+  // tooltip origin (relative to container element)
   _getOrigin = () => {
-    if (!this.refs.tooltipContainer) return;
+    if (!this._tooltipDOMNode) return;
 
-    const tooltipNode = ReactDOM.findDOMNode(this.refs.tooltipContainer);
+    const {left, top} = this._getClientOrigin();
+    const containerLeft = this.props.container.left;
+    const containerTop = this.props.container.top;    
+    return {
+      left: left - containerLeft,
+      top: top - containerTop
+    };
+  }
+
+  // get tooltip origin relative to the viewport
+  _getClientOrigin = () => {
+    if (!this._tooltipDOMNode) return;
+
+    const tooltipNode = this._tooltipDOMNode;
     //this.refs.tooltipContainer.getDOMNode();
     const width = tooltipNode.clientWidth;
     const height = tooltipNode.clientHeight;
@@ -141,12 +108,13 @@ export default class Tooltip extends React.Component {
     const {left, top} = this.state;
 
     return this.props.content && this.props.target ?
-        <Popover ref="tooltipContainer"
+        <Popover ref={(component) => this._tooltipDOMNode = ReactDOM.findDOMNode(component)}
           title="Popover right"
           placement="top"
           positionLeft={left}
           positionTop={top}>
-          <div dangerouslySetInnerHTML={{__html: this.props.content}} />
+          <div style={{width: 150}}
+            dangerouslySetInnerHTML={{__html: this.props.content}} />
         </Popover>
         : null;
   }

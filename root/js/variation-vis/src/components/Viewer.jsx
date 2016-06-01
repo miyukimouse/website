@@ -355,14 +355,19 @@ export default class Viewer extends React.Component {
 
   render() {
     return (
-      <div>
+      <div ref="myContainer"
+        style={{
+          position: 'relative',
+          width: this.state.viewWidth,
+          border:"1px solid #aaaaaa",
+          ...this.props.style
+        }}>
         <svg id="svg-browser"
           onWheel={this.handlePan}
           viewBox={this.getViewBox()}
           height="100%"
           width={this.state.viewWidth}
-          preserveAspectRatio="none"
-          style={this.props.style}>
+          preserveAspectRatio="none">
           <svg id="svg-browser-svg"
             x={0} y={0}
             style={{
@@ -385,7 +390,9 @@ export default class Viewer extends React.Component {
                 React.Children.map(this.props.children, (child) => child ? React.cloneElement(child, {
                     width: this.state.fullWidth,
                     xMin: this._getXMin(),
-                    xMax: this._getXMax()
+                    xMax: this._getXMax(),
+                    onTooltipShow: this.showTooltip,
+                    onTooltipHide: this.hideTooltip,                    
                   }) : null)
               }
               </g>
@@ -400,5 +407,3 @@ export default class Viewer extends React.Component {
   }
 
 }
-
-
