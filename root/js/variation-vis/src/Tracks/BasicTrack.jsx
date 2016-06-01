@@ -1,7 +1,7 @@
 import React from 'react';
 import { findDOMNode } from 'react-dom';
 import Tooltip from '../Tooltip';
-import SequenceComponent from '../SequenceComponent';
+import SequenceComponent from '../components/SequenceComponent';
 import DataSegment from '../components/DataSegment';
 import $ from 'jquery';
 import { TRACK_HEIGHT } from '../Utils'
