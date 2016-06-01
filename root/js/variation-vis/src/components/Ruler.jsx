@@ -14,6 +14,7 @@ export default class Ruler extends React.Component {
     getXMin: React.PropTypes.func,
     getXMax: React.PropTypes.func,
     toWidth: React.PropTypes.func,
+    toReferenceUnit: React.PropTypes.func,    
   }
 
   getTickLabelWidth = (position) => {
@@ -58,7 +59,11 @@ export default class Ruler extends React.Component {
               textAnchor="middle"
               fill="black"
               textLength={this.getTickLabelWidth(position)}
-              lengthAdjust="spacingAndGlyphs">{position}</text>
+              lengthAdjust="spacingAndGlyphs">
+              {
+                this.context.toReferenceUnit ? this.context.toReferenceUnit(position) : null
+              }
+              </text>
           })
         }
         </g>

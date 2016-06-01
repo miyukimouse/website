@@ -43,6 +43,7 @@ export default class Viewer extends React.Component {
     getXMax: React.PropTypes.func,
     //toApparentWidth: React.PropTypes.func,
     toWidth: React.PropTypes.func,
+    toReferenceUnit: React.PropTypes.func,
     isZoomPanOccuring: React.PropTypes.bool,
   }
 
@@ -53,6 +54,7 @@ export default class Viewer extends React.Component {
       getXMin: this._getXMin,
       getXMax: this._getXMax,
       toWidth: this._toWidth,
+      toReferenceUnit: this._toReferenceUnit,
       isZoomPanOccuring: this.state.isZoomPanOccuring
     }
   }
@@ -179,9 +181,11 @@ export default class Viewer extends React.Component {
 
 
   setup(configs) {
-    const {fullWidth} = configs;
+    let {fullWidth, unitLength} = configs;
+    unitLength = unitLength || 10;
     this.setState({
-      fullWidth
+      unitLength: unitLength,
+      fullWidth: fullWidth * unitLength
     }, this._setupZoomPan);
   }
 
@@ -256,7 +260,7 @@ export default class Viewer extends React.Component {
     // , preventMouseEventsDefault: true
     , zoomScaleSensitivity: 0.5
     // , minZoom: 0.5
-    , maxZoom: Infinity
+    , maxZoom: this.state.fullWidth / this.state.viewWidth
     , fit: false
     , contain: false
     , center: false,
@@ -327,6 +331,11 @@ export default class Viewer extends React.Component {
   _toWidth = (apparentWidth) => {
     const apparentFullWidth = this.state.viewWidth * this.state.zoomFactor;
     return apparentWidth * this.state.fullWidth / apparentFullWidth;
+  }
+
+  // convert svg internal coordinate to length in the domain logic (reference)
+  _toReferenceUnit = (width) => {
+    return width / this.state.unitLength;
   }
 
   _zoomPanTimeout = () => {
