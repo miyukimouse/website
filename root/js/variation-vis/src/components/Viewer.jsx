@@ -201,8 +201,8 @@ export default class Viewer extends React.Component {
         this.hammer = new Hammer(options.eventsListenerElement)
 
         // Handle double tap
-        this.hammer.on('doubletap', function(ev){
-          instance.zoomIn()
+        this.hammer.on('doubletap', (ev) => {
+          instance.zoomBy(2);
         })
 
         // Handle pan
@@ -254,7 +254,7 @@ export default class Viewer extends React.Component {
     // , dblClickZoomEnabled: true
     , mouseWheelZoomEnabled: true
     // , preventMouseEventsDefault: true
-    , zoomScaleSensitivity: 0.2
+    , zoomScaleSensitivity: 0.5
     // , minZoom: 0.5
     , maxZoom: Infinity
     , fit: false
