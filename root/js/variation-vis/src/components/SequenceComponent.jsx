@@ -22,32 +22,26 @@ class SequenceComponent extends React.Component {
     viewWidth: React.PropTypes.number,
   }
 
-  getCoord = (offsets) => {
-    const {x,y, width} = this.props;
-    const {xOffset, yOffset} = offsets || {};
+  getCoord = () => {
+    const {x,y, width, height} = this.props;
+    const yOffset = 15;
 
     return {
-      x: 0,
-      y: y + (yOffset || 0) + 15
+      x: x,
+      y: y + yOffset,
+      width,
+      height
     }
   }
 
   _getCharWidth = () => {
-    const visibleCharCount = this.props.sequence.length / this.context.zoomFactor;
-    const charWidth = this.context.viewWidth / visibleCharCount;
+    const charWidth = this.context.viewWidth / this.props.sequence.length;
     return charWidth;
   }
 
   render() {
 
-    const {x, y} = this.getCoord();
-    const {width, height} = this.props;
-    const coords = {
-      width,
-      height,
-      x,
-      y
-    };
+    const coords = this.getCoord();
 
     //console.log(coords);
 
@@ -58,7 +52,7 @@ class SequenceComponent extends React.Component {
               text-anchor="start"
               font-size="12"
               font-family='Menlo, Monaco, Consolas, "Courier New", monospace'
-              textLength={width}
+              textLength={coords.width}
               lengthAdjust="spacing"
               fill="#333333">
           {this.props.sequence}
