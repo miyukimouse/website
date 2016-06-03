@@ -2,6 +2,8 @@ import jquery from 'jquery';
 import BinnedLoader from './BinnedLoader';
 import BinHelper from './BinHelper';
 import SubstitutionHelper from './SubstitutionHelper';
+import CoordinateMappingHelper  from './CoordinateMappingHelper';
+
 
 export const DataLoader = {
   BinnedLoader,
@@ -10,6 +12,10 @@ export const DataLoader = {
 
 export {
   SubstitutionHelper
+}
+
+export {
+  CoordinateMappingHelper
 }
 
 export const TRACK_HEIGHT = 20;

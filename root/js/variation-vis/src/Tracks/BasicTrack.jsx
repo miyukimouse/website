@@ -18,6 +18,12 @@ export default class BasicTrack extends React.Component {
     })),
     sequenceLength: React.PropTypes.number,   // used when sequence isn't provided to map sequence coordinates to track graphic coordinates
     sequence: React.PropTypes.string,
+    coordinateMapping: React.PropTypes.shape({
+      toSVGCoordinate: React.PropTypes.func,
+      toSequenceCoordinate: React.PropTypes.func
+    }),
+    xMin: React.PropTypes.number,
+    xMax: React.PropTypes.number,
     viewWidth: React.PropTypes.number,
     tip: React.PropTypes.string,
     onTooltipShow: React.PropTypes.func,
@@ -42,7 +48,6 @@ export default class BasicTrack extends React.Component {
   }
 
   static defaultProps = {
-    width: 100,
     height: 25,
     data: []
   }
@@ -52,13 +57,11 @@ export default class BasicTrack extends React.Component {
   }
 
   getHorizontalPosition = (dat) => {
-    const sequenceLength = (this.props.sequenceLength || this.props.sequence.length);
     return {
-      start: dat.start / sequenceLength * this.props.width,
-      end: dat.end / sequenceLength * this.props.width
+      start: this.props.coordinateMapping.toSVGCoordinate(dat.start),
+      end: this.props.coordinateMapping.toSVGCoordinate(dat.end)
     }
   }
-
 
   /* data series within a track */
   renderData(){
@@ -67,6 +70,7 @@ export default class BasicTrack extends React.Component {
     return (
       data.map((dat, index) => {
         const graphicPosition = this.getHorizontalPosition(dat);
+
         return (
           <DataSegment
             key={`data-rect-${index}`}
@@ -86,9 +90,21 @@ export default class BasicTrack extends React.Component {
 
   /* render sequence or label depending how zoomed in */
   renderContent = () => {
+    let {xMin, xMax, sequence} = this.props;
+    xMin = Math.max(0, xMin);
+    xMax = Math.min(xMax, sequence.length);
+
+    const {start, end} = this.getHorizontalPosition({
+      start: xMin,
+      end: xMax
+    });
+    const sequenceSegment = sequence.slice(xMin, xMax);
+
     return this.context.isZoomPanOccuring ? null :
       <SequenceComponent {...this.props}
-        x="0"
+        width={end - start}
+        sequence={sequenceSegment}
+        x={start}
         y={this.getVerticalPosition()}/>
   }
 
@@ -103,7 +119,7 @@ export default class BasicTrack extends React.Component {
         </g>
         <g>
         {
-          this.renderContent()
+          this.props.sequence ? this.renderContent() : null
         }
         {
           this.state.tooltip ? <Tooltip {...this.state.tooltip}/> : null

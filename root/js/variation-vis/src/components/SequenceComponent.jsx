@@ -1,7 +1,7 @@
 import React from 'react';
 //import { ScaleIndependentComponent } from './ScaleIndependentComponent.jsx';
 
-const MIN_SEQUENCE_CHAR_WIDTH = 8;  // hide sequence if not enough space per char
+const MIN_SEQUENCE_CHAR_WIDTH = 14;  // hide sequence if not enough space per char
 
 class SequenceComponent extends React.Component {
 
@@ -22,32 +22,26 @@ class SequenceComponent extends React.Component {
     viewWidth: React.PropTypes.number,
   }
 
-  getCoord = (offsets) => {
-    const {x,y, width} = this.props;
-    const {xOffset, yOffset} = offsets || {};
+  getCoord = () => {
+    const {x,y, width, height} = this.props;
+    const yOffset = 15;
 
     return {
-      x: 0,
-      y: y + (yOffset || 0) + 15
+      x: x,
+      y: y + yOffset,
+      width,
+      height
     }
   }
 
   _getCharWidth = () => {
-    const visibleCharCount = this.props.sequence.length / this.context.zoomFactor;
-    const charWidth = this.context.viewWidth / visibleCharCount;
+    const charWidth = this.context.viewWidth / this.props.sequence.length;
     return charWidth;
   }
 
   render() {
 
-    const {x, y} = this.getCoord();
-    const {width, height} = this.props;
-    const coords = {
-      width,
-      height,
-      x,
-      y
-    };
+    const coords = this.getCoord();
 
     //console.log(coords);
 
@@ -58,8 +52,8 @@ class SequenceComponent extends React.Component {
               text-anchor="start"
               font-size="12"
               font-family='Menlo, Monaco, Consolas, "Courier New", monospace'
-              textLength={width}
-              lengthAdjust="spacingAndGlyphs"
+              textLength={coords.width}
+              lengthAdjust="spacing"
               fill="#333333">
           {this.props.sequence}
         </text> : null;
