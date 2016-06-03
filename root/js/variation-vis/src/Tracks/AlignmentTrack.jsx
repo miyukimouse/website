@@ -37,10 +37,8 @@ export default class AlignmnetTrack extends React.Component {
   }
 
   _keepLongGaps(gapsCoords) {
-    // converting the coordinate from cDNA to protein if necessary
-    const multiplier = this.props.sequence.search(/M/i) > -1 ? 3 : 1;  // check if sequence is amino acid sequence
-    const xMin = this.props.xMin/multiplier;
-    const xMax = this.props.xMax/multiplier;
+    const xMin = this.props.xMin;
+    const xMax = this.props.xMax;
 
     const lengthThreshold = DataLoader.BinHelper.getBinWidth(
       xMin, xMax, DEFAULT_MAX_BIN_COUNT);

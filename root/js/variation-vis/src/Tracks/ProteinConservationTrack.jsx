@@ -15,13 +15,9 @@ export default class ProteinConcervationTrack extends React.Component {
 
 
   _getSequenceSegments() {
-    // converting the coordinate from cDNA to protein
-    const multiplier = 3;
-    const xMin = this.props.xMin/multiplier;
-    const xMax = this.props.xMax/multiplier;
     const sequenceList = this.props.sequenceList;
 
-    const binConfig = [xMin, xMax, DEFAULT_MAX_BIN_COUNT];
+    const binConfig = [this.props.xMin, this.props.xMax, DEFAULT_MAX_BIN_COUNT];
     const {binWidth} = new DataLoader.BinHelper(...binConfig);
     const bins = DataLoader.BinHelper.getBins(...binConfig);
 

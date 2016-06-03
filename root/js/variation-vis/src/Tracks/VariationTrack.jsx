@@ -37,10 +37,8 @@ export default class VariationTrack extends React.Component {
   }
 
   _bin(variations) {
-    const xMin = this.props.xMin/3;  // converting the coordinate from cDNA to protein
-    const xMax = this.props.xMax/3
     const binnedVariations = new DataLoader.BinnedLoader(variations,
-      xMin, xMax, DEFAULT_MAX_BIN_COUNT);
+      this.props.xMin, this.props.xMax, DEFAULT_MAX_BIN_COUNT);
     const binnedData = binnedVariations.map((bin) => {
       return {
         ...bin,

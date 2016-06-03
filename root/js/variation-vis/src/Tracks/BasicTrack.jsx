@@ -18,6 +18,10 @@ export default class BasicTrack extends React.Component {
     })),
     sequenceLength: React.PropTypes.number,   // used when sequence isn't provided to map sequence coordinates to track graphic coordinates
     sequence: React.PropTypes.string,
+    coordinateMapping: React.PropTypes.shape({
+      toSVGCoordinate: React.PropTypes.func,
+      toSequenceCoordinate: React.PropTypes.func
+    }),
     viewWidth: React.PropTypes.number,
     tip: React.PropTypes.string,
     onTooltipShow: React.PropTypes.func,
@@ -42,7 +46,6 @@ export default class BasicTrack extends React.Component {
   }
 
   static defaultProps = {
-    width: 100,
     height: 25,
     data: []
   }
@@ -52,11 +55,15 @@ export default class BasicTrack extends React.Component {
   }
 
   getHorizontalPosition = (dat) => {
-    const sequenceLength = (this.props.sequenceLength || this.props.sequence.length);
     return {
-      start: dat.start / sequenceLength * this.props.width,
-      end: dat.end / sequenceLength * this.props.width
+      start: this.props.coordinateMapping.toSVGCoordinate(dat.start),
+      end: this.props.coordinateMapping.toSVGCoordinate(dat.end)
     }
+  }
+
+  getWidth = () => {
+    const sequenceLength = this.props.sequence ? this.props.sequence.length : this.props.sequenceLength;
+    return this.props.coordinateMapping.toSVGCoordinate(sequenceLength);
   }
 
 
@@ -67,6 +74,7 @@ export default class BasicTrack extends React.Component {
     return (
       data.map((dat, index) => {
         const graphicPosition = this.getHorizontalPosition(dat);
+
         return (
           <DataSegment
             key={`data-rect-${index}`}
@@ -88,6 +96,7 @@ export default class BasicTrack extends React.Component {
   renderContent = () => {
     return this.context.isZoomPanOccuring ? null :
       <SequenceComponent {...this.props}
+        width={this.getWidth()}
         x="0"
         y={this.getVerticalPosition()}/>
   }

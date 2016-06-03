@@ -1,7 +1,7 @@
 import React from 'react';
 //import { ScaleIndependentComponent } from './ScaleIndependentComponent.jsx';
 
-const MIN_SEQUENCE_CHAR_WIDTH = 8;  // hide sequence if not enough space per char
+const MIN_SEQUENCE_CHAR_WIDTH = 14;  // hide sequence if not enough space per char
 
 class SequenceComponent extends React.Component {
 
@@ -59,7 +59,7 @@ class SequenceComponent extends React.Component {
               font-size="12"
               font-family='Menlo, Monaco, Consolas, "Courier New", monospace'
               textLength={width}
-              lengthAdjust="spacingAndGlyphs"
+              lengthAdjust="spacing"
               fill="#333333">
           {this.props.sequence}
         </text> : null;

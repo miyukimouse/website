@@ -2,6 +2,7 @@ import "babel-polyfill";
 import React from 'react';
 import Tooltip from './Tooltip';
 import Ruler from './Ruler';
+import { CoordinateMappingHelper } from '../Utils';
 import svgPanZoom from 'svg-pan-zoom';
 import Hammer from 'hammerjs';
 
@@ -260,7 +261,7 @@ export default class Viewer extends React.Component {
     // , preventMouseEventsDefault: true
     , zoomScaleSensitivity: 0.5
     // , minZoom: 0.5
-    , maxZoom: this.state.fullWidth / this.state.viewWidth
+    , maxZoom: this.state.fullWidth / this.state.viewWidth * 2
     , fit: false
     , contain: false
     , center: false,
@@ -396,13 +397,26 @@ export default class Viewer extends React.Component {
               <Ruler/>
               <g>
               {
-                React.Children.map(this.props.children, (child) => child ? React.cloneElement(child, {
-                    width: this.state.fullWidth,
-                    xMin: this._getXMin(),
-                    xMax: this._getXMax(),
-                    onTooltipShow: this.showTooltip,
-                    onTooltipHide: this.hideTooltip,                    
-                  }) : null)
+                React.Children.map(this.props.children, (child) => {
+                  if (child) {
+                    const coordinateMapping = child.props.coordinateMapping || (new CoordinateMappingHelper.DefaultCoordinateMapping({
+                      sequenceLength: child.props.sequence ? child.props.sequence.length : child.props.sequenceLength,
+                      svgWidth: this.state.fullWidth
+                    }));
+                    const xMin = coordinateMapping.toSequenceCoordinate(this._getXMin());
+                    const xMax = coordinateMapping.toSequenceCoordinate(this._getXMax());
+                    const newChild = React.cloneElement(child, {
+                      xMin: Math.floor(xMin),
+                      xMax: Math.ceil(xMax),
+                      coordinateMapping: coordinateMapping,
+                      onTooltipShow: this.showTooltip,
+                      onTooltipHide: this.hideTooltip,
+                    });
+                    return newChild;
+                  } else {
+                    return null;
+                  }
+                })
               }
               </g>
             </svg>
