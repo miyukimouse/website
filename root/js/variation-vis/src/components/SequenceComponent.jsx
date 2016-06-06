@@ -1,13 +1,14 @@
 import React from 'react';
 //import { ScaleIndependentComponent } from './ScaleIndependentComponent.jsx';
 
-const MIN_SEQUENCE_CHAR_WIDTH = 14;  // hide sequence if not enough space per char
+const MIN_SEQUENCE_CHAR_WIDTH = 12;  // hide sequence if not enough space per char
 
 class SequenceComponent extends React.Component {
 
   static propTypes = {
     y: React.PropTypes.number.isRequired,
     width: React.PropTypes.number,
+    apparentWidth: React.PropTypes.number,
     height: React.PropTypes.number,
     sequence: React.PropTypes.string
   }
@@ -35,7 +36,8 @@ class SequenceComponent extends React.Component {
   }
 
   _getCharWidth = () => {
-    const charWidth = this.context.viewWidth / this.props.sequence.length;
+    console.log(this.props.apparentWidth)
+    const charWidth = this.props.apparentWidth / this.props.sequence.length;
     return charWidth;
   }
 
@@ -44,8 +46,9 @@ class SequenceComponent extends React.Component {
     const coords = this.getCoord();
 
     //console.log(coords);
+    const charWidth =  this._getCharWidth();
 
-    return this.props.sequence && this._getCharWidth() > MIN_SEQUENCE_CHAR_WIDTH ?
+    return this.props.sequence && charWidth > MIN_SEQUENCE_CHAR_WIDTH ?
         <text is="svg-text"
               class="sequence-text"
               {...coords}

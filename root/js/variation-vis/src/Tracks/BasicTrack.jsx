@@ -24,7 +24,7 @@ export default class BasicTrack extends React.Component {
     }),
     xMin: React.PropTypes.number,
     xMax: React.PropTypes.number,
-    viewWidth: React.PropTypes.number,
+//    viewWidth: React.PropTypes.number,
     tip: React.PropTypes.string,
     onTooltipShow: React.PropTypes.func,
     onTooltipHide: React.PropTypes.func,
@@ -35,7 +35,8 @@ export default class BasicTrack extends React.Component {
   }
 
   static contextTypes = {
-    isZoomPanOccuring: React.PropTypes.bool
+    isZoomPanOccuring: React.PropTypes.bool,
+    viewWidth: React.PropTypes.number,
   }
 
   constructor(props) {
@@ -91,19 +92,21 @@ export default class BasicTrack extends React.Component {
   /* render sequence or label depending how zoomed in */
   renderContent = () => {
     let {xMin, xMax, sequence} = this.props;
+    const rawSegmentLength = xMax - xMin;
     xMin = Math.max(0, xMin);
     xMax = Math.min(xMax, sequence.length);
+    const sequenceSegment = sequence.slice(xMin, xMax);
 
     const {start, end} = this.getHorizontalPosition({
       start: xMin,
       end: xMax
     });
-    const sequenceSegment = sequence.slice(xMin, xMax);
 
     return this.context.isZoomPanOccuring ? null :
       <SequenceComponent {...this.props}
         width={end - start}
         sequence={sequenceSegment}
+        apparentWidth={this.context.viewWidth / rawSegmentLength * sequenceSegment.length}
         x={start}
         y={this.getVerticalPosition()}/>
   }
