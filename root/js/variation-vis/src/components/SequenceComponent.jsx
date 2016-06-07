@@ -36,7 +36,6 @@ class SequenceComponent extends React.Component {
   }
 
   _getCharWidth = () => {
-    console.log(this.props.apparentWidth)
     const charWidth = this.props.apparentWidth / this.props.sequence.length;
     return charWidth;
   }

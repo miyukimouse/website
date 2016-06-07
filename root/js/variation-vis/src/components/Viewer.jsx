@@ -2,6 +2,7 @@ import "babel-polyfill";
 import React from 'react';
 import Tooltip from './Tooltip';
 import Ruler from './Ruler';
+import MarkerBar from './MarkerBar';
 import { CoordinateMappingHelper } from '../Utils';
 import svgPanZoom from 'svg-pan-zoom';
 import Hammer from 'hammerjs';
@@ -19,7 +20,7 @@ export default class Viewer extends React.Component {
       // zoomPan scale and position
       zoomPan: null,
       zoomFactor: 1,
-      xMin: 0,  // visible region of svg by internal coordinate
+      xMin: 0,  // visible region of svg by internal eate
       xMax: DEFAULT_SVG_INTERNAL_WIDTH,
       fullWidth: DEFAULT_SVG_INTERNAL_WIDTH,
       viewWidth: 500,
@@ -33,6 +34,9 @@ export default class Viewer extends React.Component {
       zoomPanEventId: 0,
       zoomPanCallId: 0,  // avoid too many render by
       // zoomPanEvents: [],
+
+      //marker bar
+      cursorSVGCoordinate: 0,
 
      };
   }
@@ -117,7 +121,7 @@ export default class Viewer extends React.Component {
 
     // const {x, y} = cursorPoint(event);
 
-    const containerBox = this.refs.myContainer.getBoundingClientRect();
+    const containerBox = this._viewerContainer.getBoundingClientRect();
     const targetBox = event.target.getBoundingClientRect();
 
     // console.log('called');
@@ -182,11 +186,12 @@ export default class Viewer extends React.Component {
 
 
   setup(configs) {
-    let {fullWidth, unitLength} = configs;
+    let {referenceSequenceLength, unitLength} = configs;
     unitLength = unitLength || 10;
     this.setState({
       unitLength: unitLength,
-      fullWidth: fullWidth * unitLength
+      fullWidth: referenceSequenceLength * unitLength,
+      referenceSequenceLength
     }, this._setupZoomPan);
   }
 
@@ -362,10 +367,20 @@ export default class Viewer extends React.Component {
     }, 200);
   }
 
+  _handleMouseMove = (event) => {
+    const containerRect = this._viewerContainer.getBoundingClientRect();
+    const viewOffset = event.clientX - containerRect.left;
+    const svgOffset = viewOffset * this.state.fullWidth / (this.state.zoomFactor * this.state.viewWidth) ;
+    this.setState({
+      cursorSVGCoordinate: svgOffset + this._getXMin()
+    })
+  }
 
-  render() {
+
+  render (){
     return (
-      <div ref="myContainer"
+      <div ref={(component) => this._viewerContainer = component}
+        onMouseMove={this._handleMouseMove}
         style={{
           position: 'relative',
           width: this.state.viewWidth,
@@ -419,6 +434,15 @@ export default class Viewer extends React.Component {
                 })
               }
               </g>
+              {
+                this.state.referenceSequenceLength ? <MarkerBar
+                  coordinateMapping={new CoordinateMappingHelper.DefaultCoordinateMapping({
+                    sequenceLength: this.state.referenceSequenceLength / 3,
+                    svgWidth: this.state.fullWidth})}
+                  cursorSVGCoordinate={this.state.cursorSVGCoordinate}
+                  height={DEFAULT_SVG_HEIGHT}
+                /> : null
+              }
             </svg>
           </svg>
           { this.state.tooltip

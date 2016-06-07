@@ -9,7 +9,7 @@ import { TRACK_HEIGHT } from '../Utils'
 export default class BasicTrack extends React.Component {
 
   static propTypes = {
-    index: React.PropTypes.number.isRequired,
+    index: React.PropTypes.number, //.isRequired,
     data: React.PropTypes.arrayOf(React.PropTypes.shape({
       start: React.PropTypes.number,
       end: React.PropTypes.number,

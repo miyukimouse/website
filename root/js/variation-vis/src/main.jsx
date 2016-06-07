@@ -46,7 +46,7 @@ class App extends React.Component {
     const referencePromise = model.getAlignedDNA().then((data) => {
       const referenceSequence = data.source.align_seq;
       this._viewerComponent.setup({
-        fullWidth: referenceSequence.length  // set the width of svg proportional to length of reference sequence
+        referenceSequenceLength: referenceSequence.length  // set the width of svg proportional to length of reference sequence
       });
 
       this._setTrackState({
