@@ -409,6 +409,15 @@ export default class Viewer extends React.Component {
                 <feComposite in="SourceGraphic" in2="spec2" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" />
               </filter>
               </defs>
+              {
+                this.state.referenceSequenceLength ? <MarkerBar
+                  coordinateMapping={new CoordinateMappingHelper.DefaultCoordinateMapping({
+                    sequenceLength: this.state.referenceSequenceLength / 3,
+                    svgWidth: this.state.fullWidth})}
+                  cursorSVGCoordinate={this.state.cursorSVGCoordinate}
+                  height={DEFAULT_SVG_HEIGHT}
+                /> : null
+              }
               <Ruler/>
               <g>
               {
@@ -434,15 +443,6 @@ export default class Viewer extends React.Component {
                 })
               }
               </g>
-              {
-                this.state.referenceSequenceLength ? <MarkerBar
-                  coordinateMapping={new CoordinateMappingHelper.DefaultCoordinateMapping({
-                    sequenceLength: this.state.referenceSequenceLength / 3,
-                    svgWidth: this.state.fullWidth})}
-                  cursorSVGCoordinate={this.state.cursorSVGCoordinate}
-                  height={DEFAULT_SVG_HEIGHT}
-                /> : null
-              }
             </svg>
           </svg>
           { this.state.tooltip
