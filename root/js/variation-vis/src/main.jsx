@@ -257,7 +257,7 @@ class App extends React.Component {
 
 
     const colorSchemeA = new ColorScheme((dat, index) => index % 2, {
-      0: COLORS.LIGHT_TEAL,
+      0: COLORS.TEAL,
       1: COLORS.PURPLE
     });
     //const colorSchemeB = new ColorScheme()

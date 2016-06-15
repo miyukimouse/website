@@ -62,7 +62,7 @@ export default class Button extends React.Component {
 
     return (
       <g>
-        <rect {...this._getDimension()}/>
+        <rect filter="url(#demo2)" {...this._getDimension()}/>
         { labelText && this._isLabelVisible(labelText) ?
           <text ref="label"
               is="svg-text"

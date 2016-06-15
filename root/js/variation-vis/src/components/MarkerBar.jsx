@@ -54,7 +54,7 @@ export default class MarkerBar extends React.Component {
       data={[{
         ...barCoordinates,
         color: '#fd0',
-        fillOpacity: 0.5
+        fillOpacity: 0.8
       }]}
       coordinateMapping={this.props.coordinateMapping}
       y={0}

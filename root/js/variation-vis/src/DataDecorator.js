@@ -20,9 +20,9 @@ export {
 }
 
 const PALETTE = new Map([
-  [COLOR_IDS.TEAL, 'rgb(141,211,199)'],
+  [COLOR_IDS.TEAL, 'rgb(84,189,146)'],
   [COLOR_IDS.YELLOW, 'rgb(255,255,179)'],
-  [COLOR_IDS.PURPLE, 'rgb(190,186,218)'],
+  [COLOR_IDS.PURPLE, 'rgb(96,86,161)'],
   [COLOR_IDS.RED, 'rgb(251,128,114)'],
   [COLOR_IDS.BLUE, 'rgb(128,177,211)'],
   [COLOR_IDS.ORANGE, 'rgb(253,180,98)'],
@@ -35,6 +35,25 @@ const PALETTE = new Map([
   [COLOR_IDS.LIGTH_GREY, 'rgb(204,204,204)'],
   [COLOR_IDS.BLACK, 'rgb(0,0,0)'],
 ]);
+
+// Original color palette based on ColorBrewer,
+//but seems too light when combined with lighting effect
+// const PALETTE = new Map([
+//   [COLOR_IDS.TEAL, 'rgb(141,211,199)'],
+//   [COLOR_IDS.YELLOW, 'rgb(255,255,179)'],
+//   [COLOR_IDS.PURPLE, 'rgb(190,186,218)'],
+//   [COLOR_IDS.RED, 'rgb(251,128,114)'],
+//   [COLOR_IDS.BLUE, 'rgb(128,177,211)'],
+//   [COLOR_IDS.ORANGE, 'rgb(253,180,98)'],
+//   [COLOR_IDS.GREEN, 'rgb(179,222,105)'],
+//   [COLOR_IDS.PINK, 'rgb(252,205,229)'],
+//   [COLOR_IDS.GREY, 'rgb(217,217,217)'],
+//   [COLOR_IDS.MAGENTA, 'rgb(188,128,189)'],
+//   [COLOR_IDS.LIGHT_TEAL, 'rgb(204,235,197)'],
+//   [COLOR_IDS.LIGHT_YELLOW,'rgb(255,237,111)'],
+//   [COLOR_IDS.LIGTH_GREY, 'rgb(204,204,204)'],
+//   [COLOR_IDS.BLACK, 'rgb(0,0,0)'],
+// ]);
 
 export default class ColorScheme {
 

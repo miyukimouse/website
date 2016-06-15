@@ -83,7 +83,7 @@ export default class BasicTrack extends React.Component {
             height={this.props.height}
             tip={dat.tip}
             fill={dat.color || 'grey'}
-            fillOpacity={(dat.fillOpacity || dat.fillOpacity === 0) ? dat.fillOpacity : 1}/>)
+            fillOpacity={(dat.fillOpacity || dat.fillOpacity === 0) ? dat.fillOpacity : 0.6}/>)
       })
     )
   }
@@ -115,11 +115,9 @@ export default class BasicTrack extends React.Component {
   render() {
     return (
       <g className="track">
-        <g filter="url(#demo2)">
         {
           this.renderData()
         }
-        </g>
         <g>
         {
           this.props.sequence ? this.renderContent() : null
