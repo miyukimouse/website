@@ -199,8 +199,8 @@ export default class Viewer extends React.Component {
   _setupZoomPan = () => {
 
     const eventsHandler = {
-      haltEventListeners: ['touchstart', 'touchend', 'touchmove', 'touchleave', 'touchcancel',
-        'mousedown', 'mousemove', 'mouseup'],
+      // haltEventListeners: ['touchstart', 'touchend', 'touchmove', 'touchleave', 'touchcancel',
+      //   'mousedown', 'mousemove', 'mouseup'],
       init: (options) => {
         var instance = options.instance
           , initialScale = 1
@@ -209,11 +209,6 @@ export default class Viewer extends React.Component {
 
         // Init Hammer
         this.hammer = new Hammer(options.eventsListenerElement)
-
-        // Handle double tap
-        this.hammer.on('doubletap', (ev) => {
-          instance.zoomBy(2);
-        })
 
         // Handle pan
         this.hammer.on('panstart panmove', (ev) => {
@@ -238,7 +233,7 @@ export default class Viewer extends React.Component {
 
     const svgElement = svgPanZoom('#svg-browser-svg', {
     //  viewportSelector: '.svg-pan-zoom_viewport'
-    panEnabled: true,
+    panEnabled: false,  // disable default event handling for panning. Panning is handled by custom event handler.
     separateZoomsEnabled: true,
     beforeZoom: (zooms) => {
       if (this.state.zoomLockOn) {
