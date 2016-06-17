@@ -64,30 +64,52 @@ export default class Viewer extends React.Component {
     }
   }
 
-  getZoomHandler = (multiple) => {
+  getZoomHandler = (rawMultiple) => {
     return (event) => {
       if (this.state.zoomPan){
-     //    const xMin = this._getXMin();
-     //    const xMax = this._getXMax();
+        // const xMin = this._getXMin();
+        // const xMax = this._getXMax();
      //    const xCentre = xMin + (xMax - xMin) / 2;
      //    const previousViewPortWidth = this.state.fullWidth / this.state.zoomFactor;
      //    const offset = previousViewPortWidth * (1 - multiple) / 2;
      // //   this.state.zoomPan.zoomBy(multiple);
 
-        let newZoomFactor = this.state.zoomFactor * multiple;
+        const {xMin, xMax, viewPortCenter, imageCenter, zoomFactor, viewPortWidth} = this._getViewPortStat();
+
+        let newZoomFactor = zoomFactor * rawMultiple;
         newZoomFactor = Math.min(newZoomFactor, this._getMaxZoomFactor());
         newZoomFactor = Math.max(newZoomFactor, this._getMinZoomFactor());
+        const multiple = newZoomFactor / zoomFactor;
 
-        const deltaWidth = this.state.fullWidth * (1 - newZoomFactor);
-
+        const newXMin = viewPortCenter - ((viewPortWidth / multiple) / 2);
+        const newPanOffset = newXMin * newZoomFactor * -1;
         this.state.zoomPan.zoom(newZoomFactor);
         this.state.zoomPan.pan({
-          x: deltaWidth / 2,
+          x: newPanOffset,
           y: 0
         })
+
+        // const deltaWidth = this.state.fullWidth * (1 - newZoomFactor);
+        // const centerOffset = viewPortCenter
+        // this.state.zoomPan.zoom(newZoomFactor);
+        // this.state.zoomPan.pan({
+        //   x: deltaWidth / 2 + centerOffset,
+        //   y: 0
+        // })
       }
     }
 
+  }
+
+  _getViewPortStat(){
+    const xMin = this._getXMin();
+    const xMax = this._getXMax();
+    const {zoomFactor} = this.state;
+    const viewPortWidth = xMax - xMin;
+    const viewPortCenter = xMin + viewPortWidth / 2;
+    const imageCenter = (this.state.fullWidth / 2);
+    const centerOffset = viewPortCenter - imageCenter;
+    return {xMin, xMax, viewPortCenter, imageCenter, zoomFactor, viewPortWidth};
   }
 
   getPanHandler = (deltaRatio) => {
