@@ -67,7 +67,24 @@ export default class Viewer extends React.Component {
   getZoomHandler = (multiple) => {
     return (event) => {
       if (this.state.zoomPan){
-        this.state.zoomPan.zoomBy(multiple);
+     //    const xMin = this._getXMin();
+     //    const xMax = this._getXMax();
+     //    const xCentre = xMin + (xMax - xMin) / 2;
+     //    const previousViewPortWidth = this.state.fullWidth / this.state.zoomFactor;
+     //    const offset = previousViewPortWidth * (1 - multiple) / 2;
+     // //   this.state.zoomPan.zoomBy(multiple);
+
+        let newZoomFactor = this.state.zoomFactor * multiple;
+        newZoomFactor = Math.min(newZoomFactor, this._getMaxZoomFactor());
+        newZoomFactor = Math.max(newZoomFactor, this._getMinZoomFactor());
+
+        const deltaWidth = this.state.fullWidth * (1 - newZoomFactor);
+
+        this.state.zoomPan.zoom(newZoomFactor);
+        this.state.zoomPan.pan({
+          x: deltaWidth / 2,
+          y: 0
+        })
       }
     }
 
@@ -260,8 +277,8 @@ export default class Viewer extends React.Component {
     , mouseWheelZoomEnabled: true
     // , preventMouseEventsDefault: true
     , zoomScaleSensitivity: 0.5
-    // , minZoom: 0.5
-    , maxZoom: this.state.fullWidth / this.state.viewWidth * 2
+    , minZoom: this._getMinZoomFactor()
+    , maxZoom: this._getMaxZoomFactor()
     , fit: false
     , contain: false
     , center: false,
@@ -337,6 +354,14 @@ export default class Viewer extends React.Component {
   // convert svg internal coordinate to length in the domain logic (reference)
   _toReferenceUnit = (width) => {
     return width / this.state.unitLength;
+  }
+
+  _getMaxZoomFactor() {
+    return this.state.fullWidth / this.state.viewWidth * 2;
+  }
+
+  _getMinZoomFactor() {
+    return 0.5;
   }
 
   _zoomPanTimeout = () => {
