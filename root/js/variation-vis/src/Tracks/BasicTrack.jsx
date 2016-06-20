@@ -3,6 +3,7 @@ import { findDOMNode } from 'react-dom';
 import Tooltip from '../Tooltip';
 import SequenceComponent from '../components/SequenceComponent';
 import DataSegment from '../components/DataSegment';
+import DataSegmentLabel from '../components/DataSegmentLabel';
 import $ from 'jquery';
 import { TRACK_HEIGHT } from '../Utils'
 
@@ -68,23 +69,47 @@ export default class BasicTrack extends React.Component {
   renderData(){
     const data = this.props.colorScheme
       ? this.props.colorScheme.decorate(this.props.data) : this.props.data;
-    return (
-      data.map((dat, index) => {
-        const graphicPosition = this.getHorizontalPosition(dat);
 
-        return (
-          <DataSegment
-            key={`data-rect-${index}`}
-            onMouseEnter={(event) => this.props.onTooltipShow ? this.props.onTooltipShow({content: dat.tip, event: event}) : null}
-            onMouseLeave={this.props.onTooltipHide}
-            x={graphicPosition.start}
-            y={this.getVerticalPosition()}
-            width={graphicPosition.end - graphicPosition.start}
-            height={this.props.height}
-            tip={dat.tip}
-            fill={dat.color || 'grey'}
-            fillOpacity={(dat.fillOpacity || dat.fillOpacity === 0) ? dat.fillOpacity : 0.6}/>)
-      })
+    const getSegmentCoords = (segment) => {
+      const graphicPosition = this.getHorizontalPosition(segment);
+      return {
+        x: graphicPosition.start,
+        y: this.getVerticalPosition(),
+        width: graphicPosition.end - graphicPosition.start,
+        height: this.props.height
+      };
+    }
+
+    return (
+      <g>
+        <g filter="url(#demo2)"
+          style={{
+            opacity: 0.6
+          }}>
+        {
+          data.map((dat, index) => {
+            return (
+              <DataSegment
+                {...getSegmentCoords(dat)}
+                key={`data-rect-${index}`}
+                onMouseEnter={(event) => this.props.onTooltipShow ? this.props.onTooltipShow({content: dat.tip, event: event}) : null}
+                onMouseLeave={this.props.onTooltipHide}
+                fill={dat.color || 'grey'}
+                fillOpacity={(dat.fillOpacity || dat.fillOpacity === 0) ? dat.fillOpacity : 1}/>
+            )
+          })
+        }
+        </g>
+      {
+        data.map((dat, index) => {
+          return (
+            <DataSegmentLabel
+              {...getSegmentCoords(dat)}
+              tip={dat.tip}/>
+          )
+        })
+      }
+      </g>
     )
   }
 
