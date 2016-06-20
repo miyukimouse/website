@@ -14,6 +14,7 @@ const COLOR_IDS  = {};
   'LIGHT_YELLOW',
   'LIGTH_GREY',
   'BLACK',
+  'WHITE'
 ].forEach((colorName, index) => COLOR_IDS[colorName] = index);
 export {
   COLOR_IDS as COLORS
@@ -34,6 +35,7 @@ const PALETTE = new Map([
   [COLOR_IDS.LIGHT_YELLOW,'rgb(255,237,111)'],
   [COLOR_IDS.LIGTH_GREY, 'rgb(204,204,204)'],
   [COLOR_IDS.BLACK, 'rgb(0,0,0)'],
+  [COLOR_IDS.WHITE, 'rgb(255,255,255)'],
 ]);
 
 // Original color palette based on ColorBrewer,
@@ -57,9 +59,16 @@ const PALETTE = new Map([
 
 export default class ColorScheme {
 
-  constructor(groupFunction, {...groupToColor}={}) {
-    this.groupFunction = groupFunction || function(dat, index) { return index };
-    this.groupToColor = groupToColor;
+  constructor(groupFunction, {...groupToColor}={}, fallbackScheme) {
+    if (fallbackScheme) {
+      const fallbackGroupFunction = fallbackScheme.getGroupFunction();
+      const fallbackGroupToColor = fallbackScheme.getGroupToColorMap();
+      this.groupFunction = this._composeGroupFunction(groupFunction, fallbackGroupFunction);
+      this.groupToColor = {...fallbackGroupToColor, ...groupToColor};
+    } else {
+      this.groupFunction = groupFunction || function(dat, index) { return index };
+      this.groupToColor = groupToColor;
+    }
   }
 
   decorate(data=[]){
@@ -75,6 +84,14 @@ export default class ColorScheme {
         ...dat
       }
     });
+  }
+
+  getGroupFunction() {
+    return this.groupFunction;
+  }
+
+  getGroupToColorMap() {
+    return {...this.groupToColor};
   }
 
 
@@ -95,6 +112,17 @@ export default class ColorScheme {
 
   _isColorValid(color){
     return color || color === 0;
+  }
+
+  _composeGroupFunction(groupFunction, fallbackGroupFunction) {
+    return function(dat, index) {
+      const group = groupFunction(dat, index);
+      if (typeof group !== 'undefined') {
+        return group;
+      } else {
+        return fallbackGroupFunction(dat, index);
+      }
+    }
   }
 
 }

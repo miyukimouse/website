@@ -27,6 +27,7 @@ export default class AlignmnetTrack extends React.Component {
       counter = end;
 
       return {
+        type: 'gap',
         start,
         end
       };
@@ -51,24 +52,31 @@ export default class AlignmnetTrack extends React.Component {
 
   _getColorScheme() {
     return new ColorScheme((dat, index) => {
-      return 'gap'
+      if (dat.type === 'gap' || dat.type === 'background') {
+        return dat.type;
+      }
     }, {
-      gap: COLORS.GREY
-    });
+      gap: COLORS.WHITE,
+      'background': COLORS.GREY,
+    }, this.props.colorScheme);
   }
 
   render() {
     const gaps = this._getGapsCoords();
     const longGaps = this._keepLongGaps(gaps);
+    const backgroundSegment = {
+      type: 'background',
+      start: 0,
+      end: this.props.sequenceLength || this.props.sequence.length,
+    };
 
-    return <g>
-      <BasicTrack
-        {...this.props}
-        data={this.props.data}/>
-      <BasicTrack
+    return (
+      this.props.data ? <BasicTrack
         {...this.props}
         colorScheme={this._getColorScheme()}
-        data={longGaps}/>
-    </g>;
+        data={
+          [backgroundSegment].concat(this.props.data, longGaps)
+        }/> : null
+    );
   }
 }
