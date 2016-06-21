@@ -69,8 +69,8 @@ export default class ProteinConcervationTrack extends React.Component {
     return new ColorScheme((dat, index) => {
       return dat.score > 0 ? 'positive' : 'nonPositive';
     }, {
-      positive: COLORS.ORANGE,
-      nonPositive: COLORS.BLUE
+      positive: COLORS.BLUE,
+      nonPositive: COLORS.ORANGE
     });
   }
 
@@ -109,6 +109,7 @@ export default class ProteinConcervationTrack extends React.Component {
     return true ? <g>
       <BasicTrack
         {...this.props}
+        opacity={1}
         colorScheme={colorScheme}
         data={annotatedSegments}/>
     </g> : null;
