@@ -1,6 +1,6 @@
 import "babel-polyfill";
 import React from 'react';
-import { render } from 'react-dom';
+import { render, unmountComponentAtNode } from 'react-dom';
 import Viewer from './components/Viewer';
 import BasicTrack, { VariationTrack, AlignmentTrack, ProteinConservationTrack } from './Tracks';
 import ColorScheme, { COLORS } from './Utils/ColorHelper';
@@ -14,6 +14,10 @@ const DEFAULT_SVG_HEIGHT = 600;  // use the same vertical coordinate system for 
 
 class App extends React.Component {
 
+  static propTypes = {
+    geneID: React.PropTypes.string.isRequired,
+  }
+
   constructor(props) {
     super(props);
     this.state = {
@@ -25,17 +29,14 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    this._getData();
+    this._getData(this.props.geneID);
     // setTimeout(() =>
     //   this._setupZoomPan()
     //   , 5000);
   }
 
-  _getData() {
-//    const model = new HomologyModel('WBGene00225050');
-//    const model = new HomologyModel('WBGene00015146');  // abi-1
-//    const model = new HomologyModel('WBGene00006759');  //unc-22
-    const model = new HomologyModel('WBGene00000904');  //daf-8
+  _getData(geneID) {
+    const model = new HomologyModel(geneID);
 
     function _getTrackIndex(trackName) {
       const tracks = ['sourceDNA', 'sourceVariation', 'sourceProtein', 'conservation',
@@ -337,10 +338,23 @@ class App extends React.Component {
 }
 
 
+function displayView(geneID, elementId) {
+  const element = document.getElementById(elementId);
+  if (element) {
+    unmountComponentAtNode(element);
+    render(<App geneID={geneID}/>, element);
+  }
+};
 
-render(<App/>, document.getElementById('variation-vis-container'));
+//    'WBGene00225050';
+//    'WBGene00015146';  // abi-1
+//    'WBGene00006759';  //unc-22
+//    'WBGene00000904';  //daf-8
 
-export default {
-  HomologyModel
+// Example usage:
+// displayView('WBGene00000904', 'variation-vis-container');
+
+export {
+  displayView
 }
 
