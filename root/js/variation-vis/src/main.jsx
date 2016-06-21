@@ -6,7 +6,7 @@ import BasicTrack, { VariationTrack, AlignmentTrack, ProteinConservationTrack } 
 import ColorScheme, { COLORS } from './Utils/ColorHelper';
 import { Button, Popover, Overlay } from 'react-bootstrap';
 import { ButtonGroup, ButtonToolbar, Glyphicon } from 'react-bootstrap';
-import { HomologyModel } from './Utils';
+import HomologyModel from './Models/HomologyModel';
 require('./main.less');
 
 const DEFAULT_SVG_INTERNAL_WIDTH = 100;
