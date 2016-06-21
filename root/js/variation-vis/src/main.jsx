@@ -3,7 +3,7 @@ import React from 'react';
 import { render } from 'react-dom';
 import Viewer from './components/Viewer';
 import BasicTrack, { VariationTrack, AlignmentTrack, ProteinConservationTrack } from './Tracks';
-import ColorScheme, { COLORS } from './DataDecorator';
+import ColorScheme, { COLORS } from './Utils/ColorHelper';
 import { Button, Popover, Overlay } from 'react-bootstrap';
 import { ButtonGroup, ButtonToolbar, Glyphicon } from 'react-bootstrap';
 import { HomologyModel } from './Utils';

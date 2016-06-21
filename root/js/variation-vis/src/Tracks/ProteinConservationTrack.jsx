@@ -1,7 +1,7 @@
 import React from 'react';
 import BasicTrack from './BasicTrack';
 import { DataLoader, SubstitutionHelper } from '../Utils';
-import ColorScheme, { COLORS } from '../DataDecorator';
+import ColorScheme, { COLORS } from '../Utils/ColorHelper';
 
 const DEFAULT_MAX_BIN_COUNT = 100;  // default maximum number of bins to show in the visible region
 
