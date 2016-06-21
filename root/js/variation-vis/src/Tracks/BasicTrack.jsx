@@ -1,6 +1,5 @@
 import React from 'react';
 import { findDOMNode } from 'react-dom';
-import Tooltip from '../Tooltip';
 import SequenceComponent from '../components/SequenceComponent';
 import DataSegment from '../components/DataSegment';
 import DataSegmentLabel from '../components/DataSegmentLabel';
@@ -26,7 +25,6 @@ export default class BasicTrack extends React.Component {
     xMin: React.PropTypes.number,
     xMax: React.PropTypes.number,
 //    viewWidth: React.PropTypes.number,
-    tip: React.PropTypes.string,
     onTooltipShow: React.PropTypes.func,
     onTooltipHide: React.PropTypes.func,
     colorScheme: React.PropTypes.object,
@@ -39,15 +37,6 @@ export default class BasicTrack extends React.Component {
   static contextTypes = {
     isZoomPanOccuring: React.PropTypes.bool,
     viewWidth: React.PropTypes.number,
-  }
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      tooltipTarget: null,
-      tooltip: null,
-      tooltipEventID: 0
-    };
   }
 
   static defaultProps = {
@@ -147,9 +136,6 @@ export default class BasicTrack extends React.Component {
         <g>
         {
           this.props.sequence ? this.renderContent() : null
-        }
-        {
-          this.state.tooltip ? <Tooltip {...this.state.tooltip}/> : null
         }
         </g>
       </g>
