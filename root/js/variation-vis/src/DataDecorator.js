@@ -1,8 +1,6 @@
 const COLOR_IDS  = {};
 [
-  'TEAL',
   'YELLOW',
-  'PURPLE',
   'RED',
   'BLUE',
   'ORANGE',
@@ -10,11 +8,13 @@ const COLOR_IDS  = {};
   'PINK',
   'GREY',
   'MAGENTA',
+  'TEAL',
+  'PURPLE',
   'LIGHT_TEAL',
   'LIGHT_YELLOW',
   'LIGTH_GREY',
   'BLACK',
-  'WHITE'
+  'WHITE',
 ].forEach((colorName, index) => COLOR_IDS[colorName] = index);
 export {
   COLOR_IDS as COLORS
@@ -22,7 +22,7 @@ export {
 
 const PALETTE = new Map([
   [COLOR_IDS.TEAL, 'rgb(84,189,146)'],
-  [COLOR_IDS.YELLOW, 'rgb(255,255,179)'],
+  [COLOR_IDS.YELLOW, 'rgb(241,192,0)'],
   [COLOR_IDS.PURPLE, 'rgb(96,86,161)'],
   [COLOR_IDS.RED, 'rgb(251,128,114)'],
   [COLOR_IDS.BLUE, 'rgb(128,177,211)'],

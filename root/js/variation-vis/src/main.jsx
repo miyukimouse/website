@@ -100,6 +100,9 @@ class App extends React.Component {
     });
 
     // load protein domain tracks
+    const domainColorScheme = new ColorScheme((dat, index) => {
+      return dat.id;
+    });
     model.sourceGeneModel.then((sourceGeneModel) => sourceGeneModel.getAlignedDomains()).then((domains) => {
       this._setTrackState({
         index: _getTrackIndex('sourceProtein'),
@@ -108,7 +111,8 @@ class App extends React.Component {
             ...d,
             tip: d.description || ''
           };
-        })
+        }),
+        colorScheme: domainColorScheme
       });
     });
     model.targetGeneModel.then((targetGeneModel) => targetGeneModel.getAlignedDomains()).then((domains) => {
@@ -119,7 +123,8 @@ class App extends React.Component {
             ...d,
             tip: d.description || ''
           };
-        })
+        }),
+        colorScheme: domainColorScheme
       });
     });
 
@@ -256,11 +261,10 @@ class App extends React.Component {
       + 'LFDTSAGWMPNEYLEKVRVLYDYDAAKEDELTLRENAIVYVLKKNDDDWYEGVLDGVTGLFPGNYVVPV*';
 
 
-    const colorSchemeA = new ColorScheme((dat, index) => index % 2, {
+    const defaultColorScheme = new ColorScheme((dat, index) => index % 2, {
       0: COLORS.TEAL,
       1: COLORS.PURPLE
     });
-    //const colorSchemeB = new ColorScheme()
 
     const trackLabelColumnWidth = 150;
 
@@ -318,7 +322,7 @@ class App extends React.Component {
                   sequence={trackData.sequence}
                   sequenceLength={trackData.sequenceLength}
                   data={trackData.data}
-                  colorScheme={colorSchemeA}
+                  colorScheme={trackData.colorScheme || defaultColorScheme}
                   outerHeight={trackData.outerHeight}
                   onHeightChange={this.handleTrackHeightChange}
                   y={this._getTrackYPosition(index)}/> : null;
