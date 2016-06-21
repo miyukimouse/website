@@ -25,7 +25,7 @@ const PALETTE = new Map([
   [COLOR_IDS.YELLOW, 'rgb(241,192,0)'],
   [COLOR_IDS.PURPLE, 'rgb(96,86,161)'],
   [COLOR_IDS.RED, 'rgb(251,128,114)'],
-  [COLOR_IDS.BLUE, 'rgb(128,177,211)'],
+  [COLOR_IDS.BLUE, 'rgb(62,131,179)'],
   [COLOR_IDS.ORANGE, 'rgb(253,180,98)'],
   [COLOR_IDS.GREEN, 'rgb(179,222,105)'],
   [COLOR_IDS.PINK, 'rgb(252,205,229)'],

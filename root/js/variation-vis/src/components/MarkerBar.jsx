@@ -51,10 +51,10 @@ export default class MarkerBar extends React.Component {
   render() {
     const barCoordinates = this._padSequneceCoordinates(this._cursorSequenceCoordinate())
     return (<BasicTrack
+      opacity={0.8}
       data={[{
         ...barCoordinates,
-        color: '#fd0',
-        fillOpacity: 0.8
+        color: '#fd0'
       }]}
       coordinateMapping={this.props.coordinateMapping}
       y={0}

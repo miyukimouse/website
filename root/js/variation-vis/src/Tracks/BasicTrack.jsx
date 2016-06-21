@@ -30,6 +30,7 @@ export default class BasicTrack extends React.Component {
     onTooltipShow: React.PropTypes.func,
     onTooltipHide: React.PropTypes.func,
     colorScheme: React.PropTypes.object,
+    opacity: React.PropTypes.number,
     y: React.PropTypes.number,
     width: React.PropTypes.number,
     height: React.PropTypes.number
@@ -84,7 +85,7 @@ export default class BasicTrack extends React.Component {
       <g>
         <g filter="url(#demo2)"
           style={{
-            opacity: 0.6
+            opacity: typeof this.props.opacity === 'undefined' ? 0.7 : this.props.opacity
           }}>
         {
           data.map((dat, index) => {
