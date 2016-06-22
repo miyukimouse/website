@@ -101,9 +101,9 @@ class App extends React.Component {
     });
 
     // load protein domain tracks
-    const domainColorScheme = new ColorScheme((dat, index) => {
-      return dat.id;
-    });
+    const domainColorScheme = AlignmentTrack.enhanceColorScheme(new ColorScheme((dat, index) => {
+        return dat.id;
+    }));
     model.sourceGeneModel.then((sourceGeneModel) => sourceGeneModel.getAlignedDomains()).then((domains) => {
       this._setTrackState({
         index: _getTrackIndex('sourceProtein'),
