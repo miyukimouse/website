@@ -17,6 +17,7 @@ export default class BasicTrack extends React.Component {
       tip: React.PropTypes.string,
       label: React.PropTypes.string
     })),
+    ignoreShortSegments: React.PropTypes.bool,
     sequenceLength: React.PropTypes.number,   // used when sequence isn't provided to map sequence coordinates to track graphic coordinates
     sequence: React.PropTypes.string,
     coordinateMapping: React.PropTypes.shape({
@@ -61,7 +62,7 @@ export default class BasicTrack extends React.Component {
     let data = this.props.data;
     data = this.props.colorScheme ? this.props.colorScheme.decorate(data) : data;
     data = this._selectVisibleSegments(data);
-    data = this._keepLongSegments(data);
+    data = this.props.ignoreShortSegments ? this._keepLongSegments(data) : data;
 
     const getSegmentCoords = (segment) => {
       const graphicPosition = this.getHorizontalPosition(segment);

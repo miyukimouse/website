@@ -80,7 +80,8 @@ export default class AlignmnetTrack extends React.Component {
       this.props.data ? <BasicTrack
         {...this.props}
         colorScheme={this.props.colorScheme}
-        data={allSegments}/> : null
+        data={allSegments}
+        ignoreShortSegments={true}/> : null
     );
   }
 }

@@ -70,7 +70,8 @@ class App extends React.Component {
         index: _getTrackIndex('sourceDNA'),
         data: cdss.map((cds, i) => {
           return {...cds, tip: 'CDS' + i};
-        })
+        }),
+        ignoreShortSegments: true
       });
     });
     model.targetGeneModel.then((targetGeneModel) => targetGeneModel.getAlignedCDSs()).then((cdss) => {
@@ -78,7 +79,8 @@ class App extends React.Component {
         index: _getTrackIndex('targetDNA'),
         data: cdss.map((cds, i) => {
           return {...cds, tip: 'CDS' + i};
-        })
+        }),
+        ignoreShortSegments: true
       });
     });
 
@@ -323,6 +325,7 @@ class App extends React.Component {
                   sequence={trackData.sequence}
                   sequenceLength={trackData.sequenceLength}
                   data={trackData.data}
+                  ignoreShortSegments={trackData.ignoreShortSegments}
                   colorScheme={trackData.colorScheme || defaultColorScheme}
                   outerHeight={trackData.outerHeight}
                   onHeightChange={this.handleTrackHeightChange}
