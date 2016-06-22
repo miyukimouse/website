@@ -4,7 +4,8 @@ import SequenceComponent from '../components/SequenceComponent';
 import DataSegment from '../components/DataSegment';
 import DataSegmentLabel from '../components/DataSegmentLabel';
 import $ from 'jquery';
-import { TRACK_HEIGHT } from '../Utils'
+import { TRACK_HEIGHT, DataLoader } from '../Utils'
+const DEFAULT_MAX_BIN_COUNT = 100;  // default maximum number of bins to show in the visible region
 
 export default class BasicTrack extends React.Component {
 
@@ -56,9 +57,11 @@ export default class BasicTrack extends React.Component {
   }
 
   /* data series within a track */
-  renderData(){
-    const data = this.props.colorScheme
-      ? this.props.colorScheme.decorate(this.props.data) : this.props.data;
+  renderSegments(){
+    let data = this.props.data;
+    data = this.props.colorScheme ? this.props.colorScheme.decorate(data) : data;
+    data = this._selectVisibleSegments(data);
+    data = this._keepLongSegments(data);
 
     const getSegmentCoords = (segment) => {
       const graphicPosition = this.getHorizontalPosition(segment);
@@ -103,9 +106,26 @@ export default class BasicTrack extends React.Component {
     )
   }
 
+  _selectVisibleSegments(segments=[]) {
+    const {xMin, xMax} = this.props;
+
+    return segments.filter((dat) => {
+      return dat.start < xMax && dat.end > xMin;
+    });
+  }
+
+  _keepLongSegments(segments=[]) {
+    const {xMin, xMax} = this.props;
+    const lengthThreshold = DataLoader.BinHelper.getBinWidth(
+      xMin, xMax, DEFAULT_MAX_BIN_COUNT);
+
+    return segments.filter(({start, end}) =>{
+      return end - start > lengthThreshold;
+    });
+  }
 
   /* render sequence or label depending how zoomed in */
-  renderContent = () => {
+  renderSequence = () => {
     let {xMin, xMax, sequence} = this.props;
     const rawSegmentLength = xMax - xMin;
     xMin = Math.max(0, xMin);
@@ -131,11 +151,11 @@ export default class BasicTrack extends React.Component {
     return (
       <g className="track">
         {
-          this.renderData()
+          this.renderSegments()
         }
         <g>
         {
-          this.props.sequence ? this.renderContent() : null
+          this.props.sequence ? this.renderSequence() : null
         }
         </g>
       </g>
