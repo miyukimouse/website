@@ -111,7 +111,8 @@ export default class BasicTrack extends React.Component {
     const {xMin, xMax} = this.props;
 
     return segments.filter((dat) => {
-      return dat.start < xMax && dat.end > xMin;
+      return (typeof xMax === 'undefined' || dat.start < xMax) &&
+        (typeof xMin === 'undefined' || dat.end > xMin);
     });
   }
 
