@@ -60,30 +60,44 @@ const PALETTE = new Map([
 export default class ColorScheme {
 
   constructor(groupFunction, {...groupToColor}={}, fallbackScheme) {
+    const defaultGroupToColor = {
+      'ColorScheme.default.background': COLOR_IDS.GREY
+    }
     if (fallbackScheme) {
       const fallbackGroupFunction = fallbackScheme.getGroupFunction();
       const fallbackGroupToColor = fallbackScheme.getGroupToColorMap();
       this.groupFunction = this._composeGroupFunction(groupFunction, fallbackGroupFunction);
-      this.groupToColor = {...fallbackGroupToColor, ...groupToColor};
+      this.groupToColor = {
+        ...defaultGroupToColor,
+        ...fallbackGroupToColor,
+        ...groupToColor
+      };
     } else {
       this.groupFunction = groupFunction || function(dat, index) { return index };
-      this.groupToColor = groupToColor;
+      this.groupToColor = {
+        ...defaultGroupToColor,
+        ...groupToColor
+      };
     }
   }
 
   decorate(data=[]){
     return data.map((dat, index) => {
       const group = this.groupFunction(dat, index);
-      let color = this.groupToColor[group];
-      if (!this._isColorValid(color)){
-        // find an available color to use
-        color = this._newColor(group);
-      }
-      return {
-        color: PALETTE.get(color % PALETTE.size),
-        ...dat
-      }
+      return this.decorateWithGroup(dat, group);
     });
+  }
+
+  decorateWithGroup(dat, group) {
+    let color = this.groupToColor[group];
+    if (!this._isColorValid(color)){
+      // find an available color to use
+      color = this._newColor(group);
+    }
+    return {
+      color: PALETTE.get(color % PALETTE.size),
+      ...dat
+    }
   }
 
   getGroupFunction() {

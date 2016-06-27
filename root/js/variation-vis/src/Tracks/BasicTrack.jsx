@@ -30,6 +30,7 @@ export default class BasicTrack extends React.Component {
     onTooltipShow: React.PropTypes.func,
     onTooltipHide: React.PropTypes.func,
     colorScheme: React.PropTypes.object,
+    showDefaultBackground: React.PropTypes.bool,
     opacity: React.PropTypes.number,
     y: React.PropTypes.number,
     width: React.PropTypes.number,
@@ -59,8 +60,11 @@ export default class BasicTrack extends React.Component {
 
   /* data series within a track */
   renderSegments(){
-    let data = this.props.data;
+    let data = this.props.data || [];
     data = this.props.colorScheme ? this.props.colorScheme.decorate(data) : data;
+    if (this.props.showDefaultBackground) {
+       data = [this._getBackGroundSegment()].concat(data);
+    }
     data = this._selectVisibleSegments(data);
     data = this.props.ignoreShortSegments ? this._keepLongSegments(data) : data;
 
@@ -124,6 +128,17 @@ export default class BasicTrack extends React.Component {
     return segments.filter(({start, end}) =>{
       return end - start > lengthThreshold;
     });
+  }
+
+  _getBackGroundSegment() {
+    const sequenceLength = this.props.sequenceLength || this.props.sequence.length;
+    const backgroundSegment = {
+      start: Math.max(0, this.props.xMin),
+      end: Math.min(sequenceLength, this.props.xMax)
+    };
+    return this.props.colorScheme ?
+      this.props.colorScheme.decorateWithGroup(backgroundSegment, 'ColorScheme.default.background') :
+      backgroundSegment;
   }
 
   /* render sequence or label depending how zoomed in */

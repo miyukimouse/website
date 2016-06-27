@@ -61,27 +61,18 @@ export default class AlignmnetTrack extends React.Component {
     return longGaps;
   }
 
-  _getBackGroundSegment() {
-    const sequenceLength = this.props.sequenceLength || this.props.sequence.length;
-    return {
-      type: 'background',
-      start: Math.max(0, this.props.xMin),
-      end: Math.min(sequenceLength, this.props.xMax)
-    };
-  }
-
   render() {
     const gaps = this._getGapsCoords();
     const longGaps = this._keepLongGaps(gaps);
-    const backgroundSegment = this._getBackGroundSegment();
-    const allSegments = [backgroundSegment].concat(this.props.data, longGaps);
+    const allSegments = [].concat(this.props.data, longGaps);
 
     return (
       this.props.data ? <BasicTrack
         {...this.props}
         colorScheme={this.props.colorScheme}
         data={allSegments}
-        ignoreShortSegments={true}/> : null
+        ignoreShortSegments={true}
+        showDefaultBackground={true}/> : null
     );
   }
 }
