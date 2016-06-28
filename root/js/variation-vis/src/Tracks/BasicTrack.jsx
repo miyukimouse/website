@@ -31,7 +31,7 @@ export default class BasicTrack extends React.Component {
     onTooltipHide: React.PropTypes.func,
     colorScheme: React.PropTypes.object,
     showDefaultBackground: React.PropTypes.bool,
-    opacity: React.PropTypes.number,
+    pretty: React.PropTypes.bool,
     y: React.PropTypes.number,
     width: React.PropTypes.number,
     height: React.PropTypes.number
@@ -44,7 +44,8 @@ export default class BasicTrack extends React.Component {
 
   static defaultProps = {
     height: 25,
-    data: []
+    data: [],
+    pretty: true
   }
 
   getVerticalPosition = () => {
@@ -80,10 +81,7 @@ export default class BasicTrack extends React.Component {
 
     return (
       <g>
-        <g filter="url(#demo2)"
-          style={{
-            opacity: typeof this.props.opacity === 'undefined' ? 0.7 : this.props.opacity
-          }}>
+        <g filter={this.props.pretty ? "url(#demo2)" : null}>
         {
           data.map((dat, index) => {
             return (

@@ -112,7 +112,7 @@ export default class ProteinConcervationTrack extends React.Component {
     return true ? <g>
       <BasicTrack
         {...this.props}
-        opacity={1}
+        pretty={false}
         colorScheme={colorScheme}
         data={annotatedSegments}/>
     </g> : null;

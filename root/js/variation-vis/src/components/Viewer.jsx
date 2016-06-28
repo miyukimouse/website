@@ -449,6 +449,9 @@ export default class Viewer extends React.Component {
                   <feDistantLight azimuth="270" elevation="25" />
                 </feSpecularLighting>
                 <feComposite in="SourceGraphic" in2="spec2" operator="arithmetic" k1="-1" k2="1" k3="0" k4="0" />
+                <feComponentTransfer>
+                  <feFuncA type="linear" slope="0.8"/>
+                </feComponentTransfer>
               </filter>
               </defs>
               {
