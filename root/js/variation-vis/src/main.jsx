@@ -67,13 +67,18 @@ class App extends React.Component {
     });
 
     // load CDS on DNA tracks
+    const cdsColorScheme = new ColorScheme((dat, index) => index % 2, {
+      0: COLORS.TEAL,
+      1: COLORS.PURPLE
+    });
     model.sourceGeneModel.then((sourceGeneModel) => sourceGeneModel.getAlignedCDSs()).then((cdss) => {
       this._setTrackState({
         index: _getTrackIndex('sourceDNA'),
         data: cdss.map((cds, i) => {
           return {...cds, tip: 'CDS' + i};
         }),
-        ignoreShortSegments: true
+        ignoreShortSegments: true,
+        colorScheme: cdsColorScheme,
       });
     });
     model.targetGeneModel.then((targetGeneModel) => targetGeneModel.getAlignedCDSs()).then((cdss) => {
@@ -82,7 +87,8 @@ class App extends React.Component {
         data: cdss.map((cds, i) => {
           return {...cds, tip: 'CDS' + i};
         }),
-        ignoreShortSegments: true
+        ignoreShortSegments: true,
+        colorScheme: cdsColorScheme
       });
     });
 
@@ -193,6 +199,16 @@ class App extends React.Component {
     return yPosition;
   }
 
+  _getTrackColorScheme(trackData) {
+    if (trackData.colorScheme){
+      return trackData.colorScheme;
+    } else {
+      const TrackComponent = trackData.trackComponent || BasicTrack;
+      return typeof TrackComponent.getDefaultColorScheme === 'function' &&
+        TrackComponent.getDefaultColorScheme();
+    }
+  }
+
   handleTrackHeightChange = (trackIndex, newHeight) => {
     console.log(`trackHeight change handler called with: ${trackIndex} and newHeight=${newHeight}`);
     this._setTrackState({
@@ -247,7 +263,9 @@ class App extends React.Component {
   renderTrackModal() {
     const trackIndex = this.state.activeTrackModal;
     if (trackIndex || trackIndex === 0) {
-      const {name, colorScheme} = this.state.tracks[trackIndex];
+      const trackData = this.state.tracks[trackIndex];
+      const {name} = trackData;
+      const colorScheme = this._getTrackColorScheme(trackData);
       return <TrackLegendModal
           name={name}
           colorScheme={colorScheme}
@@ -305,12 +323,6 @@ class App extends React.Component {
       + 'QQQQQQQMQQQNYGTIRKSTVNRHDLPPPPNSLLTGMSSRMPTQDDMDDLPPPPESVGGSSAYGVFAGRTESYSSSQPPS'
       + 'LFDTSAGWMPNEYLEKVRVLYDYDAAKEDELTLRENAIVYVLKKNDDDWYEGVLDGVTGLFPGNYVVPV*';
 
-
-    const defaultColorScheme = new ColorScheme((dat, index) => index % 2, {
-      0: COLORS.TEAL,
-      1: COLORS.PURPLE
-    });
-
     const trackLabelColumnWidth = 200;
 
     const containerStyle = {
@@ -362,7 +374,7 @@ class App extends React.Component {
                   sequenceLength={trackData.sequenceLength}
                   data={trackData.data}
                   ignoreShortSegments={trackData.ignoreShortSegments}
-                  colorScheme={trackData.colorScheme || defaultColorScheme}
+                  colorScheme={this._getTrackColorScheme(trackData)}
                   outerHeight={trackData.outerHeight}
                   onHeightChange={this.handleTrackHeightChange}
                   y={this._getTrackYPosition(index)}/> : null;

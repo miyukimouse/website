@@ -11,8 +11,16 @@ export default class ProteinConcervationTrack extends React.Component {
     xMin: React.PropTypes.number,
     xMax: React.PropTypes.number,
     sequenceList: React.PropTypes.arrayOf(React.PropTypes.string),
-  }
+  };
 
+  static getDefaultColorScheme() {
+    return new ColorScheme((dat, index) => {
+      return dat.score > 0 ? 'positive' : 'nonPositive';
+    }, {
+      positive: COLORS.BLUE,
+      nonPositive: COLORS.ORANGE
+    });
+  }
 
   _getSequenceSegments() {
     const sequenceList = this.props.sequenceList;
@@ -66,12 +74,7 @@ export default class ProteinConcervationTrack extends React.Component {
   }
 
   _getColorScheme(annotatedSegments) {
-    return new ColorScheme((dat, index) => {
-      return dat.score > 0 ? 'positive' : 'nonPositive';
-    }, {
-      positive: COLORS.BLUE,
-      nonPositive: COLORS.ORANGE
-    });
+    return ProteinConcervationTrack.getDefaultColorScheme();
   }
 
   _getAnnotatedSegments(segments) {

@@ -13,6 +13,21 @@ export default class VariationTrack extends React.Component {
     xMax: React.PropTypes.number,
     onHeightChange: React.PropTypes.func,
     outerHeight: React.PropTypes.number,
+  };
+
+  static getDefaultColorScheme() {
+    const knownChangeType = new Set(['Nonsense', 'Missense', 'Insertion', 'Deletion'])
+    return new ColorScheme((dat, index) => {
+      const descriptor = [].concat(dat.data.molecular_change, dat.data.effects);
+      const types = descriptor.filter((value) => knownChangeType.has(value));
+      return types.length > 0 ? types[0] : 'Other';
+    }, {
+      Nonsense: COLORS.RED,
+      Missense: COLORS.BLUE,
+      Insertion: COLORS.GREEN,
+      Deletion:COLORS.MAGENTA,
+      Other: COLORS.YELLOW
+    });
   }
 
   componentWillMount() {
@@ -103,18 +118,7 @@ export default class VariationTrack extends React.Component {
   }
 
   _getColorScheme() {
-    const knownChangeType = new Set(['Nonsense', 'Missense', 'Insertion', 'Deletion'])
-    return new ColorScheme((dat, index) => {
-      const descriptor = [].concat(dat.data.molecular_change, dat.data.effects);
-      const types = descriptor.filter((value) => knownChangeType.has(value));
-      return types.length > 0 ? types[0] : 'Other';
-    }, {
-      Nonsense: COLORS.RED,
-      Missense: COLORS.BLUE,
-      Insertion: COLORS.GREEN,
-      Deletion:COLORS.MAGENTA,
-      Other: COLORS.YELLOW
-    });
+    return VariationTrack.getDefaultColorScheme();
   }
 
 
