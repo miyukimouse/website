@@ -1,11 +1,12 @@
 import "babel-polyfill";
 import React from 'react';
 import { render, unmountComponentAtNode } from 'react-dom';
+import { Button, ButtonGroup, ButtonToolbar, Glyphicon } from 'react-bootstrap';
 import Viewer from './components/Viewer';
+import TrackLegendModal from './components/TrackLegendModal';
+import TrackLabel from './components/TrackLabel';
 import BasicTrack, { VariationTrack, AlignmentTrack, ProteinConservationTrack } from './Tracks';
 import ColorScheme, { COLORS } from './Utils/ColorHelper';
-import { Button, Popover, Overlay } from 'react-bootstrap';
-import { ButtonGroup, ButtonToolbar, Glyphicon } from 'react-bootstrap';
 import HomologyModel from './Models/HomologyModel';
 require('./main.less');
 
@@ -24,6 +25,7 @@ class App extends React.Component {
       viewWidth: 500,
       // track data
       tracks: [],
+      activeTrackModal: null,
 
      };
   }
@@ -199,6 +201,22 @@ class App extends React.Component {
     });
   }
 
+  getTrackDescriptionRequestHandler = (trackIndex) => {
+    return () => {
+      this.setState({
+        activeTrackModal: trackIndex
+      });
+    }
+  }
+
+  getTrackDescriptionCancelHandler = (trackIndex) => {
+    return () => {
+      this.setState({
+        activeTrackModal: null
+      });
+    }
+  }
+
   renderToolbar = () => {
     return (<div style={{margin: "20px auto 20px 250px", height: 30}}>
       <ButtonToolbar>
@@ -213,6 +231,30 @@ class App extends React.Component {
         </ButtonGroup>
       </ButtonToolbar>
     </div>);
+  }
+
+  renderTrackLabels() {
+    return this.state.tracks.map((trackData, index ) => {
+      return <TrackLabel
+        key={`track-label-${index}`}
+        index={index}
+        y={this._getTrackYPosition(index)}
+        {...trackData}
+        onTrackDescriptionRequest={this.getTrackDescriptionRequestHandler(index)}/>
+    });
+  }
+
+  renderTrackModal() {
+    const trackIndex = this.state.activeTrackModal;
+    if (trackIndex || trackIndex === 0) {
+      const {name, colorScheme} = this.state.tracks[trackIndex];
+      return <TrackLegendModal
+          name={name}
+          colorScheme={colorScheme}
+          onTrackDescriptionCancel={this.getTrackDescriptionCancelHandler(trackIndex)}/>;
+    } else {
+      return null
+    }
   }
 
 
@@ -269,7 +311,7 @@ class App extends React.Component {
       1: COLORS.PURPLE
     });
 
-    const trackLabelColumnWidth = 150;
+    const trackLabelColumnWidth = 200;
 
     const containerStyle = {
       // overflowX: 'scroll',
@@ -295,19 +337,13 @@ class App extends React.Component {
               position: 'relative'
             }}>
             {
-              this.state.tracks.map((trackData, index ) => {
-              return <div style={{
-                  position: 'absolute',
-                  width: '80%',
-                  top: this._getTrackYPosition(index, 40),
-                  left: 0,
-                }}
-                key={`track-label-${index}`}><h5 style={{
-                  textAlign: 'right'
-                }}>{trackData.name}</h5></div>
-              })
+              this.renderTrackLabels()
             }
           </div>
+          {
+            this.renderTrackModal()
+          }
+
           <Viewer ref={(component) => this._viewerComponent = component}
             style={{
               left: trackLabelColumnWidth
