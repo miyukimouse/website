@@ -15,12 +15,11 @@ export default class AlignmnetTrack extends React.Component {
 
   static enhanceColorScheme(colorScheme) {
     return new ColorScheme((dat, index) => {
-      if (dat.type === 'gap' || dat.type === 'background') {
+      if (dat.type === 'gap') {
         return dat.type;
       }
     }, {
-      gap: COLORS.WHITE,
-      'background': COLORS.GREY,
+      gap: COLORS.WHITE
     }, colorScheme);
   }
 

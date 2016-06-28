@@ -89,13 +89,13 @@ export default class ColorScheme {
   }
 
   decorateWithGroup(dat, group) {
-    let color = this.groupToColor[group];
-    if (!this._isColorValid(color)){
+    let colorId = this.groupToColor[group];
+    if (!this._isColorValid(colorId)){
       // find an available color to use
-      color = this._newColor(group);
+      colorId = this._newColor(group);
     }
     return {
-      color: PALETTE.get(color % PALETTE.size),
+      color: this.getColor(colorId),
       ...dat
     }
   }
@@ -106,6 +106,20 @@ export default class ColorScheme {
 
   getGroupToColorMap() {
     return {...this.groupToColor};
+  }
+
+  getColor(colorId) {
+    return PALETTE.get(colorId % PALETTE.size);
+  }
+
+  getLegendData() {
+    return Object.keys(this.groupToColor).map((group) => {
+      const colorId = this.groupToColor[group];
+      return {
+        group: group,
+        color: this.getColor(colorId),
+      }
+    })
   }
 
 

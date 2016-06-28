@@ -238,7 +238,7 @@ class App extends React.Component {
       return <TrackLabel
         key={`track-label-${index}`}
         index={index}
-        y={this._getTrackYPosition(index)}
+        y={this._getTrackYPosition(index, 40)}
         {...trackData}
         onTrackDescriptionRequest={this.getTrackDescriptionRequestHandler(index)}/>
     });

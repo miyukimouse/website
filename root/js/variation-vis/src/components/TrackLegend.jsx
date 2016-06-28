@@ -7,18 +7,23 @@ export default class TrackLegend extends React.Component {
   }
 
   _renderLegendItem(dat) {
-
+    return (<li>
+      {dat.color} - {dat.group}
+    </li>)
   }
 
   render() {
+    const colorScheme = this.props.colorScheme;
     return (
-      <div>
+      colorScheme ? <div>
+      <ul>
       {
-        legends.map((dat) => {
+        colorScheme.getLegendData().map((dat) => {
           return this._renderLegendItem(dat)
         })
       }
-      </div>
+      </ul>
+      </div> : null
     );
   }
 }
