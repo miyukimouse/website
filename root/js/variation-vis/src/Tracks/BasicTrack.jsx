@@ -3,6 +3,7 @@ import { findDOMNode } from 'react-dom';
 import SequenceComponent from '../components/SequenceComponent';
 import DataSegment from '../components/DataSegment';
 import DataSegmentLabel from '../components/DataSegmentLabel';
+import PrettyTrackSVGFilter from '../components/PrettyTrackSVGFilter';
 import $ from 'jquery';
 import { TRACK_HEIGHT, DataLoader } from '../Utils'
 const DEFAULT_MAX_BIN_COUNT = 100;  // default maximum number of bins to show in the visible region
@@ -81,7 +82,7 @@ export default class BasicTrack extends React.Component {
 
     return (
       <g>
-        <g filter={this.props.pretty ? "url(#demo2)" : null}>
+        <g filter={this.props.pretty ? `url(#${PrettyTrackSVGFilter.ID})` : null}>
         {
           data.map((dat, index) => {
             return (

@@ -2,6 +2,7 @@ import "babel-polyfill";
 import React from 'react';
 import Tooltip from './Tooltip';
 import Ruler from './Ruler';
+import PrettyTrackSVGFilter from './PrettyTrackSVGFilter';
 import MarkerBar from './MarkerBar';
 import { CoordinateMappingHelper } from '../Utils';
 import svgPanZoom from 'svg-pan-zoom';
@@ -442,17 +443,8 @@ export default class Viewer extends React.Component {
             }}
             //preserveAspectRatio="meet xMinYMin"
             >
-            <defs>
-              <filter id="demo2">
-                <feGaussianBlur stdDeviation={2 / (this.context.zoomFactor * this.context.zoomFactor || 1)} result="blur2" />
-                  <feSpecularLighting result="spec2" in="blur2" specularConstant="2" specularExponent="13" lightingColor="#cccccc">
-                  <feDistantLight azimuth="270" elevation="25" />
-                </feSpecularLighting>
-                <feComposite in="SourceGraphic" in2="spec2" operator="arithmetic" k1="-1" k2="1" k3="0" k4="0" />
-                <feComponentTransfer>
-                  <feFuncA type="linear" slope="0.8"/>
-                </feComponentTransfer>
-              </filter>
+              <defs>
+                <PrettyTrackSVGFilter/>
               </defs>
               {
                 this.state.referenceSequenceLength ? <MarkerBar
