@@ -61,8 +61,12 @@ export default class ColorScheme {
 
   constructor(groupFunction, {...groupToColor}={}, fallbackScheme) {
     const defaultGroupToColor = {
-      'ColorScheme.default.background': COLOR_IDS.GREY
-    }
+      'ColorScheme.default.background': {
+        colorId: COLOR_IDS.GREY,
+        description: 'Others'
+      }
+    };
+
     if (fallbackScheme) {
       const fallbackGroupFunction = fallbackScheme.getGroupFunction();
       const fallbackGroupToColor = fallbackScheme.getGroupToColorMap();
@@ -83,17 +87,20 @@ export default class ColorScheme {
 
   decorate(data=[]){
     return data.map((dat, index) => {
-      const group = this.groupFunction(dat, index);
-      return this.decorateWithGroup(dat, group);
+      const rawGroup = this.groupFunction(dat, index);
+      return this.decorateWithGroup(dat, rawGroup);
     });
   }
 
-  decorateWithGroup(dat, group) {
-    let colorId = this.groupToColor[group];
+  decorateWithGroup(dat, rawGroup) {
+    const group = this._parseGroup(rawGroup);
+    let {colorId} = this.groupToColor[group.key] || {};
+
     if (!this._isColorValid(colorId)){
       // find an available color to use
       colorId = this._newColor(group);
     }
+
     return {
       color: this.getColor(colorId),
       ...dat
@@ -113,28 +120,43 @@ export default class ColorScheme {
   }
 
   getLegendData() {
-    return Object.keys(this.groupToColor).map((group) => {
-      const colorId = this.groupToColor[group];
+    let groupKeys = Object.keys(this.groupToColor);
+    return groupKeys.map((groupKey) => {
+      const {colorId, description} = this.groupToColor[groupKey];
       return {
-        group: group,
+        group: groupKey,
         color: this.getColor(colorId),
+        description: description
       }
     })
   }
 
-
-  _newColor(group){
-    let color = 0;
-    while (this._isColorTaken(color)){
-      color++;
-    }
-    this.groupToColor[group] = color;
-    return color;
+  _parseGroup(rawGroup) {
+    return typeof rawGroup === 'object' ? rawGroup : {
+      key: rawGroup,
+      description: rawGroup
+    };
   }
 
-  _isColorTaken(color){
+  _newColor(group){
+    const {key, description} = group;
+
+    let colorCounter = 0;
+    while (this._isColorTaken(colorCounter)){
+      colorCounter++;
+    }
+
+    this.groupToColor[key] = {
+      description,
+      colorId: colorCounter
+    };
+    return colorCounter;
+  }
+
+  _isColorTaken(colorId){
     return Object.keys(this.groupToColor).some((key) => {
-      return this.groupToColor[key] === color;
+      const {colorId: existingColorId} = this.groupToColor[key] || {};
+      return existingColorId === colorId;
     });
   }
 
@@ -144,9 +166,9 @@ export default class ColorScheme {
 
   _composeGroupFunction(groupFunction, fallbackGroupFunction) {
     return function(dat, index) {
-      const group = groupFunction(dat, index);
-      if (typeof group !== 'undefined') {
-        return group;
+      const groupKey = groupFunction(dat, index);
+      if (typeof groupKey !== 'undefined') {
+        return groupKey;
       } else {
         return fallbackGroupFunction(dat, index);
       }

@@ -22,11 +22,21 @@ export default class VariationTrack extends React.Component {
       const types = descriptor.filter((value) => knownChangeType.has(value));
       return types.length > 0 ? types[0] : 'Other';
     }, {
-      Nonsense: COLORS.RED,
-      Missense: COLORS.BLUE,
-      Insertion: COLORS.GREEN,
-      Deletion:COLORS.MAGENTA,
-      Other: COLORS.YELLOW
+      Nonsense: {
+        colorId: COLORS.RED,
+      },
+      Missense: {
+        colorId: COLORS.BLUE,
+      },
+      Insertion: {
+        colorId: COLORS.GREEN,
+      },
+      Deletion: {
+        colorId: COLORS.MAGENTA,
+      },
+      Other: {
+        colorId: COLORS.YELLOW,
+      }
     });
   }
 

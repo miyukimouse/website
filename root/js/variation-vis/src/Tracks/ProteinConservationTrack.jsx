@@ -17,8 +17,14 @@ export default class ProteinConcervationTrack extends React.Component {
     return new ColorScheme((dat, index) => {
       return dat.score > 0 ? 'positive' : 'nonPositive';
     }, {
-      positive: COLORS.BLUE,
-      nonPositive: COLORS.ORANGE
+      positive: {
+        colorId: COLORS.BLUE,
+        description: 'Conserved'
+      },
+      nonPositive: {
+        colorId: COLORS.ORANGE,
+        description: 'Not conserved'
+      }
     });
   }
 

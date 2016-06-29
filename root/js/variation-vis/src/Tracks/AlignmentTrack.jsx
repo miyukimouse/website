@@ -19,7 +19,10 @@ export default class AlignmnetTrack extends React.Component {
         return dat.type;
       }
     }, {
-      gap: COLORS.WHITE
+      gap: {
+        colorId: COLORS.WHITE,
+        description: 'Alignment gap'
+      }
     }, colorScheme);
   }
 

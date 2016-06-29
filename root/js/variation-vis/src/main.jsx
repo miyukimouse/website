@@ -68,8 +68,14 @@ class App extends React.Component {
 
     // load CDS on DNA tracks
     const cdsColorScheme = new ColorScheme((dat, index) => index % 2, {
-      0: COLORS.TEAL,
-      1: COLORS.PURPLE
+      0: {
+        colorId: COLORS.TEAL,
+        description: 'CDS'
+      },
+      1: {
+        colorId: COLORS.PURPLE,
+        description: 'CDS'
+      }
     });
     model.sourceGeneModel.then((sourceGeneModel) => sourceGeneModel.getAlignedCDSs()).then((cdss) => {
       this._setTrackState({
@@ -112,7 +118,10 @@ class App extends React.Component {
 
     // load protein domain tracks
     const domainColorScheme = AlignmentTrack.enhanceColorScheme(new ColorScheme((dat, index) => {
-        return dat.id;
+      return {
+        key: dat.id,
+        description: dat.description
+      };
     }));
     model.sourceGeneModel.then((sourceGeneModel) => sourceGeneModel.getAlignedDomains()).then((domains) => {
       this._setTrackState({

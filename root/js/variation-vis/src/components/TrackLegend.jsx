@@ -47,7 +47,7 @@ export default class TrackLegend extends React.Component {
          x={LEGEND_ITEM_WIDTH * 2}
          y={index * LEGEND_ITEM_OUTER_HEIGHT + 0.55 * LEGEND_ITEM_OUTER_HEIGHT}>
       {
-        dat.group
+        dat.description || dat.group
       }
       </text>
 
