@@ -25,6 +25,7 @@ export default class Tooltip extends React.Component {
       width: React.PropTypes.number,
       height: React.PropTypes.number,
     }),
+    title: React.PropTypes.string,
     content: React.PropTypes.string
   }
 
@@ -38,7 +39,7 @@ export default class Tooltip extends React.Component {
 //  componentDidUpdate() {
     this.setState({
       ...this._getOrigin()
-    })   
+    })
   }
 
 // point on target
@@ -81,7 +82,7 @@ export default class Tooltip extends React.Component {
 
     const {left, top} = this._getClientOrigin();
     const containerLeft = this.props.container.left;
-    const containerTop = this.props.container.top;    
+    const containerTop = this.props.container.top;
     return {
       left: left - containerLeft,
       top: top - containerTop
@@ -109,11 +110,14 @@ export default class Tooltip extends React.Component {
 
     return this.props.content && this.props.target ?
         <Popover ref={(component) => this._tooltipDOMNode = ReactDOM.findDOMNode(component)}
-          title="Popover right"
+          title={this.props.title}
           placement="top"
           positionLeft={left}
           positionTop={top}>
-          <div style={{width: 150}}
+          <div style={{
+            width: 180,
+            maxHeight: 120,
+            overflow: 'hidden'}}
             dangerouslySetInnerHTML={{__html: this.props.content}} />
         </Popover>
         : null;

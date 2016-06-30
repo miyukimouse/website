@@ -153,7 +153,7 @@ export default class GeneModel extends WBDataModel {
       const url = this._urlFor(`gene/${data.id}/genetics`, {
         'content-type': 'application/json'
       }, {
-        pathPrefix: '/rest/widget'
+        pathPrefix: '/rest/widget/'
       });
 
       return this._getOrFetch('_variations_wb', url)
@@ -171,12 +171,37 @@ export default class GeneModel extends WBDataModel {
       const aa_position = parseInt(dat.aa_position);
       return {
         ...dat,
+        phenotypesPromise: this._getVariationPhenotypes(dat.variation.id, dat),
         link: toWormBaseURL(dat.variation),
         start: aa_position - 1,  // 0 based start coord
         end: aa_position // 1 based end coord
       }
     });
     return parsedData;
+  }
+
+  _getVariationPhenotypes(variationId, {phen_count}) {
+    if (phen_count !== 0 ) {
+      const url = this._urlFor(`variation/${variationId}/phenotypes`, {
+        'content-type': 'application/json'
+      }, {
+        pathPrefix: '/rest/widget/'
+      });
+
+      return this._remoteFetch(url)
+        .then((data) => {
+          return {
+            phenotypes: data.fields.phenotypes.data,
+            phenotypes_not_observed: data.fields.phenotypes_not_observed.data,
+          };
+        });
+
+    } else {
+      return new Promise({
+        phenotypes: [],
+        phenotypes_not_observed: []
+      })
+    }
   }
 
   /* helpers used for coordinates converstion, etc */

@@ -9,21 +9,26 @@ export default class WBDataModel {
   _getOrFetch(name, url){
 
     if (!this._raw[name]) {
-      this._raw[name] = new Promise((resolve, reject) => {
-        console.log(url);
-        jquery.ajax(url, {
-          success: (result) => {
-            resolve(result);
-          },
-          error: ([,,error]) => {
-            console.log(`Error: ${error}`);
-            reject(error);
-          }
-        });
-      });
+      this._raw[name] = this._remoteFetch(url);
     }
 
     return this._raw[name];
+  }
+
+  _remoteFetch(url){
+
+    return new Promise((resolve, reject) => {
+      console.log(url);
+      jquery.ajax(url, {
+        success: (result) => {
+          resolve(result);
+        },
+        error: ([,,error]) => {
+          console.log(`Error: ${error}`);
+          reject(error);
+        }
+      });
+    });
   }
 
 
@@ -44,11 +49,11 @@ export default class WBDataModel {
     .join(delimiter);
 
     const {pathPrefix} = {
-      pathPrefix: '/rest/parasite',
+      pathPrefix: '/rest/parasite/',
       ...options
     };
 
-    return `${pathPrefix}/${path}?${paramsStr}`;
+    return `${pathPrefix}${path}?${paramsStr}`;
   }
 }
 

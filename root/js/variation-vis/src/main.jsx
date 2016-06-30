@@ -176,6 +176,22 @@ class App extends React.Component {
         trackComponent: VariationTrack
       };
       this._setTrackState(trackData);
+      const phenotypesPromises = variations.map((dat) => dat.phenotypesPromise);
+      return Promise.all([trackData, ...phenotypesPromises]);
+    }).then(([trackData, ...variationPhenotype]) => {
+      const variations = trackData.data;
+      const newVariations = variations.map((dat, index) => {
+        const {phenotypes, phenotypes_not_observed} = variationPhenotype[index];
+        return {
+          ...dat,
+          phenotypes: phenotypes,
+          phenotypes_not_observed: phenotypes_not_observed
+        }
+      });
+      this._setTrackState({
+        ...trackData,
+        data: newVariations,
+      });
     });
   }
 

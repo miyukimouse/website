@@ -117,7 +117,7 @@ export default class VariationTrack extends React.Component {
           ...bin,
           data: dat,
           link: dat.link,
-          tip: dat.composite_change + `<br/>${dat.molecular_change}`
+          tip: this._renderTooltip(dat)
         });
 
         // used tracks are not available any more
@@ -126,6 +126,21 @@ export default class VariationTrack extends React.Component {
 
     })
     return subtrackData;
+  }
+
+  _renderTooltip(variationDat) {
+    const {composite_change, molecular_change} = variationDat;
+
+    const phenotypeText = variationDat.phen_count ? variationDat.phenotypes ?
+      '<br/><strong>Phenotypes:</strong><br/>' +
+      variationDat.phenotypes.map((p) => {
+        return `- ${p.phenotype.label}`;
+      }).join('<br/>') : '<br/>Loading phenotypes...' : '';
+
+    const compositeChangeText = composite_change ? ` (${composite_change})` : '';
+    return molecular_change +
+      compositeChangeText +
+      phenotypeText;
   }
 
   _getColorScheme() {
