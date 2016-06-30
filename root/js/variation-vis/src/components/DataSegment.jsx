@@ -9,7 +9,8 @@ export default class Button extends React.Component {
     x: React.PropTypes.number,
     y: React.PropTypes.number,
     width: React.PropTypes.number,
-    height: React.PropTypes.number
+    height: React.PropTypes.number,
+    link: React.PropTypes.string,
   }
 
   _getDimension() {
@@ -22,10 +23,26 @@ export default class Button extends React.Component {
     }
   }
 
+  handleClick = () => {
+    if (this.props.link) {
+      window.open(this.props.link, '_blank');
+    }
+  }
+
+  _getCursorStyle = () => {
+    return this.props.link ? {
+      cursor: 'pointer'
+    } : {
+      cursor: 'default'
+    }
+  }
+
   render() {
 
     return (
-      <rect {...this._getDimension()}/>
+      <rect style={{...this._getCursorStyle()}}
+        onClick={this.handleClick}
+        {...this._getDimension()}/>
     );
   }
 };

@@ -95,8 +95,16 @@ export default class GeneModel extends WBDataModel {
       });
 
       return this._getOrFetch('_domains', url)
-        .then((data) => this._parseCoords(data));
+        .then((data) => this._parseCoords(data).map((d) => this._formatDomain(d)));
     });
+  }
+
+  _formatDomain(domainData) {
+    const {id, type} = domainData;
+    return {
+      ...domainData,
+      link: type === 'Pfam' ? `http://pfam.xfam.org/family/${id}` : null,
+    };
   }
 
   toAlignedProteinCoords(coords) {

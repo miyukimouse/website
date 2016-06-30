@@ -91,6 +91,7 @@ export default class BasicTrack extends React.Component {
                 key={`data-rect-${index}`}
                 onMouseEnter={(event) => this.props.onTooltipShow ? this.props.onTooltipShow({content: dat.tip, event: event}) : null}
                 onMouseLeave={this.props.onTooltipHide}
+                link={dat.link}
                 fill={dat.color || 'grey'}
                 fillOpacity={(dat.fillOpacity || dat.fillOpacity === 0) ? dat.fillOpacity : 1}/>
             )
