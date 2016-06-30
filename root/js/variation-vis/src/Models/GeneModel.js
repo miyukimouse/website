@@ -1,4 +1,5 @@
 import WBDataModel from './WBDataModel';
+import { toWormBaseURL } from '../Utils';
 
 /*
   handles data fetchin and coordinates conversion for CDS and protein domains,
@@ -157,21 +158,25 @@ export default class GeneModel extends WBDataModel {
 
       return this._getOrFetch('_variations_wb', url)
         .then((data) => {
-          console.log(data);
           const variationData = data.fields.alleles.data;
-          const parsedData = (variationData || []).filter((dat) => {
-            return dat.aa_position || dat.aa_position === 0;
-          }).map((dat) => {
-            const aa_position = parseInt(dat.aa_position);
-            return {
-              ...dat,
-              start: aa_position - 1,  // 0 based start coord
-              end: aa_position // 1 based end coord
-            }
-          });
-          return parsedData;
+          return this._formatVariationWB(variationData);
         });
     });
+  }
+
+  _formatVariationWB(variationData) {
+    const parsedData = (variationData || []).filter((dat) => {
+      return dat.aa_position || dat.aa_position === 0;
+    }).map((dat) => {
+      const aa_position = parseInt(dat.aa_position);
+      return {
+        ...dat,
+        link: toWormBaseURL(dat.variation),
+        start: aa_position - 1,  // 0 based start coord
+        end: aa_position // 1 based end coord
+      }
+    });
+    return parsedData;
   }
 
   /* helpers used for coordinates converstion, etc */
