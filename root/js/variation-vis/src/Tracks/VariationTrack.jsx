@@ -115,6 +115,7 @@ export default class VariationTrack extends React.Component {
         subtrackData[trackId] = subtrackData[trackId] || [];
         subtrackData[trackId].push({
           ...bin,
+          name: dat.variation.label,
           data: dat,
           link: dat.link,
           tip: this._renderTooltip(dat)

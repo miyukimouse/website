@@ -143,7 +143,7 @@ export default class Viewer extends React.Component {
 
 
 
-  showTooltip = ({content, event}) => {
+  showTooltip = ({title, content, event}) => {
 
     // // Get point in global SVG space
     // function cursorPoint(evt){
@@ -186,6 +186,7 @@ export default class Viewer extends React.Component {
     this.setState((prevState, currProps) => {
       return {
         tooltip: {
+          title: title,
           content: content,
           target: targetBox,
           container: containerBox
