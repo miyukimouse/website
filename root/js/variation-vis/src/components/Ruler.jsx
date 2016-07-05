@@ -14,13 +14,14 @@ export default class Ruler extends React.Component {
     getXMin: React.PropTypes.func,
     getXMax: React.PropTypes.func,
     toWidth: React.PropTypes.func,
-    toReferenceUnit: React.PropTypes.func,    
+    toReferenceUnit: React.PropTypes.func,
   }
 
   getTickLabelWidth = (position) => {
     const apparentLabelWidth = position.toString().length * CharApparentWidth;
     return this.context.toWidth(apparentLabelWidth);
   }
+
 
   render() {
     const maxIntervalCount = 10;
@@ -53,7 +54,8 @@ export default class Ruler extends React.Component {
         <g>
         {
           tickPositions.map((position, i) => {
-            return <text key={`tick-${i}`}
+            const labelValue = this.context.toReferenceUnit ? this.context.toReferenceUnit(position) : null;
+            return isNaN(labelValue) ? null : <text key={`tick-${i}`}
               x={position} y={yOffset+20}
               fontSize={12}
               textAnchor="middle"
@@ -61,7 +63,7 @@ export default class Ruler extends React.Component {
               textLength={this.getTickLabelWidth(position)}
               lengthAdjust="spacingAndGlyphs">
               {
-                this.context.toReferenceUnit ? this.context.toReferenceUnit(position) : null
+                labelValue
               }
               </text>
           })
