@@ -427,8 +427,6 @@ export default class Viewer extends React.Component {
         style={{
           position: 'relative',
           width: this.state.viewWidth,
-          border:"1px solid #aaaaaa",
-          overflow: "hidden",
           ...this.props.style
         }}>
         <svg id="svg-browser"
@@ -436,12 +434,13 @@ export default class Viewer extends React.Component {
           viewBox={this.getViewBox()}
           height="100%"
           width={this.state.viewWidth}
-          preserveAspectRatio="none">
+          preserveAspectRatio="none"
+          style={{
+            border:"1px solid #aaaaaa",
+            fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif',
+          }}>
           <svg id="svg-browser-svg"
             x={0} y={0}
-            style={{
-              fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif',
-            }}
             //preserveAspectRatio="meet xMinYMin"
             >
               <defs>
