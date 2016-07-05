@@ -299,7 +299,7 @@ export default class Viewer extends React.Component {
     // , dblClickZoomEnabled: true
     , mouseWheelZoomEnabled: true
     // , preventMouseEventsDefault: true
-    , zoomScaleSensitivity: 0.5
+    , zoomScaleSensitivity: 0.4
     , minZoom: this._getMinZoomFactor()
     , maxZoom: this._getMaxZoomFactor()
     , fit: false
@@ -428,6 +428,7 @@ export default class Viewer extends React.Component {
           position: 'relative',
           width: this.state.viewWidth,
           border:"1px solid #aaaaaa",
+          overflow: "hidden",
           ...this.props.style
         }}>
         <svg id="svg-browser"
@@ -439,13 +440,31 @@ export default class Viewer extends React.Component {
           <svg id="svg-browser-svg"
             x={0} y={0}
             style={{
-              fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif'
+              fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif',
             }}
             //preserveAspectRatio="meet xMinYMin"
             >
               <defs>
                 <PrettyTrackSVGFilter/>
               </defs>
+              {
+                /* visibile region background */
+                <rect
+                  x={this._getXMin() - this.state.fullWidth}
+                  y={0}
+                  width={3 * this.state.fullWidth}
+                  height={DEFAULT_SVG_HEIGHT}
+                  fill={'#cccccc'}/>
+              }
+              {
+                /* visibile region background */
+                <rect
+                  x={this._getXMin()}
+                  y={0}
+                  width={this._getXMax() - this._getXMin()}
+                  height={DEFAULT_SVG_HEIGHT}
+                  fill={'#ffffff'}/>
+              }
               {
                 this.state.referenceSequenceLength ? <MarkerBar
                   coordinateMapping={new CoordinateMappingHelper.DefaultCoordinateMapping({
