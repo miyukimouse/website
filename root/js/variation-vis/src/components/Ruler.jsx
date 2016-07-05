@@ -22,6 +22,10 @@ export default class Ruler extends React.Component {
     return this.context.toWidth(apparentLabelWidth);
   }
 
+  _formatLabelText = (labelValue) => {
+    return labelValue % 1000 === 0 ? `${labelValue / 1000}k` : labelValue;
+  }
+
 
   render() {
     const maxIntervalCount = 10;
@@ -55,17 +59,18 @@ export default class Ruler extends React.Component {
         {
           tickPositions.map((position, i) => {
             const labelValue = this.context.toReferenceUnit ? this.context.toReferenceUnit(position) : null;
-            return isNaN(labelValue) ? null : <text key={`tick-${i}`}
+            const labelText = isNaN(labelValue) ? null : this._formatLabelText(labelValue);
+            return labelText && labelText !== 0 ? <text key={`tick-${i}`}
               x={position} y={yOffset+20}
               fontSize={12}
               textAnchor="middle"
               fill="black"
-              textLength={this.getTickLabelWidth(position)}
+              textLength={this.getTickLabelWidth(labelText)}
               lengthAdjust="spacingAndGlyphs">
               {
-                labelValue
+                labelText
               }
-              </text>
+              </text> : null
           })
         }
         </g>
