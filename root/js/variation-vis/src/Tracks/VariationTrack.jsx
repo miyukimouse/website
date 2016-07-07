@@ -158,6 +158,7 @@ export default class VariationTrack extends React.Component {
       {
         subtrackData.map((subtrackData, index) => {
           return <BasicTrack
+            key={`variation-subtrack-${index}`}
             {...this.props}
             y={this.props.y + SUBTRACK_HEIGHT * index}
             colorScheme={this._getColorScheme()}
