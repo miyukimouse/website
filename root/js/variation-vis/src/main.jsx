@@ -229,8 +229,8 @@ class App extends React.Component {
       return trackData.colorScheme;
     } else {
       const TrackComponent = trackData.trackComponent || BasicTrack;
-      return typeof TrackComponent.getDefaultColorScheme === 'function' &&
-        TrackComponent.getDefaultColorScheme();
+      return typeof TrackComponent.getDefaultColorScheme === 'function' ?
+        TrackComponent.getDefaultColorScheme() : null;
     }
   }
 
