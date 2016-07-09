@@ -1,5 +1,20 @@
 
-const _RAW_PALETTE = [
+export class Palette {
+  constructor(rawPalette) {
+    rawPalette.forEach(([colorName], index) => {
+      this[colorName] = index
+    });
+    this._colors = rawPalette.map(([colorName, color], index) => color);
+  }
+
+  getColor(colorId) {
+    const paletteSize = this._colors.length;
+    return this._colors[colorId % paletteSize];
+  }
+
+}
+
+export const DEFAULT_PALETTE = new Palette([
   ['YELLOW', 'rgb(241,192,0)'],
   ['RED', 'rgb(251,128,114)'],
   ['BLUE', 'rgb(62,131,179)'],
@@ -15,16 +30,8 @@ const _RAW_PALETTE = [
   ['LIGTH_GREY', 'rgb(204,204,204)'],
   ['BLACK', 'rgb(0,0,0)'],
   ['WHITE', 'rgb(255,255,255)'],
-];
-
-const PALETTE = new Map(_RAW_PALETTE.map(([colorName, color], index) => [index, color]));
-
-const COLOR_IDS  = {};
-_RAW_PALETTE.forEach(([colorName], index) => COLOR_IDS[colorName] = index);
-
-export {
-  COLOR_IDS as COLORS
-}
+]);
+export const COLORS = DEFAULT_PALETTE;
 
 
 // Original color palette based on ColorBrewer,
@@ -48,10 +55,13 @@ export {
 
 export default class ColorScheme {
 
-  constructor(groupFunction, {...groupToColor}={}, fallbackScheme) {
+  constructor(groupFunction, {...groupToColor}={}, fallbackScheme, args={}) {
+
+    this.palette = args.palette || DEFAULT_PALETTE;
+
     const defaultGroupToColor = {
       'ColorScheme.default.background': {
-        colorId: COLOR_IDS.GREY,
+        colorId: this.palette.GREY,
         description: 'Others'
       }
     };
@@ -121,7 +131,7 @@ export default class ColorScheme {
   }
 
   getColor(colorId) {
-    return PALETTE.get(colorId % PALETTE.size);
+    return this.palette.getColor(colorId);
   }
 
   getLegendData() {
