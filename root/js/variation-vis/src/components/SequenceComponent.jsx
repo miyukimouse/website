@@ -40,14 +40,15 @@ class SequenceComponent extends React.Component {
     return charWidth;
   }
 
+  shouldShow = () => {
+    return this.props.sequence && this._getCharWidth() > MIN_SEQUENCE_CHAR_WIDTH;
+  }
+
   render() {
 
     const coords = this.getCoord();
 
-    //console.log(coords);
-    const charWidth =  this._getCharWidth();
-
-    return this.props.sequence && charWidth > MIN_SEQUENCE_CHAR_WIDTH ?
+    return this.shouldShow() ?
         <text is="svg-text"
               class="sequence-text"
               {...coords}
