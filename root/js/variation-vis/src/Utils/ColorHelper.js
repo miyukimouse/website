@@ -1,42 +1,31 @@
+
+const _RAW_PALETTE = [
+  ['YELLOW', 'rgb(241,192,0)'],
+  ['RED', 'rgb(251,128,114)'],
+  ['BLUE', 'rgb(62,131,179)'],
+  ['ORANGE', 'rgb(253,180,98)'],
+  ['GREEN', 'rgb(179,222,105)'],
+  ['PINK', 'rgb(252,205,229)'],
+  ['GREY', 'rgb(90,90,90)'],
+  ['MAGENTA', 'rgb(188,128,189)'],
+  ['TEAL', 'rgb(84,189,146)'],
+  ['PURPLE', 'rgb(96,86,161)'],
+  ['LIGHT_TEAL', 'rgb(204,235,197)'],
+  ['LIGHT_YELLOW','rgb(255,237,111)'],
+  ['LIGTH_GREY', 'rgb(204,204,204)'],
+  ['BLACK', 'rgb(0,0,0)'],
+  ['WHITE', 'rgb(255,255,255)'],
+];
+
+const PALETTE = new Map(_RAW_PALETTE.map(([colorName, color], index) => [index, color]));
+
 const COLOR_IDS  = {};
-[
-  'YELLOW',
-  'RED',
-  'BLUE',
-  'ORANGE',
-  'GREEN',
-  'PINK',
-  'GREY',
-  'MAGENTA',
-  'TEAL',
-  'PURPLE',
-  'LIGHT_TEAL',
-  'LIGHT_YELLOW',
-  'LIGTH_GREY',
-  'BLACK',
-  'WHITE',
-].forEach((colorName, index) => COLOR_IDS[colorName] = index);
+_RAW_PALETTE.forEach(([colorName], index) => COLOR_IDS[colorName] = index);
+
 export {
   COLOR_IDS as COLORS
 }
 
-const PALETTE = new Map([
-  [COLOR_IDS.TEAL, 'rgb(84,189,146)'],
-  [COLOR_IDS.YELLOW, 'rgb(241,192,0)'],
-  [COLOR_IDS.PURPLE, 'rgb(96,86,161)'],
-  [COLOR_IDS.RED, 'rgb(251,128,114)'],
-  [COLOR_IDS.BLUE, 'rgb(62,131,179)'],
-  [COLOR_IDS.ORANGE, 'rgb(253,180,98)'],
-  [COLOR_IDS.GREEN, 'rgb(179,222,105)'],
-  [COLOR_IDS.PINK, 'rgb(252,205,229)'],
-  [COLOR_IDS.GREY, 'rgb(90,90,90)'],
-  [COLOR_IDS.MAGENTA, 'rgb(188,128,189)'],
-  [COLOR_IDS.LIGHT_TEAL, 'rgb(204,235,197)'],
-  [COLOR_IDS.LIGHT_YELLOW,'rgb(255,237,111)'],
-  [COLOR_IDS.LIGTH_GREY, 'rgb(204,204,204)'],
-  [COLOR_IDS.BLACK, 'rgb(0,0,0)'],
-  [COLOR_IDS.WHITE, 'rgb(255,255,255)'],
-]);
 
 // Original color palette based on ColorBrewer,
 //but seems too light when combined with lighting effect
@@ -93,9 +82,9 @@ export default class ColorScheme {
   }
 
   decorateWithGroup(dat, rawGroup) {
-    const colorId = this._findColor(rawGroup);
+    const color = this._findColor(rawGroup);
     return {
-      color: colorId,
+      color: color,
       ...dat
     }
   }
