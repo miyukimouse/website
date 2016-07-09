@@ -15,6 +15,13 @@ export default class ProteinConcervationTrack extends React.Component {
     sequenceList: React.PropTypes.arrayOf(React.PropTypes.string),
   };
 
+  static getDefaultColorScheme() {
+    return new ColorScheme((residue, index) => {
+      return residue;
+    }, {
+    });
+  }
+
   render() {
     return <g>
     {
@@ -24,6 +31,7 @@ export default class ProteinConcervationTrack extends React.Component {
           {...this.props}
           ref={(ref) => this.sequenceTrack = this.sequenceTrack || ref}
           sequence={sequence}
+          colorScheme={ProteinConcervationTrack.getDefaultColorScheme()}
           y={this.props.y + 15 * index}/>
       })
     }

@@ -93,6 +93,25 @@ export default class ColorScheme {
   }
 
   decorateWithGroup(dat, rawGroup) {
+    const colorId = this._findColor(rawGroup);
+    return {
+      color: colorId,
+      ...dat
+    }
+  }
+
+  getColorFor(dat, index) {
+    const rawGroup = this.groupFunction(dat, index);
+    return this._findColor(rawGroup);
+  }
+
+  getColorsForAll(data=[]){
+    return data.map((dat, index) => {
+      this._getColorFor(dat, index);
+    });
+  }
+
+  _findColor(rawGroup) {
     const group = this._parseGroup(rawGroup);
     let {colorId} = this.groupToColor[group.key] || {};
 
@@ -101,10 +120,7 @@ export default class ColorScheme {
       colorId = this._newColor(group);
     }
 
-    return {
-      color: this.getColor(colorId),
-      ...dat
-    }
+    return this.getColor(colorId);
   }
 
   getGroupFunction() {

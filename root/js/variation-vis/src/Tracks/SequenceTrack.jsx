@@ -12,6 +12,7 @@ export default class SequenceTrack extends React.Component {
     xMin: React.PropTypes.number,
     xMax: React.PropTypes.number,
     sequence: React.PropTypes.string,
+    colorScheme: React.PropTypes.object,
   };
 
   static contextTypes = {
@@ -19,42 +20,45 @@ export default class SequenceTrack extends React.Component {
     viewWidth: React.PropTypes.number,
   }
 
-  static getDefaultColorScheme() {
-    return new ColorScheme((dat, index) => {
-      return index;
-    }, {
-      // positive: {
-      //   colorId: COLORS.BLUE,
-      //   description: 'Conserved'
-      // },
-      // nonPositive: {
-      //   colorId: COLORS.ORANGE,
-      //   description: 'Not conserved'
-      // }
-    });
-  }
-
   renderSequence = () => {
-    const {xMin, xMax, sequence} = this.props;
+    const {xMin, xMax} = this.props;
     const rawSegmentLength = xMax - xMin;
-    const xMinSegment = Math.max(0, xMin);
-    const xMaxSegment = Math.min(xMax, sequence.length);
-    const sequenceSegment = sequence.slice(xMinSegment, xMaxSegment);
+    const segment = this.getVisibleSegment();
+    const apparentSegmentWidth =
+      this.context.viewWidth / rawSegmentLength * segment.sequence.length;
 
     const {start, end} = this.getHorizontalPosition({
-      start: xMinSegment,
-      end: xMaxSegment
+      start: segment.start,
+      end: segment.end
     });
-
-    const apparentSegmentWidth = this.context.viewWidth / rawSegmentLength * sequenceSegment.length;
 
     return <SequenceComponent {...this.props}
         ref={(ref) => this.sequenceComponent = ref}
         width={end - start}
-        sequence={sequenceSegment}
+        sequence={segment.sequence}
         apparentWidth={apparentSegmentWidth}
         x={start}
         y={this.props.y}/>
+  }
+
+  renderColor = () => {
+    const segment = this.getVisibleSegment();
+    const {start, end} = this.getHorizontalPosition(segment);
+    const unitWidth = (end - start) / segment.sequence.length;
+    const characters = segment.sequence.split('');
+
+    return this.props.colorScheme && this.shouldShowSequence() ?
+      characters.map((char, index) => {
+        const color = this.props.colorScheme.getColorFor(char, index);
+        const x = start + unitWidth * index;
+        return <rect
+          fill={color}
+          x={x}
+          y={this.props.y}
+          width={unitWidth}
+          height={20}/>
+      }) : null;
+
   }
 
   getHorizontalPosition = (dat) => {
@@ -64,11 +68,31 @@ export default class SequenceTrack extends React.Component {
     }
   }
 
+  getVisibleSegment = () => {
+    const {xMin, xMax, sequence} = this.props;
+    const xMinSegment = Math.max(0, xMin);
+    const xMaxSegment = Math.min(xMax, sequence.length);
+    const sequenceSegment = sequence.slice(xMinSegment, xMaxSegment);
+    return {
+      sequence: sequenceSegment,
+      start: xMinSegment,
+      end: xMaxSegment
+    }
+  }
+
   shouldShowSequence = () => {
     return this.sequenceComponent && this.sequenceComponent.shouldShow();
   }
 
   render() {
-    return this.renderSequence();
+    return <g>
+    {
+      this.renderColor()
+    }
+    {
+      this.renderSequence()
+    }
+    }
+    </g>
   }
 }
