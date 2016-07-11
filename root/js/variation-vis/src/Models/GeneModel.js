@@ -14,6 +14,13 @@ export default class GeneModel extends WBDataModel {
     this.alignedProteinPromise = alignedProteinPromise;
   }
 
+  /* species */
+  getSpecies() {
+    return this.alignedDNAPromise.then((data) => {
+      return data.species;
+    });
+  }
+
 
   /*  CDS related */
 
