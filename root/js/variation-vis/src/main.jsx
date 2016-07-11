@@ -78,8 +78,8 @@ class App extends React.Component {
       }
     });
     model.sourceGeneModel.then((sourceGeneModel) => {
-      return Promise.all([sourceGeneModel.getSpecies(), sourceGeneModel.getAlignedCDSs()]);
-    }).then(([species, cdss]) => {
+      return Promise.all([sourceGeneModel.getSummary(), sourceGeneModel.getAlignedCDSs()]);
+    }).then(([summary, cdss]) => {
       this._setTrackState({
         index: _getTrackIndex('sourceDNA'),
         data: cdss.map((cds, i) => {
@@ -87,12 +87,13 @@ class App extends React.Component {
         }),
         ignoreShortSegments: true,
         colorScheme: cdsColorScheme,
-        species: species
+        labelPrefix: 'Transcript',
+        ...summary
       });
     });
     model.targetGeneModel.then((targetGeneModel) => {
-      return Promise.all([targetGeneModel.getSpecies(), targetGeneModel.getAlignedCDSs()]);
-    }).then(([species, cdss]) => {
+      return Promise.all([targetGeneModel.getSummary(), targetGeneModel.getAlignedCDSs()]);
+    }).then(([summary, cdss]) => {
       this._setTrackState({
         index: _getTrackIndex('targetDNA'),
         data: cdss.map((cds, i) => {
@@ -100,7 +101,8 @@ class App extends React.Component {
         }),
         ignoreShortSegments: true,
         colorScheme: cdsColorScheme,
-        species: species
+        labelPrefix: 'Transcript',
+        ...summary
       });
     });
 
@@ -130,8 +132,8 @@ class App extends React.Component {
       };
     }));
     model.sourceGeneModel.then((sourceGeneModel) => {
-      return Promise.all([sourceGeneModel.getSpecies(), sourceGeneModel.getAlignedDomains()]);
-    }).then(([species, domains]) => {
+      return Promise.all([sourceGeneModel.getSummary(), sourceGeneModel.getAlignedDomains()]);
+    }).then(([summary, domains]) => {
       this._setTrackState({
         index: _getTrackIndex('sourceProtein'),
         data: domains.map((d) => {
@@ -141,12 +143,13 @@ class App extends React.Component {
           };
         }),
         colorScheme: domainColorScheme,
-        species: species
+        labelPrefix: 'Protein',
+        ...summary
       });
     });
     model.targetGeneModel.then((targetGeneModel) => {
-      return Promise.all([targetGeneModel.getSpecies(), targetGeneModel.getAlignedDomains()]);
-    }).then(([species, domains]) => {
+      return Promise.all([targetGeneModel.getSummary(), targetGeneModel.getAlignedDomains()]);
+    }).then(([summary, domains]) => {
       this._setTrackState({
         index: _getTrackIndex('targetProtein'),
         data: domains.map((d) => {
@@ -156,7 +159,8 @@ class App extends React.Component {
           };
         }),
         colorScheme: domainColorScheme,
-        species: species
+        labelPrefix: 'Protein',
+        ...summary
       });
     });
 
@@ -178,16 +182,16 @@ class App extends React.Component {
     model.sourceGeneModel.then((sourceGeneModel) => {
       const variationsPromise = sourceGeneModel.getAlignedVariations('wormbase');
       const proteinLengthPromise = sourceGeneModel.getAlignedProteinLength();
-      const speciesPromise = sourceGeneModel.getSpecies();
+      const speciesPromise = sourceGeneModel.getSummary();
       return Promise.all([speciesPromise, variationsPromise, proteinLengthPromise]);
-    }).then(([species, variations, proteinLength]) => {
+    }).then(([summary, variations, proteinLength]) => {
       const trackData = {
         index: _getTrackIndex('sourceVariation'),
-        name: `Variation: R05D11.1`,
         sequenceLength: proteinLength,
         data: variations,
         trackComponent: VariationTrack,
-        species: species
+        labelPrefix: 'Variations',
+        ...summary
       };
       this._setTrackState(trackData);
       const phenotypesPromises = variations.map((dat) => dat.phenotypesPromise);

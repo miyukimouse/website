@@ -14,10 +14,33 @@ export default class GeneModel extends WBDataModel {
     this.alignedProteinPromise = alignedProteinPromise;
   }
 
+  getSummary() {
+    return Promise.all([this.getSpecies(), this.getName()]).then(([species, name]) => {
+      return {
+        name: name,
+        species: species
+      }
+    });
+  }
+
   /* species */
   getSpecies() {
     return this.alignedDNAPromise.then((data) => {
       return data.species;
+    });
+  }
+
+  /* name */
+  getName() {
+    const url = this._urlFor(`gene/${this.geneId}/overview`, {
+      'content-type': 'application/json'
+    }, {
+      pathPrefix: '/rest/widget/'
+    });
+
+    return this._getOrFetch('_gene_overview', url).then((data) => {
+      console.log((data.fields.name.data || {}).label);
+      return (data.fields.name.data || {}).label;
     });
   }
 

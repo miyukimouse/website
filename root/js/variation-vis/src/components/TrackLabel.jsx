@@ -7,6 +7,7 @@ export default class TrackLabel extends React.Component {
   static propTypes = {
     index: React.PropTypes.number, //.isRequired,
     name: React.PropTypes.string,
+    labelPrefix: React.PropTypes.string,
     species: React.PropTypes.string,
     y: React.PropTypes.number,
     onTrackDescriptionRequest: React.PropTypes.func,
@@ -62,7 +63,10 @@ export default class TrackLabel extends React.Component {
     return <div style={style}>
       <div style={labelWrapperStyle}>
         {this._renderSpeciesLabel(this.props.species)}
-        <h6>{this.props.name}</h6>
+        <h6>
+        {this.props.labelPrefix ? `${this.props.labelPrefix}: ` : null}
+        {this.props.name}
+        </h6>
       </div>
       <div style={buttonWrapperStyle}>
       {

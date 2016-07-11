@@ -6,27 +6,28 @@ export default class WBDataModel {
     this._raw = {};
   }
 
-  _getOrFetch(name, url){
+  _getOrFetch(name, url, options){
 
     if (!this._raw[name]) {
-      this._raw[name] = this._remoteFetch(url);
+      this._raw[name] = this._remoteFetch(url, options);
     }
 
     return this._raw[name];
   }
 
-  _remoteFetch(url){
+  _remoteFetch(url, options={}){
 
     return new Promise((resolve, reject) => {
       console.log(url);
       jquery.ajax(url, {
+        ...options,
         success: (result) => {
           resolve(result);
         },
         error: ([,,error]) => {
           console.log(`Error: ${error}`);
           reject(error);
-        }
+        },
       });
     });
   }
