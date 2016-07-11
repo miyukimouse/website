@@ -67,12 +67,15 @@ export default class AlignmnetTrack extends React.Component {
     const gaps = this._getGapsCoords();
     const longGaps = this._keepLongGaps(gaps);
     const allSegments = [].concat(this.props.data, longGaps);
+    const sequenceLength = this.props.sequence.length;
 
     return (
       this.props.data ? <BasicTrack
         {...this.props}
         colorScheme={this.props.colorScheme}
         data={allSegments}
+        sequence={null}
+        sequenceLength={sequenceLength}
         ignoreShortSegments={true}
         showDefaultBackground={true}/> : null
     );
