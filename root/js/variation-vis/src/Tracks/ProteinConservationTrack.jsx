@@ -7,7 +7,7 @@ import ColorScheme, { Palette } from '../Utils/ColorHelper';
 
 const DEFAULT_MAX_BIN_COUNT = 100;  // default maximum number of bins to show in the visible region
 
-export default class ProteinConcervationTrack extends React.Component {
+export default class ProteinConservationTrack extends React.Component {
   static propTypes = {
     ...BasicTrack.propTypes,
     xMin: React.PropTypes.number,
@@ -83,10 +83,11 @@ export default class ProteinConcervationTrack extends React.Component {
       this.props.sequenceList.map((sequence, index) => {
         const extraProps = {};
         return <SequenceTrack
+          key={`sequence-${index}`}
           {...this.props}
           ref={(ref) => this.sequenceTrack = this.sequenceTrack || ref}
           sequence={sequence}
-          colorScheme={ProteinConcervationTrack.getDefaultColorScheme()}
+          colorScheme={ProteinConservationTrack.getDefaultColorScheme()}
           y={this.props.y + 20 * index}/>
       })
     }

@@ -386,7 +386,7 @@ class App extends React.Component {
           this.renderToolbar()
         }
         <div id="svg-browser-container" style={containerStyle}>
-          <div class="track-label-column"
+          <div className="track-label-column"
             style={{
               width: trackLabelColumnWidth,
               position: 'relative'

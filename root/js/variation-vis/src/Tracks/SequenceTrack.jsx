@@ -52,6 +52,7 @@ export default class SequenceTrack extends React.Component {
         const color = this.props.colorScheme.getColorFor(char, index);
         const x = start + unitWidth * index;
         return <rect
+          key={index + segment.start}
           fill={color}
           x={x}
           y={this.props.y}

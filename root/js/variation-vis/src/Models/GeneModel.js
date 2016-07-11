@@ -39,7 +39,6 @@ export default class GeneModel extends WBDataModel {
     });
 
     return this._getOrFetch('_gene_overview', url).then((data) => {
-      console.log((data.fields.name.data || {}).label);
       return (data.fields.name.data || {}).label;
     });
   }

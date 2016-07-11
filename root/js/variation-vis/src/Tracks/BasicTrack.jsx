@@ -102,6 +102,7 @@ export default class BasicTrack extends React.Component {
         data.map((dat, index) => {
           return (
             <DataSegmentLabel
+              key={`segment-label-${index}`}
               {...getSegmentCoords(dat)}
               tip={dat.tip}/>
           )
@@ -156,6 +157,7 @@ export default class BasicTrack extends React.Component {
 
     return this.context.isZoomPanOccuring ? null :
       <SequenceComponent {...this.props}
+        key="sequence"
         width={end - start}
         sequence={sequenceSegment}
         apparentWidth={this.context.viewWidth / rawSegmentLength * sequenceSegment.length}
