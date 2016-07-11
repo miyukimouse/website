@@ -1,17 +1,40 @@
 import React from 'react';
-import { Button, ButtonGroup, ButtonToolbar, Glyphicon } from 'react-bootstrap';
+import { Button, ButtonGroup, ButtonToolbar, Glyphicon, Label } from 'react-bootstrap';
+import { capitalize } from '../Utils';
 
 export default class TrackLabel extends React.Component {
 
   static propTypes = {
     index: React.PropTypes.number, //.isRequired,
     name: React.PropTypes.string,
+    species: React.PropTypes.string,
     y: React.PropTypes.number,
     onTrackDescriptionRequest: React.PropTypes.func,
   }
 
   handleClick = () => {
     this.props.onTrackDescriptionRequest(this.props.index);
+  }
+
+  _renderSpeciesLabel(species) {
+    if (species) {
+      const speciesName = capitalize(species.replace(/_/g, ' '));
+      return <Label style={{backgroundColor: this._getSpeciesColor(species)}}>
+          {speciesName}
+        </Label>;
+    } else {
+      return null;
+    }
+  }
+
+  _getSpeciesColor = (species) => {
+    if (species === 'homo_sapiens') {
+      return "#5bc0de";
+    } else if (species === 'caenorhabditis_elegans') {
+      return '#756bb1';
+    } else {
+      return '#777'
+    }
   }
 
   render() {
@@ -38,6 +61,7 @@ export default class TrackLabel extends React.Component {
 
     return <div style={style}>
       <div style={labelWrapperStyle}>
+        {this._renderSpeciesLabel(this.props.species)}
         <h5>{this.props.name}</h5>
       </div>
       <div style={buttonWrapperStyle}>
