@@ -54,14 +54,14 @@ class App extends React.Component {
 
       this._setTrackState({
         index: _getTrackIndex('sourceDNA'),
-        name: `${data.source.protein_id} (cDNA)`,
+        name: `Transcript: ${data.source.protein_id}`,
         sequence: referenceSequence
       });
 
       // show homolog sequence
       this._setTrackState({
         index: _getTrackIndex('targetDNA'),
-        name: `${data.target.protein_id} (cDNA)`,
+        name: `Transcript: ${data.target.protein_id}`,
         sequence: data.target.align_seq
       });
     });
@@ -108,7 +108,7 @@ class App extends React.Component {
     model.getAlignedSourceProtein().then((data) => {
       this._setTrackState({
         index: _getTrackIndex('sourceProtein'),
-        name: `${data.protein_id} (protein)`,
+        name: `Protein: ${data.protein_id}`,
         sequence: data.align_seq,
         trackComponent: AlignmentTrack
       });
@@ -116,7 +116,7 @@ class App extends React.Component {
     model.getAlignedTargetProtein().then((data) => {
       this._setTrackState({
         index: _getTrackIndex('targetProtein'),
-        name: `${data.protein_id} (protein)`,
+        name: `Protein: ${data.protein_id}`,
         sequence: data.align_seq,
         trackComponent: AlignmentTrack
       });
@@ -183,7 +183,7 @@ class App extends React.Component {
     }).then(([species, variations, proteinLength]) => {
       const trackData = {
         index: _getTrackIndex('sourceVariation'),
-        name: `R05D11.1 (variations)`,
+        name: `Variation: R05D11.1`,
         sequenceLength: proteinLength,
         data: variations,
         trackComponent: VariationTrack,

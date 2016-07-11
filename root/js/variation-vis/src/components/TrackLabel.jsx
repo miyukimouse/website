@@ -62,7 +62,7 @@ export default class TrackLabel extends React.Component {
     return <div style={style}>
       <div style={labelWrapperStyle}>
         {this._renderSpeciesLabel(this.props.species)}
-        <h5>{this.props.name}</h5>
+        <h6>{this.props.name}</h6>
       </div>
       <div style={buttonWrapperStyle}>
       {
