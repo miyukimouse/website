@@ -136,14 +136,21 @@ export default class ColorScheme {
 
   getLegendData() {
     let groupKeys = Object.keys(this.groupToColor);
-    return groupKeys.map((groupKey) => {
+
+    const legendData = groupKeys.map((groupKey) => {
       const {colorId, description} = this.groupToColor[groupKey];
       return {
         group: groupKey,
         color: this.getColor(colorId),
         description: description
       }
-    })
+    });
+
+    if (legendData[0].group.match(/ColorScheme\.default\./)){
+      return legendData.slice(1).concat(legendData[0]);
+    } else {
+      return legendData;
+    }
   }
 
   _parseGroup(rawGroup) {
