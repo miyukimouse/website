@@ -6,11 +6,13 @@ const MIN_SEQUENCE_CHAR_WIDTH = 12;  // hide sequence if not enough space per ch
 class SequenceComponent extends React.Component {
 
   static propTypes = {
+    x: React.PropTypes.number.isRequired,
     y: React.PropTypes.number.isRequired,
     width: React.PropTypes.number,
     apparentWidth: React.PropTypes.number,
     height: React.PropTypes.number,
-    sequence: React.PropTypes.string
+    sequence: React.PropTypes.string,
+    colorScheme: React.PropTypes.object,
   }
 
   // static defaultProps = {
@@ -44,11 +46,33 @@ class SequenceComponent extends React.Component {
     return this.props.sequence && this._getCharWidth() > MIN_SEQUENCE_CHAR_WIDTH;
   }
 
+  renderColor = () => {
+    const {colorScheme, sequence, x: start, y, width} = this.props;
+    const unitWidth = width / sequence.length;
+    const characters = sequence.split('');
+
+    return characters.map((char, index) => {
+      const color = colorScheme.getColorFor(char, index);
+      const x = start + unitWidth * index;
+      return <rect
+        key={index}
+        fill={color}
+        x={x}
+        y={this.props.y}
+        width={unitWidth}
+        height={20}/>
+    });
+
+  }
+
   render() {
 
     const coords = this.getCoord();
 
-    return this.shouldShow() ?
+    return this.shouldShow() ? <g>
+        {
+          this.props.colorScheme ? this.renderColor() : null
+        }
         <text is="svg-text"
               class="sequence-text"
               {...coords}
@@ -59,7 +83,8 @@ class SequenceComponent extends React.Component {
               lengthAdjust="spacing"
               fill="#333333">
           {this.props.sequence}
-        </text> : null;
+        </text>
+      </g> : null;
   }
 }
 

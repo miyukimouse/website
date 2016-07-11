@@ -41,26 +41,26 @@ export default class SequenceTrack extends React.Component {
         y={this.props.y}/>
   }
 
-  renderColor = () => {
-    const segment = this.getVisibleSegment();
-    const {start, end} = this.getHorizontalPosition(segment);
-    const unitWidth = (end - start) / segment.sequence.length;
-    const characters = segment.sequence.split('');
+  // renderColor = () => {
+  //   const segment = this.getVisibleSegment();
+  //   const {start, end} = this.getHorizontalPosition(segment);
+  //   const unitWidth = (end - start) / segment.sequence.length;
+  //   const characters = segment.sequence.split('');
 
-    return this.props.colorScheme && this.shouldShowSequence() ?
-      characters.map((char, index) => {
-        const color = this.props.colorScheme.getColorFor(char, index);
-        const x = start + unitWidth * index;
-        return <rect
-          key={index + segment.start}
-          fill={color}
-          x={x}
-          y={this.props.y}
-          width={unitWidth}
-          height={20}/>
-      }) : null;
+  //   return this.props.colorScheme && this.shouldShowSequence() ?
+  //     characters.map((char, index) => {
+  //       const color = this.props.colorScheme.getColorFor(char, index);
+  //       const x = start + unitWidth * index;
+  //       return <rect
+  //         key={index + segment.start}
+  //         fill={color}
+  //         x={x}
+  //         y={this.props.y}
+  //         width={unitWidth}
+  //         height={20}/>
+  //     }) : null;
 
-  }
+  // }
 
   getHorizontalPosition = (dat) => {
     return {
@@ -88,7 +88,7 @@ export default class SequenceTrack extends React.Component {
   render() {
     return <g>
     {
-      this.renderColor()
+      //this.renderColor()
     }
     {
       this.renderSequence()
