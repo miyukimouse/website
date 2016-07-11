@@ -1,5 +1,6 @@
 import React from 'react';
 import BasicTrack from './BasicTrack';
+import SequenceComponent from '../components/SequenceComponent';
 import { DataLoader } from '../Utils';
 import ColorScheme, { COLORS } from '../Utils/ColorHelper';
 
@@ -14,6 +15,11 @@ export default class VariationTrack extends React.Component {
     onHeightChange: React.PropTypes.func,
     outerHeight: React.PropTypes.number,
   };
+
+  static contextTypes = {
+//    isZoomPanOccuring: React.PropTypes.bool,
+    viewWidth: React.PropTypes.number,
+  }
 
   static getDefaultColorScheme() {
     const knownChangeType = new Set(['Nonsense', 'Missense', 'Insertion', 'Deletion'])
@@ -148,6 +154,27 @@ export default class VariationTrack extends React.Component {
     return VariationTrack.getDefaultColorScheme();
   }
 
+  renderSubstitution = (variationDat, subtrackIndex) => {
+    const compositeChange = variationDat.data.composite_change;
+    const substitution = compositeChange.match(/\d+(\w+)/)[1];
+
+    const start = this.props.coordinateMapping.toSVGCoordinate(variationDat.start);
+    const end = this.props.coordinateMapping.toSVGCoordinate(variationDat.end);
+
+    const {minBin, maxBin} = new DataLoader.BinHelper.getBinDescriptor(
+      this.props.xMin, this.props.xMax, DEFAULT_MAX_BIN_COUNT);
+    const actualBinCount = maxBin - minBin;
+
+    return <SequenceComponent {...this.props}
+        key={variationDat.name}
+        width={end - start}
+        sequence={substitution}
+        apparentWidth={this.context.viewWidth / actualBinCount}
+        x={start}
+        y={this.props.y + 2 + SUBTRACK_HEIGHT * subtrackIndex}
+        colorScheme={null}/>
+  }
+
 
   render() {
     const data = this._getDataWithIdentifier();
@@ -163,6 +190,13 @@ export default class VariationTrack extends React.Component {
             y={this.props.y + SUBTRACK_HEIGHT * index}
             colorScheme={this._getColorScheme()}
             data={subtrackData}/>
+        })
+      }
+      {
+        subtrackData.map((subtrackData, subtrackIndex) => {
+          return subtrackData.map((variationDat) => {
+            return this.renderSubstitution(variationDat, subtrackIndex);
+          })
         })
       }
       </g>;
