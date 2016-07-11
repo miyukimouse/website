@@ -1,6 +1,7 @@
 import React from 'react';
 import { findDOMNode } from 'react-dom';
 import SequenceComponent from '../components/SequenceComponent';
+import SequenceTrack from './SequenceTrack';
 import DataSegment from '../components/DataSegment';
 import DataSegmentLabel from '../components/DataSegmentLabel';
 import PrettyTrackSVGFilter from '../components/PrettyTrackSVGFilter';
@@ -142,30 +143,6 @@ export default class BasicTrack extends React.Component {
       backgroundSegment;
   }
 
-  /* render sequence or label depending how zoomed in */
-  renderSequence = () => {
-    let {xMin, xMax, sequence} = this.props;
-    const rawSegmentLength = xMax - xMin;
-    xMin = Math.max(0, xMin);
-    xMax = Math.min(xMax, sequence.length);
-    const sequenceSegment = sequence.slice(xMin, xMax);
-
-    const {start, end} = this.getHorizontalPosition({
-      start: xMin,
-      end: xMax
-    });
-
-    return this.context.isZoomPanOccuring ? null :
-      <SequenceComponent {...this.props}
-        key="sequence"
-        width={end - start}
-        sequence={sequenceSegment}
-        apparentWidth={this.context.viewWidth / rawSegmentLength * sequenceSegment.length}
-        x={start}
-        y={this.getVerticalPosition()}/>
-  }
-
-
   render() {
     return (
       <g className="track">
@@ -174,7 +151,10 @@ export default class BasicTrack extends React.Component {
         }
         <g>
         {
-          this.props.sequence ? this.renderSequence() : null
+          this.props.sequence ? <SequenceTrack
+            {...this.props}
+            y={this.getVerticalPosition()}
+            colorScheme={null}/> : null
         }
         </g>
       </g>

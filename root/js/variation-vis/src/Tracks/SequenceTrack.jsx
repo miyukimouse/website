@@ -8,11 +8,15 @@ const DEFAULT_MAX_BIN_COUNT = 100;  // default maximum number of bins to show in
 
 export default class SequenceTrack extends React.Component {
   static propTypes = {
-    ...BasicTrack.propTypes,
     xMin: React.PropTypes.number,
     xMax: React.PropTypes.number,
     sequence: React.PropTypes.string,
     colorScheme: React.PropTypes.object,
+    coordinateMapping: React.PropTypes.shape({
+      toSVGCoordinate: React.PropTypes.func,
+      toSequenceCoordinate: React.PropTypes.func
+    }),
+    y: React.PropTypes.number,
   };
 
   static contextTypes = {
@@ -38,29 +42,9 @@ export default class SequenceTrack extends React.Component {
         sequence={segment.sequence}
         apparentWidth={apparentSegmentWidth}
         x={start}
-        y={this.props.y}/>
+        y={this.props.y}
+        colorScheme={this.props.colorScheme}/>
   }
-
-  // renderColor = () => {
-  //   const segment = this.getVisibleSegment();
-  //   const {start, end} = this.getHorizontalPosition(segment);
-  //   const unitWidth = (end - start) / segment.sequence.length;
-  //   const characters = segment.sequence.split('');
-
-  //   return this.props.colorScheme && this.shouldShowSequence() ?
-  //     characters.map((char, index) => {
-  //       const color = this.props.colorScheme.getColorFor(char, index);
-  //       const x = start + unitWidth * index;
-  //       return <rect
-  //         key={index + segment.start}
-  //         fill={color}
-  //         x={x}
-  //         y={this.props.y}
-  //         width={unitWidth}
-  //         height={20}/>
-  //     }) : null;
-
-  // }
 
   getHorizontalPosition = (dat) => {
     return {
@@ -87,9 +71,6 @@ export default class SequenceTrack extends React.Component {
 
   render() {
     return <g>
-    {
-      //this.renderColor()
-    }
     {
       this.renderSequence()
     }
