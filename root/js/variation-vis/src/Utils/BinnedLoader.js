@@ -7,13 +7,14 @@ export default function BinnedLoader(data, lower, upper, maxBinCount) {
 
   // construct the binToData map
   data.forEach((dat) => {
-    const binList = binMinchine.getBinListOf(dat);
-    binList.forEach((bin) => {
+  //  const binList = binMinchine.getBinListOf(dat);
+  //  binList.forEach((bin) => {
+    const bin = binMinchine.getBinOf(dat.start);
       if (!binToData[bin]) {
         binToData[bin] = [];
       }
       binToData[bin].push(dat);
-    });
+  //  });
   });
 
   const binnedData = [];
