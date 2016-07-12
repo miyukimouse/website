@@ -31,11 +31,12 @@ export default class ProteinConservationTrack extends React.Component {
     const residueCategories = [
       ['A', 'I', 'L', 'M', 'F', 'W', 'V'],
       ['R', 'K'],
-      ['N', 'Q'],
+      ['N', 'Q', 'S', 'T'],
       ['D', 'E'],
-      ['C', 'G'],
+      ['G'],
       ['H', 'Y'],
       ['P'],
+      ['C'],
       ['B', 'X', 'Z'],
       ['-'],
     ];
@@ -47,29 +48,41 @@ export default class ProteinConservationTrack extends React.Component {
     }, {
       0: {
         colorId: clustalXPalette.LIGHT_BLUE,
+        description: 'Hydrophobic'
       },
       1: {
         colorId: clustalXPalette.RED,
+        description: 'With positive charge'
       },
       2: {
         colorId: clustalXPalette.GREEN,
+        description: 'Polar'
       },
       3: {
         colorId: clustalXPalette.MAGENTA,
+        description: 'With negative charge'
       },
       4: {
         colorId: clustalXPalette.ORANGE,
+        description: 'Glycines'
       },
       5: {
         colorId: clustalXPalette.TEAL,
+        description: 'H, Y'
       },
       6: {
         colorId: clustalXPalette.YELLOW,
+        description: 'Prolines'
       },
       7: {
-        colorId: clustalXPalette.WHITE,
+        colorId: clustalXPalette.PINK,
+        description: 'Cysteines'
       },
       8: {
+        colorId: clustalXPalette.WHITE,
+        description: 'B, X, Z'
+      },
+      9: {
         colorId: clustalXPalette.GREY,
       }
     }, null, {
