@@ -229,6 +229,7 @@ export default class GeneModel extends WBDataModel {
           after,
           aa_position: dat.aa_position
         },
+        types: [].concat(dat.molecular_change, dat.effects),
         phenotypesPromise: this._getVariationPhenotypes(dat.variation.id, dat),
         link: toWormBaseURL(dat.variation),
         start: aa_position - 1,  // 0 based start coord
@@ -251,6 +252,7 @@ export default class GeneModel extends WBDataModel {
           after: after,
           aa_position: start // one based
         },
+        types: ['Missense'],
         link: `http://www.ncbi.nlm.nih.gov/projects/SNP/snp_ref.cgi?rs=${dbSnpId}`,
         start: start - 1,  // 0 based start coord
         end: end // 1 based end coord

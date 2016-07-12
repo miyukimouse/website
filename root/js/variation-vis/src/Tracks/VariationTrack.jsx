@@ -24,8 +24,7 @@ export default class VariationTrack extends React.Component {
   static getDefaultColorScheme() {
     const knownChangeType = new Set(['Nonsense', 'Missense', 'Insertion', 'Deletion'])
     return new ColorScheme((dat, index) => {
-      const descriptor = [].concat(dat.data.molecular_change, dat.data.effects);
-      const types = descriptor.filter((value) => knownChangeType.has(value));
+      const types = dat.types.filter((value) => knownChangeType.has(value));
       return types.length > 0 ? types[0] : 'Other';
     }, {
       Nonsense: {
@@ -70,13 +69,13 @@ export default class VariationTrack extends React.Component {
   _bin(variations) {
     const binnedVariations = new DataLoader.BinnedLoader(variations,
       this.props.xMin, this.props.xMax, DEFAULT_MAX_BIN_COUNT);
-    const binnedData = binnedVariations.map((bin) => {
-      return {
-        ...bin,
-        tip: bin.data.map((v) => v.composite_change || '').join('<br/>')
-      };
-    });
-    return binnedData;
+    // const binnedData = binnedVariations.map((bin) => {
+    //   return {
+    //     ...bin,
+    //     tip: bin.data.map((v) => v.composite_change || '').join('<br/>')
+    //   };
+    // });
+    return binnedVariations;
   }
 
   _getDataWithIdentifier(){
@@ -123,6 +122,7 @@ export default class VariationTrack extends React.Component {
           ...bin,
           name: dat.label,
           substitution: dat.substitution,
+          types: dat.types,
           data: dat,
           link: dat.link,
           tip: this._renderTooltip(dat)
@@ -180,11 +180,6 @@ export default class VariationTrack extends React.Component {
     const data = this._getDataWithIdentifier();
     const binnedData = this._bin(data);
     const subtrackData = this._decompose(binnedData);
-    console.log('subtrackData');
-    subtrackData.map((tdata) => {
-      console.log(tdata.map((dat) => dat.name));
-    });
-    console.log('subtrackData');
 
     return <g>
       {
