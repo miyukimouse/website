@@ -121,7 +121,8 @@ export default class VariationTrack extends React.Component {
         subtrackData[trackId] = subtrackData[trackId] || [];
         subtrackData[trackId].push({
           ...bin,
-          name: dat.variation.label,
+          name: dat.label,
+          substitution: dat.substitution,
           data: dat,
           link: dat.link,
           tip: this._renderTooltip(dat)
@@ -144,8 +145,8 @@ export default class VariationTrack extends React.Component {
         return `- ${p.phenotype.label}`;
       }).join('<br/>') : '<br/>Loading phenotypes...' : '';
 
-    const compositeChangeText = composite_change ? ` (${composite_change})` : '';
-    return molecular_change +
+    const compositeChangeText = ' (' + variationDat.substitution.before + variationDat.substitution.aa_position + variationDat.substitution.after + ')';
+    return (molecular_change || 'Substitution') +
       compositeChangeText +
       phenotypeText;
   }
@@ -155,8 +156,7 @@ export default class VariationTrack extends React.Component {
   }
 
   renderSubstitution = (variationDat, subtrackIndex) => {
-    const compositeChange = variationDat.data.composite_change;
-    const substitution = compositeChange.match(/\d+(\w+)/)[1];
+    const substitution = variationDat.substitution.after;
 
     const start = this.props.coordinateMapping.toSVGCoordinate(variationDat.start);
     const end = this.props.coordinateMapping.toSVGCoordinate(variationDat.end);
@@ -166,7 +166,7 @@ export default class VariationTrack extends React.Component {
     const actualBinCount = maxBin - minBin;
 
     return <SequenceComponent {...this.props}
-        key={variationDat.name}
+//        key={variationDat.name}
         width={end - start}
         sequence={substitution}
         apparentWidth={this.context.viewWidth / actualBinCount}
@@ -180,6 +180,11 @@ export default class VariationTrack extends React.Component {
     const data = this._getDataWithIdentifier();
     const binnedData = this._bin(data);
     const subtrackData = this._decompose(binnedData);
+    console.log('subtrackData');
+    subtrackData.map((tdata) => {
+      console.log(tdata.map((dat) => dat.name));
+    });
+    console.log('subtrackData');
 
     return <g>
       {

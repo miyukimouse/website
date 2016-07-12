@@ -169,6 +169,8 @@ export default class GeneModel extends WBDataModel {
   getVariations(source) {
     if (source === 'wormbase') {
       return this._getVariationsWB();
+    } else if (source === 'ensembl') {
+      return this._getVariationsEnsembl();
     }
   }
 
@@ -193,17 +195,65 @@ export default class GeneModel extends WBDataModel {
     });
   }
 
+  _getVariationsEnsembl() {
+    return this.alignedProteinPromise.then((data) => {
+      console.log('aligned protein promise')
+      const proteinId = data.protein_id;
+      const url = this._urlFor(`overlap/translation/${proteinId}`, {
+        feature: 'transcript_variation',
+        type: 'missense_variant',
+//        'content-type': 'application/json'
+      }, {
+        pathPrefix: '/rest/ensembl/'
+      });
+
+      return this._getOrFetch('_variations_ensembl', url)
+        .then((data) => {
+          return this._formatVariationEnsembl(data);
+        });
+    });
+  }
+
   _formatVariationWB(variationData) {
     const parsedData = (variationData || []).filter((dat) => {
       return dat.aa_position || dat.aa_position === 0;
     }).map((dat) => {
       const aa_position = parseInt(dat.aa_position);
+      const substitution = dat.composite_change.match(/(\w+?)\d+(\w+)/);
+      const [,before, after] = substitution;
       return {
         ...dat,
+        label: dat.variation.label,
+        substitution: {
+          before,
+          after,
+          aa_position: dat.aa_position
+        },
         phenotypesPromise: this._getVariationPhenotypes(dat.variation.id, dat),
         link: toWormBaseURL(dat.variation),
         start: aa_position - 1,  // 0 based start coord
         end: aa_position // 1 based end coord
+      }
+    });
+    return parsedData;
+  }
+
+  _formatVariationEnsembl(variationData) {
+    const parsedData = (variationData || []).map((dat) => {
+      const {start, end, id} = dat;
+      const dbSnpId = id.match(/rs(\d+)$/)[1];
+      const [before, after] = dat.residues.split('/');
+      return {
+//        ...dat,
+        label: id,
+        substitution: {
+          before: before,
+          after: after,
+          aa_position: start // one based
+        },
+        link: `http://www.ncbi.nlm.nih.gov/projects/SNP/snp_ref.cgi?rs=${dbSnpId}`,
+        start: start - 1,  // 0 based start coord
+        end: end // 1 based end coord
       }
     });
     return parsedData;

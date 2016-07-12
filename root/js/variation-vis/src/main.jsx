@@ -42,7 +42,7 @@ class App extends React.Component {
 
     function _getTrackIndex(trackName) {
       const tracks = ['sourceDNA', 'sourceVariation', 'sourceProtein', 'conservation',
-        'targetProtein', 'targetDNA'];
+        'targetProtein', 'targetVariation', 'targetDNA'];
       return tracks.findIndex((knowTrackName) => knowTrackName === trackName);
     }
 
@@ -211,6 +211,24 @@ class App extends React.Component {
         data: newVariations,
       });
     });
+
+    /* human variations */
+    model.targetGeneModel.then((targetGeneModel) => {
+      const variationsPromise = targetGeneModel.getAlignedVariations('ensembl');
+      const proteinLengthPromise = targetGeneModel.getAlignedProteinLength();
+      const speciesPromise = targetGeneModel.getSummary();
+      return Promise.all([speciesPromise, variationsPromise, proteinLengthPromise]);
+    }).then(([summary, variations, proteinLength]) => {
+      const trackData = {
+        index: _getTrackIndex('targetVariation'),
+        sequenceLength: proteinLength,
+        data: variations,
+        trackComponent: VariationTrack,
+        labelPrefix: 'Variations',
+        ...summary
+      };
+      this._setTrackState(trackData);
+    })
   }
 
   _setTrackState(data, callback) {
