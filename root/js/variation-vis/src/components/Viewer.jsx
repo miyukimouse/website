@@ -385,7 +385,7 @@ export default class Viewer extends React.Component {
   }
 
   _getMinZoomFactor() {
-    return 0.5;
+    return 0.9;
   }
 
   _zoomPanTimeout = () => {
@@ -444,6 +444,7 @@ export default class Viewer extends React.Component {
             x={0} y={0}
             //preserveAspectRatio="meet xMinYMin"
             >
+            <g>
               <defs>
                 <PrettyTrackSVGFilter/>
               </defs>
@@ -499,13 +500,14 @@ export default class Viewer extends React.Component {
                 })
               }
               </g>
-            </svg>
+            </g>
           </svg>
-          { this.state.tooltip
-            ? <Tooltip {...this.state.tooltip}/>
-            : null
-          }
-        </div>
+        </svg>
+        { this.state.tooltip
+          ? <Tooltip {...this.state.tooltip}/>
+          : null
+        }
+      </div>
     );
   }
 
