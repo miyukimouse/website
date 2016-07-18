@@ -79,7 +79,7 @@ module.exports = {
     publicPath: '/static',
     proxy: {
       '/rest/*': {
-        target: 'http://dev.wormbase.org:5000',
+        target: 'http://staging.wormbase.org',
         // rewrite: function(req) {
         //   req.url = req.url.replace(/^\/api/, '');
         // },
