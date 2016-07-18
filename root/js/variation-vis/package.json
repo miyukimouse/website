@@ -5,6 +5,7 @@
   "scripts": {
     "build": "webpack",
     "start": "DEV_PORT=9004 webpack-dev-server  --inline --hot",
+    "serve-build": "webpack-dev-server --content-base build/",
     "test": "echo \"Error: no test specified\" && exit 1",
     "babel-node": "babel-node"
   },
